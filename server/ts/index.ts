@@ -68,11 +68,39 @@ app.use(express.urlencoded({ extended: true }));
 app.post('/signup', async(req, res) => {
     const id = crypto.randomUUID();
     const { firstName, lastName, email, password } = req.body;
+    const conn = await connectDB();
+    const salt = bcrypt.genSaltSync(10);
+    const hash = bcrypt.hashSync(password, salt);
+
+    await conn.execute(`INSERT INTO User (id, firstName, lastName, email, password, isMember) VALUES (?, ?, ?, ?, ?, 1)`, (err: Error, stmt: mysql.PrepareStatementInfo) => {
+        stmt.execute([crypto.randomUUID(), firstName, lastName, email, hash]);
+        stmt.close();
+    });
+
+    await conn.end();
+    
     res.json({ });
 });
 
 app.post('/login', async(req, res) => {
     const { email, password } = req.body;
+    const conn = await connectDB();
+    const salt = bcrypt.genSaltSync(10);
+    const hash = bcrypt.hashSync(password, salt);
+
+    await conn.execute(`SELECT * FROM User WHERE email = ? AND password = ?`, (err: Error, stmt: mysql.PrepareStatementInfo) => {
+        stmt.execute([email, hash], (err, rows) => {
+            if (rows) {
+
+            } else {
+                // j
+            }
+        });
+        stmt.close();
+    });
+
+    await conn.end();
+
     res.json({ msg: '' });
 });
 
