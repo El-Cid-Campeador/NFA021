@@ -1,6 +1,20 @@
 {
+  "firstName": "Admin",
+  "lastName": "Admin",
+  "email": "admin@gmail.com",
+  "password": "12345678"
+}
+
+{
   "firstName": "William",
   "lastName": "Shakespeare",
   "email": "example@gmail.com",
-  "password": "12345679"
+  "password": "12345678"
+}
+
+{
+  "firstName": "John",
+  "lastName": "The ripper",
+  "email": "example0@gmail.com",
+  "password": "12345678"
 }
