@@ -1,6 +1,6 @@
-import express from 'express';
-import cors from 'cors';
-import router from './routers/index.js';
+import express from "express";
+import cors from "cors";
+import router from "./routers/index.js";
 
 const PORT = 8080;
 const app = express();

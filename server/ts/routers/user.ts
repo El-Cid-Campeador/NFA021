@@ -1,8 +1,8 @@
-import express from 'express';
-import bcrypt from 'bcrypt';
-import jwt from 'jsonwebtoken';
-import crypto from 'node:crypto';
-import { conn, customReq, Token, findUser, authMiddleware } from '../functions.js';
+import express from "express";
+import bcrypt from "bcrypt";
+import jwt from "jsonwebtoken";
+import crypto from "node:crypto";
+import { conn, customReq, Token, findUser, authMiddleware } from "../functions.js";
 
 const userRouter = express.Router();
 

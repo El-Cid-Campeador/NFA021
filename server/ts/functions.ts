@@ -1,7 +1,7 @@
-import { Request, Response, NextFunction } from 'express';
-import mysql from 'mysql2/promise';
-import jwt from 'jsonwebtoken';
-import 'dotenv/config';
+import { Request, Response, NextFunction } from "express";
+import mysql from "mysql2/promise";
+import jwt from "jsonwebtoken";
+import "dotenv/config";
 
 type Token = {
     firstName: string,
