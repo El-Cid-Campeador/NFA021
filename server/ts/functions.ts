@@ -4,6 +4,8 @@ import jwt from 'jsonwebtoken';
 import 'dotenv/config';
 
 type Token = {
+    firstName: string,
+    lastName: string,
     email: string, 
     password: string, 
     isMember: number

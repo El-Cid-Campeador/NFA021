@@ -42,10 +42,10 @@ userRouter.post('/login', async(req, res) => {
        const rows = await stmt.execute([email]) as any[][];
        
        if (rows[0].length) {
-           const { email, password: hash_db, isMember } = rows[0][0];
+           const { firstName, lastName, email, password: hash_db, isMember } = rows[0][0];
            
            if (bcrypt.compareSync(password, hash_db)) {
-                msg = jwt.sign({ email, password: hash_db, isMember }, process.env.JWT_SECRET_KEY!);
+                msg = jwt.sign({ firstName, lastName, email, password: hash_db, isMember }, process.env.JWT_SECRET_KEY!);
             }        
         }
     
