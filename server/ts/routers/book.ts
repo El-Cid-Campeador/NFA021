@@ -14,9 +14,10 @@ bookRouter.route('/books')
         if ((req as unknown as customReq).user.isMember === 0) {
             const { title, imgUrl, authorName, descr, yearPubl, numEdition } = req.body;
 
-            const stmt = await conn.prepare(`INSERT INTO Books (id, title, imgUrl, authorName, descr, yearPubl, numEdition, isDeleted) VALUES (?, ?, ?, ?, ?, ?, ?, 0)`);
+            const sql = `INSERT INTO Books (id, title, imgUrl, authorName, descr, yearPubl, numEdition, isDeleted) VALUES (?, ?, ?, ?, ?, ?, ?, 0)`;
+            const stmt = await conn.prepare(sql);
             await stmt.execute([crypto.randomUUID(), title, imgUrl, authorName, descr, yearPubl, numEdition]);
-            await stmt.close();
+            conn.unprepare(sql);
 
             return res.json({ msg: 'Successfully added!' });
         }
@@ -37,18 +38,20 @@ bookRouter.route('/books/:id')
         const { id: idBook } = req.params;
         const { title, imgUrl, authorName, descr, yearPubl, numEdition } = req.body;
 
-        const stmt = await conn.prepare(`UPDATE Books SET title = ?, imgUrl = ?, authorName = ?, descr = ?, yearPubl = ?, numEdition = ? WHERE id = ?`);
+        const sql = `UPDATE Books SET title = ?, imgUrl = ?, authorName = ?, descr = ?, yearPubl = ?, numEdition = ? WHERE id = ?`;
+        const stmt = await conn.prepare(sql);
         await stmt.execute([title, imgUrl, authorName, descr, yearPubl, numEdition, idBook]);
-        await stmt.close();
+        conn.unprepare(sql);
 
         res.json({ msg: 'Successfully patched!' });
     })
     .delete(authMiddleware, async(req, res) => {
         const { id: idBook } = req.params;
 
-        const stmt = await conn.prepare(`UPDATE Books SET isDeleted = 1 WHERE id = ?`);
+        const sql = `UPDATE Books SET isDeleted = 1 WHERE id = ?`;
+        const stmt = await conn.prepare(sql);
         await stmt.execute([idBook]);
-        await stmt.close();
+        conn.unprepare(sql);
     
         res.json({ msg: 'Successfully deleted!' });
     });
@@ -58,9 +61,10 @@ bookRouter.patch('/books/:id/borrow', authMiddleware, async(req, res) => {
         const { id: idBook } = req.params;
         const { idMember } = req.body;
 
-        const stmt = await conn.prepare(`UPDATE Books SET idMember = ?, borrowingTimestamp = ? WHERE id = ?`);
+        const sql = `UPDATE Books SET idMember = ?, borrowingTimestamp = ? WHERE id = ?`;
+        const stmt = await conn.prepare(sql);
         await stmt.execute([idMember, Date.now(), idBook]);
-        await stmt.close();
+        conn.unprepare(sql);
 
         res.json({ msg: 'Successfully patched!' });
     }
@@ -72,9 +76,10 @@ bookRouter.route('/books/:id/suggest')
     .get(authMiddleware, async(req, res) => {
         const { id: idBook } = req.params;
 
-        const stmt = await conn.prepare(`SELECT * FROM Suggestions WHERE idBook = ?`);
+        const sql = `SELECT * FROM Suggestions WHERE idBook = ?`;
+        const stmt = await conn.prepare(sql);
         const rows = await stmt.execute([idBook]) as any[][];
-        await stmt.close();
+        conn.unprepare(sql);
     
         return res.json({ result: rows[0] });
     })
@@ -83,9 +88,10 @@ bookRouter.route('/books/:id/suggest')
             const { id: idBook } = req.params;
             const { descr, idMember } = req.body;
 
-            const stmt = await conn.prepare(`INSERT INTO Suggestions (id, descr, insertionTimestamp, idMember, idBook, isDeleted) VALUES (?, ?, ?, ?, ?, 0)`);
+            const sql = `INSERT INTO Suggestions (id, descr, insertionTimestamp, idMember, idBook, isDeleted) VALUES (?, ?, ?, ?, ?, 0)`;
+            const stmt = await conn.prepare(sql);
             await stmt.execute([crypto.randomUUID(), descr, Date.now(), idMember, idBook]);
-            await stmt.close();
+            conn.unprepare(sql);
 
             return res.json({ msg: 'Successfully added!' });
         }

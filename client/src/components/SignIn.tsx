@@ -1,5 +1,8 @@
 import { FormEvent, useEffect, useState } from "react";
-import { isInvalid } from "../functions";
+import { useMutation } from "@tanstack/react-query";
+import axios from "axios";
+import validator from "validator";
+import { hasEmptyValues } from "../functions";
 
 export default function SignIn() {
     const [showPassword, setShowPassword] = useState(false);
@@ -9,15 +12,31 @@ export default function SignIn() {
     }); 
     const [error, setError] = useState('');
 
+    const { mutate } = useMutation({
+        mutationFn: async () => {
+            const res = await axios.post(`http://127.0.0.1:8080/login`, { ...payload });
+            if (res.status !== 401) {
+                console.log(res.data);
+            }
+            return res;
+        },
+        networkMode: 'always'
+    });
+
     function handlesubmit(e: FormEvent) {
         e.preventDefault();
 
-        if (isInvalid(payload)) {
-            setError('Invalid fields!');
-            return
+        if (hasEmptyValues(payload)) {
+            setError('No empty fields!');
+            return;
         }
 
-        console.log(payload);
+        if (!validator.isEmail(payload.email)) {
+            setError('Invalid email!');
+            return;
+        }
+
+        mutate();
     }
 
     useEffect(() => {
@@ -51,7 +70,9 @@ export default function SignIn() {
                 
                 <input type="submit" />
             </form>
-            <h1>{error}</h1>
+            <p>{error}</p>
         </>
     );
 }
+
+// agkajkda@gmail.com 123ABC_d

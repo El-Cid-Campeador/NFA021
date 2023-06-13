@@ -1,5 +1,8 @@
 import { FormEvent, useEffect, useState } from "react";
-import { isInvalid } from "../functions";
+import { useMutation } from "@tanstack/react-query";
+import axios from "axios";
+import validator from "validator";
+import { hasEmptyValues } from "../functions";
 
 export default function SignUp() {
     const [showPassword, setShowPassword] = useState(false);
@@ -8,18 +11,35 @@ export default function SignUp() {
         lastName: '',
         email: '',
         password: ''
-    }); 
+    });
     const [error, setError] = useState('');
+
+    const { mutate } = useMutation({
+        mutationFn: async () => {
+            return await axios.post(`http://127.0.0.1:8080/signup`, { ...payload });
+        },
+        networkMode: 'always'
+    });
 
     function handlesubmit(e: FormEvent) {
         e.preventDefault();
 
-        if (isInvalid(payload)) {
-            setError('Invalid fields!');
-            return
+        if (hasEmptyValues(payload)) {
+            setError('No empty fields!');
+            return;
         }
 
-        console.log(payload);
+        if (!validator.isEmail(payload.email)) {
+            setError('Invalid email!');
+            return;
+        }
+
+        if (!validator.isStrongPassword(payload.password, { minLength: 8, minLowercase: 1, minUppercase: 1, minNumbers: 1, minSymbols: 1, })) {
+            setError('Please use a strong password! (Minimum 8 characters & at least: 1 uppercase character, 1 lowercase character, 1 digit/number, 1special character)');
+            return;
+        }
+
+        mutate();
     }
 
     useEffect(() => {
@@ -71,11 +91,9 @@ export default function SignUp() {
                     <span onClick={() => setShowPassword(prev => !prev)}>{showPassword ? 'Hide password' : 'Show password'}</span>
                 </div>
 
-                <input type="submit" value="Sign In" />
+                <input type="submit" value="Sign Up" />
             </form>
-            <h1>{error}</h1>
+            <p>{error}</p>
         </>
     );
 }
-
-// afasgas@gmail.com
