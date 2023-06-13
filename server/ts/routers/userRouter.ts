@@ -77,10 +77,10 @@ userRouter.route('/users/:id/fees')
     .get(authMiddleware, async(req, res) => {
         const { id: idMember } = req.params;
 
-        const stmt = await conn.prepare(`SELECT * FROM Fees WHERE idMember = ?`);
+        const stmt = await conn.prepare(`SELECT SUM(amount) FROM Fees WHERE idMember = ?`);
         const rows = await stmt.execute([idMember]) as any[][];
         
-        return res.json({ result: rows[0] });
+        res.json({ result: rows[0] });
     })
     .post(authMiddleware, async(req, res) => {
         if ((req as unknown as customReq).user.isMember === 0) {

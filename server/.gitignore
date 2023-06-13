@@ -1,3 +1,6 @@
 node_modules
 js
 .env
+script.sql
+test.db
+tmp.txt

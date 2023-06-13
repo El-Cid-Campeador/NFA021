@@ -11,7 +11,7 @@ bookRouter.route('/books')
         res.json({ result: rows[0] });
     })
     .post(authMiddleware, async(req, res) => {
-        if ((req as customReq).user.isMember === 0) {
+        if ((req as unknown as customReq).user.isMember === 0) {
             const { title, imgUrl, authorName, descr, yearPubl, numEdition } = req.body;
 
             const stmt = await conn.prepare(`INSERT INTO Books (id, title, imgUrl, authorName, descr, yearPubl, numEdition, isDeleted) VALUES (?, ?, ?, ?, ?, ?, ?, 0)`);
@@ -90,7 +90,7 @@ bookRouter.route('/books/:id/suggest')
             return res.json({ msg: 'Successfully added!' });
         }
 
-        return res.status(401).json({ msg: 'Unauthorized!' });res.json({ result: '' });
+        return res.status(401).json({ msg: 'Unauthorized!' });
     });
 
 export default bookRouter;

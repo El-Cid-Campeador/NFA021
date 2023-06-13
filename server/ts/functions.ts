@@ -29,9 +29,9 @@ async function connectDB() {
             lastName VARCHAR(255) NOT NULL,
             email VARCHAR(255) NOT NULL,
             password VARCHAR(255) NOT NULL,
-            insertionTimestamp INT NOT NULL,
-            isMember INT NOT NULL,
-            isDeleted INT NOT NUll
+            insertionTimestamp BIGINT NOT NULL,
+            isMember TINYINT NOT NULL,
+            isDeleted TINYINT NOT NUll
         )`
     );
 
@@ -41,12 +41,12 @@ async function connectDB() {
             imgUrl VARCHAR(255) NOT NULL,
             authorName VARCHAR(255) NOT NULL,
             descr VARCHAR(255) NOT NULL,
-            yearPubl INT NOT NULL,
-            numEdition INT NOT NULL,
-            insertionTimestamp INT NOT NULL,
+            yearPubl SMALLINT NOT NULL,
+            numEdition TINYINT NOT NULL,
+            insertionTimestamp BIGINT NOT NULL,
             idMember VARCHAR(255),
-            borrowingTimestamp INT,
-            isDeleted INT NOT NUll,
+            borrowingTimestamp BIGINT,
+            isDeleted TINYINT NOT NUll,
             FOREIGN KEY(idMember) REFERENCES Users(id)
         )`
     );
@@ -54,7 +54,7 @@ async function connectDB() {
     await db.execute(`CREATE TABLE IF NOT EXISTS Fees (
             id VARCHAR(255) PRIMARY KEY,
             amount FLOAT NOT NULL,
-            paymentTimestamp INT NOT NULL,
+            paymentTimestamp BIGINT NOT NULL,
             idMember VARCHAR(255) NOT NULL,
             FOREIGN KEY(idMember) REFERENCES Users(id)
         )`
@@ -63,10 +63,10 @@ async function connectDB() {
     await db.execute(`CREATE TABLE IF NOT EXISTS Suggestions (
             id VARCHAR(255) PRIMARY KEY,
             descr VARCHAR(255) NOT NULL,
-            insertionTimestamp INT NOT NULL,
+            insertionTimestamp BIGINT NOT NULL,
             idMember VARCHAR(255) NOT NULL,
             idBook VARCHAR(255) NOT NULL,
-            isDeleted INT NOT NUll,
+            isDeleted TINYINT NOT NUll,
             FOREIGN KEY(idMember) REFERENCES Users(id),
             FOREIGN KEY(idBook) REFERENCES Books(id)
         )`
