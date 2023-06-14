@@ -31,9 +31,9 @@ async function connectDB() {
             lastName VARCHAR(255) NOT NULL,
             email VARCHAR(255) NOT NULL,
             password VARCHAR(255) NOT NULL,
-            insertionTimestamp BIGINT NOT NULL,
-            isMember TINYINT NOT NULL,
-            isDeleted TINYINT NOT NUll
+            insertionTimestamp BIGINT UNSIGNED NOT NULL,
+            isMember TINYINT UNSIGNED NOT NULL,
+            isDeleted TINYINT UNSIGNED NOT NUll
         )`
     );
 
@@ -43,12 +43,12 @@ async function connectDB() {
             imgUrl VARCHAR(255) NOT NULL,
             authorName VARCHAR(255) NOT NULL,
             descr VARCHAR(255) NOT NULL,
-            yearPubl SMALLINT NOT NULL,
-            numEdition TINYINT NOT NULL,
-            insertionTimestamp BIGINT NOT NULL,
+            yearPubl SMALLINT UNSIGNED NOT NULL,
+            numEdition TINYINT UNSIGNED NOT NULL,
+            insertionTimestamp BIGINT UNSIGNED NOT NULL,
             idMember VARCHAR(255),
-            borrowingTimestamp BIGINT,
-            isDeleted TINYINT NOT NUll,
+            borrowingTimestamp BIGINT UNSIGNED,
+            isDeleted TINYINT UNSIGNED NOT NUll,
             FOREIGN KEY(idMember) REFERENCES Users(id)
         )`
     );
@@ -56,7 +56,7 @@ async function connectDB() {
     await db.execute(`CREATE TABLE IF NOT EXISTS Fees (
             id VARCHAR(255) PRIMARY KEY,
             amount FLOAT NOT NULL,
-            paymentTimestamp BIGINT NOT NULL,
+            paymentTimestamp BIGINT UNSIGNED NOT NULL,
             idMember VARCHAR(255) NOT NULL,
             FOREIGN KEY(idMember) REFERENCES Users(id)
         )`
@@ -65,10 +65,10 @@ async function connectDB() {
     await db.execute(`CREATE TABLE IF NOT EXISTS Suggestions (
             id VARCHAR(255) PRIMARY KEY,
             descr VARCHAR(255) NOT NULL,
-            insertionTimestamp BIGINT NOT NULL,
+            insertionTimestamp BIGINT UNSIGNED NOT NULL,
             idMember VARCHAR(255) NOT NULL,
             idBook VARCHAR(255) NOT NULL,
-            isDeleted TINYINT NOT NUll,
+            isDeleted TINYINT UNSIGNED NOT NUll,
             FOREIGN KEY(idMember) REFERENCES Users(id),
             FOREIGN KEY(idBook) REFERENCES Books(id)
         )`
