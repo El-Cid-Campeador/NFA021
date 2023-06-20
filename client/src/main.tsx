@@ -5,7 +5,13 @@ import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { BrowserRouter } from "react-router-dom";
 import "./index.css";
 
-const client = new QueryClient();
+const client = new QueryClient({
+	logger: {
+		log: console.log,
+		warn: console.warn,
+		error: () => {},
+	},
+});
 
 ReactDOM.createRoot(document.getElementById('root') as HTMLElement).render(
 	<React.StrictMode>

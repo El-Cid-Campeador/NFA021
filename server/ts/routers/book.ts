@@ -1,17 +1,27 @@
 import express from "express";
 import crypto from "node:crypto";
-import { conn, customReq, authMiddleware } from "../functions.js";
+import { conn, authMiddleware, deserializeUser } from "../functions.js";
 
 const bookRouter = express.Router();
 
+bookRouter.use(deserializeUser);
+bookRouter.use(authMiddleware);
+
+bookRouter.get('/home', async(req, res) => {
+    const rows = await conn.query(`SELECT * FROM Books ORDER BY createdAt DESC LIMIT 3`) as any[][];
+
+    res.json({ result: rows[0] });
+});
+
 bookRouter.route('/books')
-    .get(authMiddleware, async(req, res) => {
+    .get(async(req, res) => {
         const rows = await conn.query(`SELECT * FROM Books`) as any[][];
 
         res.json({ result: rows[0] });
     })
-    .post(authMiddleware, async(req, res) => {
-        if ((req as unknown as customReq).user.isMember === 0) {
+    .post(async(req, res) => {
+        // @ts-ignore
+        if (req.user.isMember === 0) {
             const { title, imgUrl, authorName, descr, yearPubl, numEdition } = req.body;
 
             const sql = `INSERT INTO Books (id, title, imgUrl, authorName, descr, yearPubl, numEdition, isDeleted) VALUES (?, ?, ?, ?, ?, ?, ?, 0)`;
@@ -26,44 +36,45 @@ bookRouter.route('/books')
     });
 
 bookRouter.route('/books/:id')
-    .get(authMiddleware, async(req, res) => {
-        const { id: idBook } = req.params;
+    .get(async(req, res) => {
+        const { id: bookId } = req.params;
 
         const stmt = await conn.prepare(`SELECT * FROM Books WHERE id = ?`);
-        const rows = await stmt.execute([idBook]) as any[][];
+        const rows = await stmt.execute([bookId]) as any[][];
         
         res.json({ result: rows[0] });
     })
-    .patch(authMiddleware, async(req, res) => {
-        const { id: idBook } = req.params;
+    .patch(async(req, res) => {
+        const { id: bookId } = req.params;
         const { title, imgUrl, authorName, descr, yearPubl, numEdition } = req.body;
 
         const sql = `UPDATE Books SET title = ?, imgUrl = ?, authorName = ?, descr = ?, yearPubl = ?, numEdition = ? WHERE id = ?`;
         const stmt = await conn.prepare(sql);
-        await stmt.execute([title, imgUrl, authorName, descr, yearPubl, numEdition, idBook]);
+        await stmt.execute([title, imgUrl, authorName, descr, yearPubl, numEdition, bookId]);
         conn.unprepare(sql);
 
         res.json({ msg: 'Successfully patched!' });
     })
-    .delete(authMiddleware, async(req, res) => {
-        const { id: idBook } = req.params;
+    .delete(async(req, res) => {
+        const { id: bookId } = req.params;
 
         const sql = `UPDATE Books SET isDeleted = 1 WHERE id = ?`;
         const stmt = await conn.prepare(sql);
-        await stmt.execute([idBook]);
+        await stmt.execute([bookId]);
         conn.unprepare(sql);
     
         res.json({ msg: 'Successfully deleted!' });
     });
 
-bookRouter.patch('/books/:id/borrow', authMiddleware, async(req, res) => {
-    if ((req as unknown as customReq).user.isMember === 0) {
-        const { id: idBook } = req.params;
-        const { idMember } = req.body;
+bookRouter.patch('/books/:id/borrow', async(req, res) => {
+    // @ts-ignore
+    if (req.user.isMember === 0) {
+        const { id: bookId } = req.params;
+        const { memberId } = req.body;
 
-        const sql = `UPDATE Books SET idMember = ?, borrowingTimestamp = ? WHERE id = ?`;
+        const sql = `UPDATE Books SET memberId = ?, borrowedAt = CURRENT_TIMESTAMP WHERE id = ?`;
         const stmt = await conn.prepare(sql);
-        await stmt.execute([idMember, Date.now(), idBook]);
+        await stmt.execute([memberId, Date.now(), bookId]);
         conn.unprepare(sql);
 
         res.json({ msg: 'Successfully patched!' });
@@ -73,24 +84,25 @@ bookRouter.patch('/books/:id/borrow', authMiddleware, async(req, res) => {
 });
 
 bookRouter.route('/books/:id/suggest')
-    .get(authMiddleware, async(req, res) => {
-        const { id: idBook } = req.params;
+    .get(async(req, res) => {
+        const { id: bookId } = req.params;
 
-        const sql = `SELECT * FROM Suggestions WHERE idBook = ?`;
+        const sql = `SELECT * FROM Suggestions WHERE bookId = ?`;
         const stmt = await conn.prepare(sql);
-        const rows = await stmt.execute([idBook]) as any[][];
+        const rows = await stmt.execute([bookId]) as any[][];
         conn.unprepare(sql);
     
         return res.json({ result: rows[0] });
     })
-    .post(authMiddleware, async(req, res) => {
-        if ((req as unknown as customReq).user.isMember === 1) {
-            const { id: idBook } = req.params;
-            const { descr, idMember } = req.body;
+    .post(async(req, res) => {
+        // @ts-ignore
+        if (req.user.isMember === 1) {
+            const { id: bookId } = req.params;
+            const { descr, memberId } = req.body;
 
-            const sql = `INSERT INTO Suggestions (id, descr, insertionTimestamp, idMember, idBook, isDeleted) VALUES (?, ?, ?, ?, ?, 0)`;
+            const sql = `INSERT INTO Suggestions (id, descr, memberId, bookId, isDeleted) VALUES (?, ?, ?, ?, 0)`;
             const stmt = await conn.prepare(sql);
-            await stmt.execute([crypto.randomUUID(), descr, Date.now(), idMember, idBook]);
+            await stmt.execute([crypto.randomUUID(), descr, memberId, bookId]);
             conn.unprepare(sql);
 
             return res.json({ msg: 'Successfully added!' });

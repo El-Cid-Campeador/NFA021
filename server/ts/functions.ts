@@ -3,23 +3,11 @@ import mysql from "mysql2/promise";
 import jwt from "jsonwebtoken";
 import "dotenv/config";
 
-type Token = {
-    firstName: string,
-    lastName: string,
-    email: string, 
-    password: string, 
-    isMember: number
-}
-
-interface customReq extends Request {
-    user: Token
-}
-
 const conn = await connectDB();
 
 async function connectDB() {
     const db = await mysql.createConnection({
-        host: '127.0.0.1',
+        host: 'localhost',
         user: 'root',
         password: process.env.DB_PASSWORD!,
         database: 'nfa021'
@@ -29,11 +17,12 @@ async function connectDB() {
             id VARCHAR(255) PRIMARY KEY,
             firstName VARCHAR(255) NOT NULL,
             lastName VARCHAR(255) NOT NULL,
-            email VARCHAR(255) NOT NULL,
+            email VARCHAR(255) NOT NULL UNIQUE,
             password VARCHAR(255) NOT NULL,
-            insertionTimestamp BIGINT UNSIGNED NOT NULL,
             isMember TINYINT UNSIGNED NOT NULL,
-            isDeleted TINYINT UNSIGNED NOT NUll
+            isDeleted TINYINT UNSIGNED NOT NUll,
+            createdAt TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+            updatedAt TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
         )`
     );
 
@@ -45,77 +34,60 @@ async function connectDB() {
             descr VARCHAR(255) NOT NULL,
             yearPubl SMALLINT UNSIGNED NOT NULL,
             numEdition TINYINT UNSIGNED NOT NULL,
-            insertionTimestamp BIGINT UNSIGNED NOT NULL,
-            idMember VARCHAR(255),
-            borrowingTimestamp BIGINT UNSIGNED,
+            memberId VARCHAR(255),
+            borrowedAt TIMESTAMP,
             isDeleted TINYINT UNSIGNED NOT NUll,
-            FOREIGN KEY(idMember) REFERENCES Users(id)
+            createdAt TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+            updatedAt TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+            FOREIGN KEY(memberId) REFERENCES Users(id)
         )`
     );
 
     await db.execute(`CREATE TABLE IF NOT EXISTS Fees (
             id VARCHAR(255) PRIMARY KEY,
             amount FLOAT NOT NULL,
-            paymentTimestamp BIGINT UNSIGNED NOT NULL,
-            idMember VARCHAR(255) NOT NULL,
-            FOREIGN KEY(idMember) REFERENCES Users(id)
+            memberId VARCHAR(255) NOT NULL,
+            createdAt TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+            updatedAt TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+            FOREIGN KEY(memberId) REFERENCES Users(id)
         )`
     );
 
     await db.execute(`CREATE TABLE IF NOT EXISTS Suggestions (
             id VARCHAR(255) PRIMARY KEY,
             descr VARCHAR(255) NOT NULL,
-            insertionTimestamp BIGINT UNSIGNED NOT NULL,
-            idMember VARCHAR(255) NOT NULL,
-            idBook VARCHAR(255) NOT NULL,
+            memberId VARCHAR(255) NOT NULL,
+            bookId VARCHAR(255) NOT NULL,
             isDeleted TINYINT UNSIGNED NOT NUll,
-            FOREIGN KEY(idMember) REFERENCES Users(id),
-            FOREIGN KEY(idBook) REFERENCES Books(id)
+            createdAt TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+            updatedAt TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+            FOREIGN KEY(memberId) REFERENCES Users(id),
+            FOREIGN KEY(bookId) REFERENCES Books(id)
         )`
     );
 
     return db;
 }
 
-async function findUser(email: string, password: string) {
-    if (email && password) {
-        const stmt = await conn.prepare(`SELECT * FROM Users WHERE email = ?`);
-        const rows = await stmt.execute([email]) as any[][];
-
-        if (rows[0].length) {
-            const { password: hash_db, isMember } = rows[0][0];
-            
-            await stmt.close();
-
-            if (password === hash_db) {
-                return isMember;
-            }
-        }
-    }
-
-    return -1;
-}
-
-async function authMiddleware(req: Request, res: Response, next: NextFunction) {
-    const token = req.headers['x-auth-token'];
-
-    if (!token) {
-        return res.status(401).json({ msg: 'Access denied. Token missing.' });
-    }
-
+export function deserializeUser(req: Request, res: Response, next: NextFunction) {
     try {
-        const decoded = jwt.verify(String(token), process.env.JWT_SECRET_KEY!) as Token;
+        const { token } = req.cookies;
+        const decoded = jwt.verify(token, process.env.JWT_SECRET_KEY!);
         
-        if (await findUser(decoded.email, decoded.password) === -1) {
-            return res.status(401).json({ msg: 'Access denied. User not found.' });
-        }
+        // @ts-ignore
+        req.user = decoded;
+    } catch (err) {}
 
-        (req as customReq).user = decoded;
-
-        next();
-    } catch (e) {
-        return res.status(401).json({ msg: 'Access denied. Invalid token.' });
-    }
+    return next();
 }
 
-export { conn, customReq, Token, findUser, authMiddleware };
+async function authMiddleware(req: Request, res: Response, next: NextFunction) {    
+    // @ts-ignore
+    if (!req.user) {
+        return res.status(401).json({ msg: 'Access denied!' });
+    }
+        
+    return next();
+}
+
+export { conn, authMiddleware };

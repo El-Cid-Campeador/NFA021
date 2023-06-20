@@ -14,9 +14,9 @@ export default function SignUp() {
     });
     const [error, setError] = useState('');
 
-    const { mutate } = useMutation({
+    const { mutate: signUp } = useMutation({
         mutationFn: async () => {
-            return await axios.post(`http://127.0.0.1:8080/signup`, { ...payload });
+            return await axios.post(`http://localhost:8080/signup`, { ...payload });
         },
         networkMode: 'always'
     });
@@ -39,7 +39,7 @@ export default function SignUp() {
             return;
         }
 
-        mutate();
+        signUp();
     }
 
     useEffect(() => {

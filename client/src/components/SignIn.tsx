@@ -1,24 +1,34 @@
 import { FormEvent, useEffect, useState } from "react";
+import { useNavigate } from "react-router-dom";
 import { useMutation } from "@tanstack/react-query";
 import axios from "axios";
-import validator from "validator";
-import { hasEmptyValues } from "../functions";
+// import validator from "validator";
+// import { hasEmptyValues, isAlreadyLoggedIn } from "../functions";
+import { isAlreadyLoggedIn } from "../functions";
 
 export default function SignIn() {
-    const [showPassword, setShowPassword] = useState(false);
-    const [payload, setPayload] = useState({
-        email: '',
-        password: ''
-    }); 
+    // const [showPassword, setShowPassword] = useState(false);
+    // const [payload, setPayload] = useState({
+    //     email: '',
+    //     password: ''
+    // }); 
+
     const [error, setError] = useState('');
 
-    const { mutate } = useMutation({
+    const navigate = useNavigate();
+
+    const { mutate: signIn } = useMutation({
         mutationFn: async () => {
-            const res = await axios.post(`http://127.0.0.1:8080/login`, { ...payload });
-            if (res.status !== 401) {
-                console.log(res.data);
-            }
-            return res;
+            // example@gmail.com  12345678
+            return await axios.post(`http://localhost:8080/login`, { email: "example@gmail.com", password: "12345678" }, { // { ...payload }
+                withCredentials: true
+            });
+        },
+        onSuccess: () => {
+            navigate('/');
+        },
+        onError: () => {
+            setError('Invalid credentials!');
         },
         networkMode: 'always'
     });
@@ -26,27 +36,37 @@ export default function SignIn() {
     function handlesubmit(e: FormEvent) {
         e.preventDefault();
 
-        if (hasEmptyValues(payload)) {
-            setError('No empty fields!');
-            return;
-        }
+        // if (hasEmptyValues(payload)) {
+        //     setError('No empty fields!');
+        //     return;
+        // }
 
-        if (!validator.isEmail(payload.email)) {
-            setError('Invalid email!');
-            return;
-        }
+        // if (!validator.isEmail(payload.email)) {
+        //     setError('Invalid email!');
+        //     return;
+        // }
 
-        mutate();
+        signIn();
     }
 
     useEffect(() => {
-        setError('');
-    }, [payload]);
+        async function verify() { 
+            if (await isAlreadyLoggedIn()) {
+                navigate('/');
+            }
+        }
+
+        verify();
+    }, []);
+
+    // useEffect(() => {
+    //     setError('');
+    // }, [payload]);
 
     return (
         <>
             <form onSubmit={(e) => handlesubmit(e)}>
-                <div>
+                {/* <div>
                         <label htmlFor="email">Email: </label>
                         <input 
                             type="email" 
@@ -66,7 +86,7 @@ export default function SignIn() {
                             onChange={(e) => setPayload({ ...payload, password: e.target.value })} 
                         />
                         <span onClick={() => setShowPassword(prev => !prev)}>{showPassword ? 'Hide password' : 'Show password'}</span>
-                    </div>
+                    </div> */}
                 
                 <input type="submit" />
             </form>

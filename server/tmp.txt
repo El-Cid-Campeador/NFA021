@@ -5,8 +5,6 @@
   "password": "12345678"
 }
 
-eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJlbWFpbCI6ImFkbWluQGdtYWlsLmNvbSIsInBhc3N3b3JkIjoiJDJiJDEwJGFJc1hNak5WMkdmUkxFRjBPQm1TZC5iMVF6SDlCNVd5TmRGMDVSZ1hhY1hkSVN1Tk1EcjJ1IiwiaXNNZW1iZXIiOjAsImlhdCI6MTY4NjY0MDY4Nn0.flReE7KkxuotqyuV-PikGgkeyzLLhRk2DnWYU-RUzMY
-
 {
   "firstName": "William",
   "lastName": "Shakespeare",
@@ -14,11 +12,16 @@ eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJlbWFpbCI6ImFkbWluQGdtYWlsLmNvbSIsInBhc3N
   "password": "12345678"
 }
 
-eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJlbWFpbCI6ImV4YW1wbGVAZ21haWwuY29tIiwicGFzc3dvcmQiOiIkMmIkMTAkVk14RlJtUmJoVWNUWkVPejVaaGk1ZTZJQjg4cjlSQkV1NndreGduWXdGTTVXSjJPY25OSkciLCJpc01lbWJlciI6MSwiaWF0IjoxNjg2NjQwNDkxfQ.qA-Kawqt6wzObpR0l8635_ixf6ZDrOMVHXri3i6Hex4
-
 {
   "firstName": "John",
   "lastName": "The ripper",
   "email": "example0@gmail.com",
   "password": "12345678"
 }
+
+https://github.com/ipenywis/jwt-best-practices
+https://github.com/ipenywis/jwt-best-practices-server
+
+https://github.com/bahdcoder/jwt-best-practices
+
+eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjEyMyIsImlhdCI6MTUxNjIzOTAyMn0.6xWO1QTTtG50wyVE0hrRmP2cmsPHkHVilRftic_hejQ
