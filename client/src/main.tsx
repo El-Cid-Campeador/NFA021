@@ -6,6 +6,15 @@ import { BrowserRouter } from "react-router-dom";
 import "./index.css";
 
 const client = new QueryClient({
+	defaultOptions: {
+		queries: {
+			refetchOnWindowFocus: false,
+			networkMode: 'always'
+		},
+		mutations: {
+			networkMode: 'always'
+		}
+	},
 	logger: {
 		log: console.log,
 		warn: console.warn,

@@ -3,7 +3,7 @@ import bcrypt from "bcrypt";
 import jwt from "jsonwebtoken";
 import crypto from "node:crypto";
 import "dotenv/config";
-import { conn, authMiddleware, deserializeUser } from "../functions.js";
+import { authMiddleware, conn, deserializeUser } from "../functions.js";
 
 const userRouter = express.Router();
 
@@ -62,30 +62,25 @@ userRouter.post('/login', async(req, res) => {
     return res.status(401).json({ msg: 'Unauthorized!' });
 });
 
-userRouter.get('/user', authMiddleware, (req, res) => {
-    console.log(req.cookies);
+userRouter.use(authMiddleware);
 
-    // @ts-ignore
-    return res.json({ msg: req.cookies });
-});
+userRouter.delete('/logout', async(req, res) => {
+    // const sql = `UPDATE Sessions SET isValid = 0 WHERE id = ?`;null
+    // const stmt = await conn.prepare(sql);
 
-userRouter.delete('/logout', authMiddleware, async(req, res) => {
-    const sql = `UPDATE Sessions SET isValid = 0 WHERE id = ?`;null
-    const stmt = await conn.prepare(sql);
-
-    // @ts-ignore
-    await stmt.execute([req.user.sessionId]);
-    conn.unprepare(sql);
+    // // @ts-ignore
+    // await stmt.execute([req.user.sessionId]);
+    // conn.unprepare(sql);
 
     res.clearCookie('token');
 
     // @ts-ignore
     req.user = undefined;
 
-    return res.end();
+    res.json({ msg: 'Successfully logged out!' });
 });
 
-userRouter.delete('/users/:id', authMiddleware, async(req, res) => {
+userRouter.delete('/users/:id', async(req, res) => {
     // @ts-ignore
     if (req.user.isMember === 0) {
         const { id: memberId } = req.params;
@@ -103,7 +98,7 @@ userRouter.delete('/users/:id', authMiddleware, async(req, res) => {
 });
 
 userRouter.route('/users/:id/fees')
-    .get(authMiddleware, async(req, res) => {
+    .get(async(req, res) => {
         const { id: memberId } = req.params;
 
         const sql = `SELECT SUM(amount) FROM Fees WHERE memberId = ?`;
@@ -114,7 +109,7 @@ userRouter.route('/users/:id/fees')
         
         res.json({ result: rows[0] });
     })
-    .post(authMiddleware, async(req, res) => {
+    .post(async(req, res) => {
         // @ts-ignore
         if (req.user.isMember === 0) {
             const { id: memberId } = req.params;

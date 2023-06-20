@@ -1,10 +1,27 @@
 import { useEffect } from "react";
 import { useNavigate } from "react-router-dom";
-import { isAlreadyLoggedIn } from "../functions";
-import axios from "axios";
+import { useMutation, useQuery } from "@tanstack/react-query";
+import { Book, fetcher, isAlreadyLoggedIn } from "../functions";
 
 export default function Home() {
     const navigate = useNavigate();
+
+    const { mutate: signOut } = useMutation({
+        mutationFn: async () => {
+            return await fetcher.delete(`http://localhost:8080/logout`);
+        },
+        onSuccess: () => {
+            navigate('/signin');
+        }
+    });
+
+    const { data: latestBooks, isLoading } = useQuery({
+        queryKey: ['latest_books'],
+        queryFn: async () => {
+            const { data } = await fetcher.get(`http://localhost:8080/books/latest`) ;
+            return data as { result: Book[] };
+        }
+    });
 
     useEffect(() => {
         async function verify() { 
@@ -18,18 +35,23 @@ export default function Home() {
         verify();
     }, []);
 
-    async function click() {
-        const { data } = await axios.get(`http://localhost:8080/user`, {
-            withCredentials: true
-        });
-
-        console.log(data);
-    }
+    if (isLoading) return <h1>Loading...</h1>;
 
     return (
         <div>
             <h1>Welcome!</h1>
-            <button onClick={click}>User</button>
+            <button onClick={() => signOut()}>Sign out</button>
+            <ul>
+                {
+                    latestBooks?.result.map(book => {
+                        return (
+                            <li onClick={() => navigate(`${book.id}`)} key={book.id}>
+                                {book.title}
+                            </li>
+                        );
+                    })
+                }
+            </ul>
         </div>
     );
 }
