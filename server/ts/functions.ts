@@ -2,6 +2,7 @@ import { Request, Response, NextFunction } from "express";
 import mysql from "mysql2/promise";
 import jwt from "jsonwebtoken";
 import "dotenv/config";
+import { unless } from "express-unless";
 
 const conn = await connectDB();
 
@@ -82,13 +83,13 @@ export function deserializeUser(req: Request, res: Response, next: NextFunction)
     return next();
 }
 
-function unless(middleware: any, method?: string, ...paths: any[]) {
-    return function(req: Request, res: Response, next: NextFunction) {
-        req.method
-        const pathCheck = paths.some(path => path === req.path);
-        pathCheck ? next() : middleware(req, res, next);
-    };
-};
+// function unless(middleware: any, method?: string, ...paths: any[]) {
+//     return function(req: Request, res: Response, next: NextFunction) {
+//         req.method
+//         const pathCheck = paths.some(path => path === req.path);
+//         pathCheck ? next() : middleware(req, res, next);
+//     };
+// };
 
 async function authMiddleware(req: Request, res: Response, next: NextFunction) {
     // @ts-ignore
@@ -98,5 +99,7 @@ async function authMiddleware(req: Request, res: Response, next: NextFunction) {
         
     return next();
 }
+
+authMiddleware.unless = unless;
 
 export { conn, authMiddleware };

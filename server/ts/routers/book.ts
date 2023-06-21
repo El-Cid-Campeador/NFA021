@@ -5,7 +5,7 @@ import { conn, authMiddleware, deserializeUser } from "../functions.js";
 const bookRouter = express.Router();
 
 bookRouter.use(deserializeUser);
-bookRouter.use(authMiddleware);
+bookRouter.use(authMiddleware.unless({ path: [''], method: [''] }));
 
 bookRouter.get('/books', async(req, res) => {
     const rows = await conn.query(`SELECT id, title, imgUrl, authorName, category, descr, yearPubl, numEdition, memberId FROM Books WHERE isDeleted = 0`) as any[][];
