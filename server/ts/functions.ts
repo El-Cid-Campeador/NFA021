@@ -82,7 +82,15 @@ export function deserializeUser(req: Request, res: Response, next: NextFunction)
     return next();
 }
 
-async function authMiddleware(req: Request, res: Response, next: NextFunction) {    
+function unless(middleware: any, method?: string, ...paths: any[]) {
+    return function(req: Request, res: Response, next: NextFunction) {
+        req.method
+        const pathCheck = paths.some(path => path === req.path);
+        pathCheck ? next() : middleware(req, res, next);
+    };
+};
+
+async function authMiddleware(req: Request, res: Response, next: NextFunction) {
     // @ts-ignore
     if (!req.user) {
         return res.status(401).json({ msg: 'Access denied!' });

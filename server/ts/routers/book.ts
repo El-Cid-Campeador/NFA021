@@ -5,14 +5,23 @@ import { conn, authMiddleware, deserializeUser } from "../functions.js";
 const bookRouter = express.Router();
 
 bookRouter.use(deserializeUser);
+bookRouter.use(authMiddleware);
 
 bookRouter.get('/books', async(req, res) => {
-        const rows = await conn.query(`SELECT id, title, imgUrl, authorName, category, descr, yearPubl, numEdition, memberId FROM Books WHERE isDeleted = 0`) as any[][];
+    const rows = await conn.query(`SELECT id, title, imgUrl, authorName, category, descr, yearPubl, numEdition, memberId FROM Books WHERE isDeleted = 0`) as any[][];
 
-        res.json({ result: rows[0] });
-    });
+    res.json({ result: rows[0] });
+ });
 
-bookRouter.use(authMiddleware);
+
+
+bookRouter.get('/books/latest', async(req, res) => {
+    const rows = await conn.query(`SELECT id, title, imgUrl, authorName, category, descr, yearPubl, numEdition, memberId 
+        FROM Books WHERE isDeleted = 0 ORDER BY createdAt DESC LIMIT 3`
+    ) as any[][];
+
+    res.json({ result: rows[0] });
+});
 
 bookRouter.post('/books', async(req, res) => {
     // @ts-ignore
@@ -30,23 +39,15 @@ bookRouter.post('/books', async(req, res) => {
     return res.status(401).json({ msg: 'Unauthorized!' });
 });
 
-bookRouter.get('/books/latest', async(req, res) => {
-    const rows = await conn.query(`SELECT id, title, imgUrl, authorName, category, descr, yearPubl, numEdition, memberId 
-        FROM Books WHERE isDeleted = 0 ORDER BY createdAt DESC LIMIT 3`
-    ) as any[][];
-
-    res.json({ result: rows[0] });
-});
-
 bookRouter.route('/books/:id')
-    // .get(async(req, res) => {
-    //     const { id: bookId } = req.params;
+    .get(async(req, res) => {
+        const { id: bookId } = req.params;
 
-    //     const stmt = await conn.prepare(`SELECT * FROM Books WHERE id = ?`);
-    //     const rows = await stmt.execute([bookId]) as any[][];
+        const stmt = await conn.prepare(`SELECT title, imgUrl, authorName, category, descr, yearPubl, numEdition, isDeleted FROM Books WHERE id = ?`);
+        const rows = await stmt.execute([bookId]) as any[][];
         
-    //     res.json({ result: rows[0] });
-    // })
+        res.json({ result: rows[0][0] });
+    })
     .patch(async(req, res) => {
         // @ts-ignore
         if (req.user.isMember === 0) {

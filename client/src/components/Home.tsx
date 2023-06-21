@@ -1,7 +1,6 @@
-import { useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { useMutation, useQuery } from "@tanstack/react-query";
-import { Book, fetcher, isAlreadyLoggedIn } from "../functions";
+import { Book, fetcher  } from "../functions";
 
 export default function Home() {
     const navigate = useNavigate();
@@ -20,20 +19,9 @@ export default function Home() {
         queryFn: async () => {
             const { data } = await fetcher.get(`http://localhost:8080/books/latest`) ;
             return data as { result: Book[] };
-        }
+        },
+        retryOnMount: false
     });
-
-    useEffect(() => {
-        async function verify() { 
-            if (!await isAlreadyLoggedIn()) {
-                navigate('/signin');
-            } else {
-                console.clear();
-            }
-        }
-
-        verify();
-    }, []);
 
     if (isLoading) return <h1>Loading...</h1>;
 
