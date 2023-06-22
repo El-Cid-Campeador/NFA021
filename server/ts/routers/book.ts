@@ -1,32 +1,30 @@
 import express from "express";
 import crypto from "node:crypto";
-import { conn, authMiddleware, deserializeUser } from "../functions.js";
+import { authMiddleware, conn} from "../functions.js";
 
 const bookRouter = express.Router();
 
-bookRouter.use(deserializeUser);
 bookRouter.use(authMiddleware);
 
-bookRouter.get('/home', async(req, res) => {
-    const rows = await conn.query(`SELECT * FROM Books ORDER BY createdAt DESC LIMIT 3`) as any[][];
+bookRouter.get('/:column/:value', async(req, res) => {
+    const { column,  value } = req.params;
+    const val = typeof value === "number" ? value : `\"${value}\"`;
+    
+    const rows = await conn.query(`SELECT id, title, imgUrl, authorName, category, lang, yearPubl, memberId FROM Books 
+        WHERE isDeleted = 0 AND ${column} = ${val}`
+    ) as any[][];
 
     res.json({ result: rows[0] });
 });
 
-bookRouter.route('/books')
-    .get(async(req, res) => {
-        const rows = await conn.query(`SELECT * FROM Books`) as any[][];
-
-        res.json({ result: rows[0] });
-    })
-    .post(async(req, res) => {
+bookRouter.post('/', async(req, res) => {
         // @ts-ignore
         if (req.user.isMember === 0) {
-            const { title, imgUrl, authorName, descr, yearPubl, numEdition } = req.body;
+            const { title, imgUrl, authorName, category, lang, descr, yearPubl, numEdition } = req.body;
 
-            const sql = `INSERT INTO Books (id, title, imgUrl, authorName, descr, yearPubl, numEdition, isDeleted) VALUES (?, ?, ?, ?, ?, ?, ?, 0)`;
+            const sql = `INSERT INTO Books (id, title, imgUrl, authorName, category, lang, descr, yearPubl, numEdition, isDeleted) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, 0)`;
             const stmt = await conn.prepare(sql);
-            await stmt.execute([crypto.randomUUID(), title, imgUrl, authorName, descr, yearPubl, numEdition]);
+            await stmt.execute([crypto.randomUUID(), title, imgUrl, authorName, category, lang, descr, yearPubl, numEdition]);
             conn.unprepare(sql);
 
             return res.json({ msg: 'Successfully added!' });
@@ -35,38 +33,58 @@ bookRouter.route('/books')
         return res.status(401).json({ msg: 'Unauthorized!' });
     });
 
-bookRouter.route('/books/:id')
+bookRouter.get('/latest', async(req, res) => {
+    const rows = await conn.query(`SELECT id, title, imgUrl, authorName, category, lang, yearPubl, memberId 
+        FROM Books WHERE isDeleted = 0 ORDER BY createdAt DESC LIMIT 3`
+    ) as any[][];
+
+    res.json({ result: rows[0] });
+});
+
+bookRouter.route('/:id')
     .get(async(req, res) => {
         const { id: bookId } = req.params;
 
-        const stmt = await conn.prepare(`SELECT * FROM Books WHERE id = ?`);
+        const sql = `SELECT title, imgUrl, authorName, category, lang, descr, yearPubl, numEdition, memberId FROM Books WHERE id = ?`;
+        const stmt = await conn.prepare(sql);
         const rows = await stmt.execute([bookId]) as any[][];
+        conn.unprepare(sql);
         
-        res.json({ result: rows[0] });
+        res.json({ result: rows[0][0] });
     })
     .patch(async(req, res) => {
-        const { id: bookId } = req.params;
-        const { title, imgUrl, authorName, descr, yearPubl, numEdition } = req.body;
+        // @ts-ignore
+        if (req.user.isMember === 0) {
+            const { id: bookId } = req.params;
+            const { title, imgUrl, authorName, category, lang, descr, yearPubl, numEdition } = req.body;
+    
+            const sql = `UPDATE Books SET title = ?, imgUrl = ?, authorName = ?, category = ?, lang ?, descr = ?, yearPubl = ?, numEdition = ? WHERE id = ?`;
+            const stmt = await conn.prepare(sql);
+            await stmt.execute([title, imgUrl, authorName, descr, yearPubl, numEdition, bookId]);
+            conn.unprepare(sql);
+    
+            return res.json({ msg: 'Successfully patched!' });
+        }
 
-        const sql = `UPDATE Books SET title = ?, imgUrl = ?, authorName = ?, descr = ?, yearPubl = ?, numEdition = ? WHERE id = ?`;
-        const stmt = await conn.prepare(sql);
-        await stmt.execute([title, imgUrl, authorName, descr, yearPubl, numEdition, bookId]);
-        conn.unprepare(sql);
-
-        res.json({ msg: 'Successfully patched!' });
+        return res.status(401).json({ msg: 'Unauthorized!' });
     })
     .delete(async(req, res) => {
-        const { id: bookId } = req.params;
-
-        const sql = `UPDATE Books SET isDeleted = 1 WHERE id = ?`;
-        const stmt = await conn.prepare(sql);
-        await stmt.execute([bookId]);
-        conn.unprepare(sql);
+        // @ts-ignore
+        if (req.user.isMember === 0) {
+            const { id: bookId } = req.params;
     
-        res.json({ msg: 'Successfully deleted!' });
+            const sql = `UPDATE Books SET isDeleted = 1 WHERE id = ?`;
+            const stmt = await conn.prepare(sql);
+            await stmt.execute([bookId]);
+            conn.unprepare(sql);
+        
+            return res.json({ msg: 'Successfully deleted!' });
+        }
+
+        return res.status(401).json({ msg: 'Unauthorized!' });
     });
 
-bookRouter.patch('/books/:id/borrow', async(req, res) => {
+bookRouter.patch('/:id/borrow', async(req, res) => {
     // @ts-ignore
     if (req.user.isMember === 0) {
         const { id: bookId } = req.params;
@@ -83,7 +101,7 @@ bookRouter.patch('/books/:id/borrow', async(req, res) => {
     return res.status(401).json({ msg: 'Unauthorized!' });
 });
 
-bookRouter.route('/books/:id/suggest')
+bookRouter.route('/:id/suggest')
     .get(async(req, res) => {
         const { id: bookId } = req.params;
 

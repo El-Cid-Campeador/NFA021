@@ -1,35 +1,45 @@
-import { useEffect } from "react";
-import { useNavigate } from "react-router-dom";
-import { isAlreadyLoggedIn } from "../functions";
-import axios from "axios";
+import { Navigate, useNavigate } from "react-router-dom";
+import { useMutation, useQuery } from "@tanstack/react-query";
+import { FullBookInfo, fetcher  } from "../functions";
 
 export default function Home() {
     const navigate = useNavigate();
 
-    useEffect(() => {
-        async function verify() { 
-            if (!await isAlreadyLoggedIn()) {
-                navigate('/signin');
-            } else {
-                console.clear();
-            }
+    const { data: latestBooks, isLoading, error, isFetching } = useQuery({
+        queryKey: ['latest_books'],
+        queryFn: async () => {
+            const { data } = await fetcher.get(`http://localhost:8080/books/latest`) ;
+            return data as { result: FullBookInfo[] };
         }
+    });
 
-        verify();
-    }, []);
+    const { mutate: signOut } = useMutation({
+        mutationFn: async () => {
+            return await fetcher.delete(`http://localhost:8080/logout`);
+        },
+        onSuccess: () => {
+            navigate('/signin');
+        }
+    });
 
-    async function click() {
-        const { data } = await axios.get(`http://localhost:8080/user`, {
-            withCredentials: true
-        });
-
-        console.log(data);
-    }
+    if (isLoading || isFetching) return <h1>Loading...</h1>;
+    if (error) return <Navigate to="/signin" />
 
     return (
         <div>
             <h1>Welcome!</h1>
-            <button onClick={click}>User</button>
+            <button onClick={() => signOut()}>Sign out</button>
+            <ul>
+                {
+                    latestBooks?.result.map(book => {
+                        return (
+                            <li onClick={() => navigate(`${book.id}`)} key={book.id}>
+                                {book.title}
+                            </li>
+                        );
+                    })
+                }
+            </ul>
         </div>
     );
 }

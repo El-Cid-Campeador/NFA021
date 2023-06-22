@@ -1,10 +1,9 @@
 import { FormEvent, useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { useMutation } from "@tanstack/react-query";
-import axios from "axios";
 // import validator from "validator";
 // import { hasEmptyValues, isAlreadyLoggedIn } from "../functions";
-import { isAlreadyLoggedIn } from "../functions";
+import { fetcher, isAlreadyLoggedIn } from "../functions";
 
 export default function SignIn() {
     // const [showPassword, setShowPassword] = useState(false);
@@ -20,17 +19,14 @@ export default function SignIn() {
     const { mutate: signIn } = useMutation({
         mutationFn: async () => {
             // example@gmail.com  12345678
-            return await axios.post(`http://localhost:8080/login`, { email: "example@gmail.com", password: "12345678" }, { // { ...payload }
-                withCredentials: true
-            });
+            return await fetcher.post(`http://localhost:8080/login`, { email: "example@gmail.com", password: "12345678" }); // { ...payload }
         },
         onSuccess: () => {
             navigate('/');
         },
         onError: () => {
             setError('Invalid credentials!');
-        },
-        networkMode: 'always'
+        }
     });
 
     function handlesubmit(e: FormEvent) {

@@ -1,8 +1,7 @@
 import { FormEvent, useEffect, useState } from "react";
 import { useMutation } from "@tanstack/react-query";
-import axios from "axios";
 import validator from "validator";
-import { hasEmptyValues } from "../functions";
+import { fetcher, hasEmptyValues } from "../functions";
 
 export default function SignUp() {
     const [showPassword, setShowPassword] = useState(false);
@@ -16,9 +15,8 @@ export default function SignUp() {
 
     const { mutate: signUp } = useMutation({
         mutationFn: async () => {
-            return await axios.post(`http://localhost:8080/signup`, { ...payload });
-        },
-        networkMode: 'always'
+            return await fetcher.post(`http://localhost:8080/signup`, { ...payload });
+        }
     });
 
     function handlesubmit(e: FormEvent) {

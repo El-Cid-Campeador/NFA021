@@ -3,11 +3,15 @@ import bcrypt from "bcrypt";
 import jwt from "jsonwebtoken";
 import crypto from "node:crypto";
 import "dotenv/config";
-import { conn, authMiddleware, deserializeUser } from "../functions.js";
+import { authMiddleware, conn } from "../functions.js";
 
 const userRouter = express.Router();
 
-userRouter.use(deserializeUser);
+userRouter.get('/users', async (req, res) => {
+    const rows = await conn.query(`SELECT * FROM Users WHERE isDeleted = 0`) as any[][];
+
+    res.json({ result: rows[0] }); 
+});
 
 userRouter.post('/signup', async(req, res) => {
     const { firstName, lastName, email, password } = req.body;
@@ -62,27 +66,20 @@ userRouter.post('/login', async(req, res) => {
     return res.status(401).json({ msg: 'Unauthorized!' });
 });
 
-userRouter.get('/user', authMiddleware, (req, res) => {
-    console.log(req.cookies);
-
-    // @ts-ignore
-    return res.json({ msg: req.cookies });
-});
-
 userRouter.delete('/logout', authMiddleware, async(req, res) => {
-    const sql = `UPDATE Sessions SET isValid = 0 WHERE id = ?`;null
-    const stmt = await conn.prepare(sql);
+    // const sql = `UPDATE Sessions SET isValid = 0 WHERE id = ?`;null
+    // const stmt = await conn.prepare(sql);
 
-    // @ts-ignore
-    await stmt.execute([req.user.sessionId]);
-    conn.unprepare(sql);
+    // // @ts-ignore
+    // await stmt.execute([req.user.sessionId]);
+    // conn.unprepare(sql);
 
     res.clearCookie('token');
 
     // @ts-ignore
     req.user = undefined;
 
-    return res.end();
+    res.json({ msg: 'Successfully logged out!' });
 });
 
 userRouter.delete('/users/:id', authMiddleware, async(req, res) => {
