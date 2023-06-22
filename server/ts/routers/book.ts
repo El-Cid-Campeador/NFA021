@@ -6,7 +6,7 @@ const bookRouter = express.Router();
 
 bookRouter.use(authMiddleware);
 
-bookRouter.get('/:column/:value', async(req, res) => {
+bookRouter.get('/:column/:value', async (req, res) => {
     const { column,  value } = req.params;
     const val = typeof value === "number" ? value : `\"${value}\"`;
     
@@ -17,23 +17,21 @@ bookRouter.get('/:column/:value', async(req, res) => {
     res.json({ result: rows[0] });
 });
 
-bookRouter.post('/', async(req, res) => {
-        // @ts-ignore
-        if (req.user.isMember === 0) {
-            const { title, imgUrl, authorName, category, lang, descr, yearPubl, numEdition } = req.body;
+bookRouter.post('/', async (req, res) => {
+    // @ts-ignore
+    if (req.user.isMember === 0) {
+        const { title, imgUrl, authorName, category, lang, descr, yearPubl, numEdition } = req.body;
 
-            const sql = `INSERT INTO Books (id, title, imgUrl, authorName, category, lang, descr, yearPubl, numEdition, isDeleted) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, 0)`;
-            const stmt = await conn.prepare(sql);
-            await stmt.execute([crypto.randomUUID(), title, imgUrl, authorName, category, lang, descr, yearPubl, numEdition]);
-            conn.unprepare(sql);
+        const sql = `INSERT INTO Books (id, title, imgUrl, authorName, category, lang, descr, yearPubl, numEdition, isDeleted) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, 0)`;
+        const stmt = await conn.prepare(sql);
+        await stmt.execute([crypto.randomUUID(), title, imgUrl, authorName, category, lang, descr, yearPubl, numEdition]);
+        conn.unprepare(sql);
+    }
 
-            return res.json({ msg: 'Successfully added!' });
-        }
+    return res.status(401).json({ msg: 'Unauthorized!' });
+});
 
-        return res.status(401).json({ msg: 'Unauthorized!' });
-    });
-
-bookRouter.get('/latest', async(req, res) => {
+bookRouter.get('/latest', async (req, res) => {
     const rows = await conn.query(`SELECT id, title, imgUrl, authorName, category, lang, yearPubl, memberId 
         FROM Books WHERE isDeleted = 0 ORDER BY createdAt DESC LIMIT 3`
     ) as any[][];
@@ -42,7 +40,7 @@ bookRouter.get('/latest', async(req, res) => {
 });
 
 bookRouter.route('/:id')
-    .get(async(req, res) => {
+    .get(async (req, res) => {
         const { id: bookId } = req.params;
 
         const sql = `SELECT title, imgUrl, authorName, category, lang, descr, yearPubl, numEdition, memberId FROM Books WHERE id = ?`;
@@ -52,7 +50,7 @@ bookRouter.route('/:id')
         
         res.json({ result: rows[0][0] });
     })
-    .patch(async(req, res) => {
+    .patch(async (req, res) => {
         // @ts-ignore
         if (req.user.isMember === 0) {
             const { id: bookId } = req.params;
@@ -68,7 +66,7 @@ bookRouter.route('/:id')
 
         return res.status(401).json({ msg: 'Unauthorized!' });
     })
-    .delete(async(req, res) => {
+    .delete(async (req, res) => {
         // @ts-ignore
         if (req.user.isMember === 0) {
             const { id: bookId } = req.params;
@@ -84,7 +82,7 @@ bookRouter.route('/:id')
         return res.status(401).json({ msg: 'Unauthorized!' });
     });
 
-bookRouter.patch('/:id/borrow', async(req, res) => {
+bookRouter.patch('/:id/borrow', async (req, res) => {
     // @ts-ignore
     if (req.user.isMember === 0) {
         const { id: bookId } = req.params;
@@ -102,7 +100,7 @@ bookRouter.patch('/:id/borrow', async(req, res) => {
 });
 
 bookRouter.route('/:id/suggest')
-    .get(async(req, res) => {
+    .get(async (req, res) => {
         const { id: bookId } = req.params;
 
         const sql = `SELECT * FROM Suggestions WHERE bookId = ?`;
@@ -112,7 +110,7 @@ bookRouter.route('/:id/suggest')
     
         return res.json({ result: rows[0] });
     })
-    .post(async(req, res) => {
+    .post(async (req, res) => {
         // @ts-ignore
         if (req.user.isMember === 1) {
             const { id: bookId } = req.params;

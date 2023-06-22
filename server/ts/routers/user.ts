@@ -82,7 +82,7 @@ userRouter.delete('/logout', authMiddleware, async(req, res) => {
     res.json({ msg: 'Successfully logged out!' });
 });
 
-userRouter.delete('/users/:id', authMiddleware, async(req, res) => {
+userRouter.delete('/users/:id', async(req, res) => {
     // @ts-ignore
     if (req.user.isMember === 0) {
         const { id: memberId } = req.params;
@@ -100,7 +100,7 @@ userRouter.delete('/users/:id', authMiddleware, async(req, res) => {
 });
 
 userRouter.route('/users/:id/fees')
-    .get(authMiddleware, async(req, res) => {
+    .get(async(req, res) => {
         const { id: memberId } = req.params;
 
         const sql = `SELECT SUM(amount) FROM Fees WHERE memberId = ?`;
@@ -111,7 +111,7 @@ userRouter.route('/users/:id/fees')
         
         res.json({ result: rows[0] });
     })
-    .post(authMiddleware, async(req, res) => {
+    .post(async(req, res) => {
         // @ts-ignore
         if (req.user.isMember === 0) {
             const { id: memberId } = req.params;

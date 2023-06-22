@@ -35,16 +35,4 @@ function hasEmptyValues(obj: any) {
     return false;
 }
 
-async function isAlreadyLoggedIn() {
-    try {
-        const res = await fetcher.post(`http://localhost:8080/login`, { email: '', password: ''});
-
-        if (res.status === 200) {
-            return true;
-        }
-    } catch(err) {}
-
-    return false;
-}
-
-export { fetcher, isAlreadyLoggedIn, hasEmptyValues };
+export { fetcher, hasEmptyValues };

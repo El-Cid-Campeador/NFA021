@@ -2,7 +2,6 @@ import { Routes, Route } from "react-router-dom";
 import SignUp from "./components/SignUp";
 import SignIn from "./components/SignIn";
 import Home from "./components/Home";
-
 import BookItem from "./components/BookItem";
 
 export default function App() {	
