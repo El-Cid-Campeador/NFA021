@@ -3,6 +3,7 @@ import SignUp from "./components/SignUp";
 import SignIn from "./components/SignIn";
 import Home from "./components/Home";
 import BookItem from "./components/BookItem";
+import Search from "./components/Search";
 
 export default function App() {	
 	return (
@@ -11,7 +12,8 @@ export default function App() {
 				<Route path='/' element={<Home/>} />
 				<Route path="signup" element={<SignUp />}></Route>
 				<Route path="signin" element={<SignIn />}></Route>
-				<Route path=":bookId" element={<BookItem />}></Route>
+				<Route path="books/:bookId" element={<BookItem />}></Route>
+				<Route path="search/:column?" element={<Search />}></Route>
 				<Route path="*" element={<h1>Page not found!</h1>}></Route>
 			</Routes>
 		</>

@@ -14,7 +14,7 @@ const client = new QueryClient({
 			// cacheTime: 
 			retry: false,
 			retryOnMount: false,
-			networkMode: 'always',
+			networkMode: 'always'
 		},
 		mutations: {
 			networkMode: 'always'
@@ -23,7 +23,7 @@ const client = new QueryClient({
 	logger: {
 		log: console.log,
 		warn: console.warn,
-		error: () => {},
+		error: () => {}
 	}
 });
 

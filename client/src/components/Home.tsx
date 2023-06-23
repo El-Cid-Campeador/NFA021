@@ -1,4 +1,4 @@
-import { Navigate, useNavigate } from "react-router-dom";
+import { Link, Navigate, useNavigate } from "react-router-dom";
 import { useMutation, useQuery } from "@tanstack/react-query";
 import { FullBookInfo, fetcher  } from "../functions";
 
@@ -33,13 +33,16 @@ export default function Home() {
                 {
                     latestBooks?.result.map(book => {
                         return (
-                            <li onClick={() => navigate(`${book.id}`)} key={book.id}>
-                                {book.title}
+                            <li key={book.id}>
+                                <Link to={`/books/${book.id}`} >
+                                    {book.title}
+                                </Link>
                             </li>
                         );
                     })
                 }
             </ul>
+            <Link to={`/search`}>Search</Link>
         </div>
     );
 }

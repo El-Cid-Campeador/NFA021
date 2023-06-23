@@ -6,6 +6,18 @@ const bookRouter = express.Router();
 
 bookRouter.use(authMiddleware);
 
+bookRouter.get('/search/:payload', async (req, res) => {
+    const { payload } = req.params;
+    const val = `%${payload}%`;
+
+    const sql = `SELECT id, title, imgUrl, authorName, category, lang, yearPubl, nbrPages, memberId FROM Books WHERE title LIKE ? OR authorName LIKE ?`;
+    const stmt = await conn.prepare(sql);
+    const rows = await stmt.execute([val, val]) as any[][];
+    conn.unprepare(sql);
+
+    res.json({ result: rows[0] });
+});
+
 bookRouter.get('/:column/:value', async (req, res) => {
     const { column,  value } = req.params;
     const val = typeof value === "number" ? value : `\"${value}\"`;

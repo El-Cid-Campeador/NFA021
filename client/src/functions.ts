@@ -35,16 +35,13 @@ function hasEmptyValues(obj: any) {
     return false;
 }
 
-async function isAlreadyLoggedIn() {
-    try {
-        const res = await fetcher.post(`http://localhost:8080/login`, { email: '', password: ''});
+function generateYears(): number[] {
+    const arr = [];
+    for (let i = new Date().getFullYear(); i >= 1970 ; i -= 1) {
+        arr.push(i);  
+    }
 
-        if (res.status === 200) {
-            return true;
-        }
-    } catch(err) {}
-
-    return false;
+    return arr;
 }
 
-export { fetcher, hasEmptyValues, isAlreadyLoggedIn };
+export { fetcher, hasEmptyValues, generateYears };

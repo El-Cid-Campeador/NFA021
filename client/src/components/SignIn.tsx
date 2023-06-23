@@ -3,7 +3,7 @@ import { useNavigate } from "react-router-dom";
 import { useMutation } from "@tanstack/react-query";
 // import validator from "validator";
 // import { hasEmptyValues, isAlreadyLoggedIn } from "../functions";
-import { fetcher, isAlreadyLoggedIn } from "../functions";
+import { fetcher } from "../functions";
 
 export default function SignIn() {
     // const [showPassword, setShowPassword] = useState(false);
@@ -46,13 +46,7 @@ export default function SignIn() {
     }
 
     useEffect(() => {
-        async function verify() { 
-            if (await isAlreadyLoggedIn()) {
-                navigate('/');
-            }
-        }
-
-        verify();
+        signIn();
     }, []);
 
     // useEffect(() => {
