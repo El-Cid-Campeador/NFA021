@@ -25,6 +25,79 @@ export type FullBookInfo = {
     memberId: string
 }
 
+const bookCategories = [
+    'Adventure',
+    'Art',
+    'Autobiography',
+    'Biography',
+    'Business',
+    'Children',
+    'Comics',
+    'Computer science',
+    'Cooking',
+    'Dystopian',
+    'Education',
+    'Essays',
+    'Fantasy',
+    'Film',
+    'Finance',
+    'Fitness',
+    'Fiction',
+    'Graphic Novels',
+    'Health',
+    'History',
+    'Horror',
+    'Humor',
+    'Literature',
+    'Mathematics',
+    'Memoir',
+    'Music',
+    'Mystery',
+    'Philosophy',
+    'Photography',
+    'Plays',
+    'Poetry',
+    'Politics',
+    'Psychology',
+    'Religion',
+    'Romance',
+    'Satire',
+    'Science',
+    'Science Fiction',
+    'Self-help',
+    'Short Stories',
+    'Social Sciences',
+    'Spirituality',
+    'Sports',
+    'Technology',
+    'Thriller',
+    'Tragedy',
+    'Travel'
+];
+
+const bookLanguages = [
+    'Arabic',
+    'Chinese',
+    'English',
+    'French',
+    'German',
+    'Hindi',
+    'Italian',
+    'Japanese',
+    'Korean',
+    'Persian',
+    'Portuguese',
+    'Russian',
+    'Spanish',
+    'Swedish',
+    'Tamil',
+    'Telugu',
+    'Turkish',
+    'Ukrainian',
+    'Urdu',
+    'Vietnamese'
+];
+
 function hasEmptyValues(obj: any) {
     for (let key in obj) {
         if (obj[key] === '') {
@@ -44,4 +117,4 @@ function generateYears(): number[] {
     return arr;
 }
 
-export { fetcher, hasEmptyValues, generateYears };
+export { fetcher, bookCategories, bookLanguages, hasEmptyValues, generateYears };

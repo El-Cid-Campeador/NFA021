@@ -1,12 +1,13 @@
 import { useQuery } from "@tanstack/react-query";
-import { FullBookInfo, fetcher, generateYears } from "../functions";
+import { FullBookInfo, fetcher } from "../functions";
 import { useState } from "react";
-import { Link, Navigate } from "react-router-dom";
+import { Navigate } from "react-router-dom";
+import Books from "./Books";
 
 export default function Search() {
     const [search, setSearch] = useState('');
 
-    const { data: books, error } = useQuery({
+    const { data: queryByText, isLoading: isLoadingByText, error: errorByText } = useQuery({
 		queryKey: ['books', search],
         queryFn: async () => {
             if (search === '') {
@@ -20,7 +21,7 @@ export default function Search() {
         }
 	});
 
-    if (error) return <Navigate to="/signin" />;
+    if (errorByText) return <Navigate to="/signin" />;
     
     return (
         <>
@@ -32,46 +33,11 @@ export default function Search() {
                     onChange={(e) => setSearch(e.target.value)} 
                 />
             </div>
-            <ul>
-                {
-                    books?.result.map(book => {
-                        return (
-                            <li key={book.id}>
-                                <Link to={`/books/${book.id}`} >
-                                    {book.title}
-                                </Link>
-                            </li>
-                        );
-                    })
-                }
-            </ul>
-            {/* <div>
-                <label htmlFor=""></label>
-                <input type="checkbox" id="" />
-            </div>
-            <div>
-                <label htmlFor="category">Category: </label>
-                <select id="category">
-                    <option value={"all"}>All</option>
-                    <option value={"all"}>Programming</option>
-                </select> 
-            </div> */}
-            <div>
-                <label htmlFor="years">Years: </label>
-                <select id="years">
-                    {
-                        generateYears().map(year => {
-                            return <option value={year} key={year}>{year}</option>;
-                        })
-                    }
-                </select> 
-            </div>
-            {/* <div>
-                <label htmlFor="language">Language: </label>
-                <select id="language">
-                    <option value=""></option>
-                </select> 
-            </div> */}
+            {
+                isLoadingByText ? <h1>Loading...</h1> : (
+                   <Books queryResult={queryByText!} />
+                )
+            }
         </>
     );
 }

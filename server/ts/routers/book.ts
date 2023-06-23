@@ -18,7 +18,7 @@ bookRouter.get('/search/:payload', async (req, res) => {
     res.json({ result: rows[0] });
 });
 
-bookRouter.get('/:column/:value', async (req, res) => {
+bookRouter.get('/explore/:column/:value', async (req, res) => {
     const { column,  value } = req.params;
     const val = typeof value === "number" ? value : `\"${value}\"`;
     
