@@ -6,14 +6,14 @@ import "dotenv/config";
 const conn = await connectDB();
 
 async function connectDB() {
-    const db = await mysql.createConnection({
+    const conn = await mysql.createConnection({
         host: 'localhost',
         user: 'root',
         password: process.env.DB_PASSWORD!,
         database: 'nfa021'
     });
 
-    await db.execute(`CREATE TABLE IF NOT EXISTS Users (
+    await conn.execute(`CREATE TABLE IF NOT EXISTS Users (
             id VARCHAR(255) PRIMARY KEY,
             firstName LONGTEXT NOT NULL,
             lastName LONGTEXT NOT NULL,
@@ -26,7 +26,7 @@ async function connectDB() {
         )`
     );
 
-    await db.execute(`CREATE TABLE IF NOT EXISTS Books (
+    await conn.execute(`CREATE TABLE IF NOT EXISTS Books (
             id VARCHAR(255) PRIMARY KEY,
             title LONGTEXT NOT NULL,
             imgUrl LONGTEXT NOT NULL,
@@ -36,6 +36,7 @@ async function connectDB() {
             descr LONGTEXT NOT NULL,
             yearPubl SMALLINT UNSIGNED NOT NULL,
             numEdition TINYINT UNSIGNED NOT NULL,
+            nbrPages SMALLINT UNSIGNED NOT NULL,
             memberId VARCHAR(255),
             borrowedAt TIMESTAMP DEFAULT 0,
             isDeleted TINYINT UNSIGNED NOT NUll,
@@ -45,7 +46,7 @@ async function connectDB() {
         )`
     );
 
-    await db.execute(`CREATE TABLE IF NOT EXISTS Fees (
+    await conn.execute(`CREATE TABLE IF NOT EXISTS Fees (
             id VARCHAR(255) PRIMARY KEY,
             amount FLOAT NOT NULL,
             memberId VARCHAR(255) NOT NULL,
@@ -55,7 +56,7 @@ async function connectDB() {
         )`
     );
 
-    await db.execute(`CREATE TABLE IF NOT EXISTS Suggestions (
+    await conn.execute(`CREATE TABLE IF NOT EXISTS Suggestions (
             id VARCHAR(255) PRIMARY KEY,
             descr LONGTEXT NOT NULL,
             memberId VARCHAR(255) NOT NULL,
@@ -68,7 +69,7 @@ async function connectDB() {
         )`
     );
 
-    return db;
+    return conn;
 }
 
 export function deserializeUser(req: Request, res: Response, next: NextFunction) {

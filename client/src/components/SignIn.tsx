@@ -16,7 +16,7 @@ export default function SignIn() {
 
     const navigate = useNavigate();
 
-    const { mutate: signIn } = useMutation({
+    const { mutate: signIn, isLoading } = useMutation({
         mutationFn: async () => {
             // example@gmail.com  12345678
             return await fetcher.post(`http://localhost:8080/login`, { email: "example@gmail.com", password: "12345678" }); // { ...payload }
@@ -58,6 +58,8 @@ export default function SignIn() {
     // useEffect(() => {
     //     setError('');
     // }, [payload]);
+
+    if (isLoading) return <h1>Waiting for server...</h1>;
 
     return (
         <>

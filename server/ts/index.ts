@@ -2,7 +2,6 @@ import express from "express";
 import cors from "cors";
 import cookieParser from "cookie-parser";
 import router from "./routers/index.js";
-import { conn } from "./functions.js";
 
 const PORT = 8080;
 const app = express();

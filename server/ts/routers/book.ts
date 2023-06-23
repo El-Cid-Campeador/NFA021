@@ -10,7 +10,7 @@ bookRouter.get('/:column/:value', async (req, res) => {
     const { column,  value } = req.params;
     const val = typeof value === "number" ? value : `\"${value}\"`;
     
-    const rows = await conn.query(`SELECT id, title, imgUrl, authorName, category, lang, yearPubl, memberId FROM Books 
+    const rows = await conn.query(`SELECT id, title, imgUrl, authorName, category, lang, yearPubl, nbrPages, memberId FROM Books 
         WHERE isDeleted = 0 AND ${column} = ${val}`
     ) as any[][];
 
@@ -20,11 +20,11 @@ bookRouter.get('/:column/:value', async (req, res) => {
 bookRouter.post('/', async (req, res) => {
     // @ts-ignore
     if (req.user.isMember === 0) {
-        const { title, imgUrl, authorName, category, lang, descr, yearPubl, numEdition } = req.body;
+        const { title, imgUrl, authorName, category, lang, descr, yearPubl, numEdition, nbrPages } = req.body;
 
-        const sql = `INSERT INTO Books (id, title, imgUrl, authorName, category, lang, descr, yearPubl, numEdition, isDeleted) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, 0)`;
+        const sql = `INSERT INTO Books (id, title, imgUrl, authorName, category, lang, descr, yearPubl, numEdition, nbrPages, isDeleted) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, 0)`;
         const stmt = await conn.prepare(sql);
-        await stmt.execute([crypto.randomUUID(), title, imgUrl, authorName, category, lang, descr, yearPubl, numEdition]);
+        await stmt.execute([crypto.randomUUID(), title, imgUrl, authorName, category, lang, descr, yearPubl, numEdition, nbrPages]);
         conn.unprepare(sql);
     }
 
@@ -43,7 +43,7 @@ bookRouter.route('/:id')
     .get(async (req, res) => {
         const { id: bookId } = req.params;
 
-        const sql = `SELECT title, imgUrl, authorName, category, lang, descr, yearPubl, numEdition, memberId FROM Books WHERE id = ?`;
+        const sql = `SELECT title, imgUrl, authorName, category, lang, descr, yearPubl, numEdition, nbrPages, memberId FROM Books WHERE id = ?`;
         const stmt = await conn.prepare(sql);
         const rows = await stmt.execute([bookId]) as any[][];
         conn.unprepare(sql);
@@ -54,11 +54,11 @@ bookRouter.route('/:id')
         // @ts-ignore
         if (req.user.isMember === 0) {
             const { id: bookId } = req.params;
-            const { title, imgUrl, authorName, category, lang, descr, yearPubl, numEdition } = req.body;
+            const { title, imgUrl, authorName, category, lang, descr, yearPubl, numEdition, nbrPages } = req.body;
     
-            const sql = `UPDATE Books SET title = ?, imgUrl = ?, authorName = ?, category = ?, lang ?, descr = ?, yearPubl = ?, numEdition = ? WHERE id = ?`;
+            const sql = `UPDATE Books SET title = ?, imgUrl = ?, authorName = ?, category = ?, lang ?, descr = ?, yearPubl = ?, numEdition = ?, nbrPages = ? WHERE id = ?`;
             const stmt = await conn.prepare(sql);
-            await stmt.execute([title, imgUrl, authorName, descr, yearPubl, numEdition, bookId]);
+            await stmt.execute([title, imgUrl, authorName, category, lang, descr, yearPubl, numEdition, nbrPages, bookId]);
             conn.unprepare(sql);
     
             return res.json({ msg: 'Successfully patched!' });
