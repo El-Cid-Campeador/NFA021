@@ -6,6 +6,15 @@ const bookRouter = express.Router();
 
 bookRouter.use(authMiddleware);
 
+bookRouter.get('/latest', async (req, res) => {
+    const rows = await conn.query(`SELECT id, title, imgUrl, authorName, category, lang, yearPubl, memberId 
+        FROM Books WHERE isDeleted = 0 ORDER BY yearPubl DESC, createdAt DESC LIMIT 3`
+    ) as any[][];
+
+    res.json({ result: rows[0] });
+});
+
+
 bookRouter.get('/search/:payload', async (req, res) => {
     const { payload } = req.params;
     const val = `%${payload}%`;
@@ -41,14 +50,6 @@ bookRouter.post('/', async (req, res) => {
     }
 
     return res.status(401).json({ msg: 'Unauthorized!' });
-});
-
-bookRouter.get('/latest', async (req, res) => {
-    const rows = await conn.query(`SELECT id, title, imgUrl, authorName, category, lang, yearPubl, memberId 
-        FROM Books WHERE isDeleted = 0 ORDER BY createdAt DESC LIMIT 3`
-    ) as any[][];
-
-    res.json({ result: rows[0] });
 });
 
 bookRouter.route('/:id')

@@ -98,6 +98,26 @@ const bookLanguages = [
     'Vietnamese'
 ];
 
+function printColumnName(columnName: string) {
+    let res = '';
+
+    switch (columnName) {
+        case 'yearPubl':
+            res = 'Year of publishing'
+            break;
+        case 'category':
+            res = 'Category'
+            break;
+        case 'lang':
+            res = 'Language'
+            break;
+        default:
+            break;
+    }
+
+    return res;
+}
+
 function hasEmptyValues(obj: any) {
     for (let key in obj) {
         if (obj[key] === '') {
@@ -117,4 +137,4 @@ function generateYears(): number[] {
     return arr;
 }
 
-export { fetcher, bookCategories, bookLanguages, hasEmptyValues, generateYears };
+export { fetcher, bookCategories, bookLanguages, hasEmptyValues, generateYears, printColumnName };

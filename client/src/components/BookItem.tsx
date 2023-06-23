@@ -6,7 +6,7 @@ export default function BookItem() {
     const { bookId } = useParams();
 
     const { data: book, isLoading, error, isFetching } = useQuery({
-        queryKey: ['latest_books'],
+        queryKey: ['books', bookId],
         queryFn: async () => {
             const { data } = await fetcher.get(`http://localhost:8080/books/${bookId}`) ;
             return data as { result: PartialBookInfo };

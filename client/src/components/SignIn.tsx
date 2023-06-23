@@ -45,9 +45,9 @@ export default function SignIn() {
         signIn();
     }
 
-    useEffect(() => {
-        signIn();
-    }, []);
+    // useEffect(() => {
+    //     signIn();
+    // }, []);
 
     // useEffect(() => {
     //     setError('');
