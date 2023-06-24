@@ -84,7 +84,7 @@ export function deserializeUser(req: Request, res: Response, next: NextFunction)
     return next();
 }
 
-async function authMiddleware(req: Request, res: Response, next: NextFunction) {
+function authMiddleware(req: Request, res: Response, next: NextFunction) {
     // @ts-ignore
     if (!req.user) {
         return res.status(401).json({ msg: 'Access denied!' });
@@ -93,4 +93,13 @@ async function authMiddleware(req: Request, res: Response, next: NextFunction) {
     return next();
 }
 
-export { conn, authMiddleware };
+function adminMiddleware(req: Request, res: Response, next: NextFunction) {
+    // @ts-ignore
+    if (req.user.isMember === 0) {
+        return next();
+    }
+
+    return res.status(403).json({ msg: 'Access denied!' });
+}
+
+export { conn, authMiddleware, adminMiddleware };
