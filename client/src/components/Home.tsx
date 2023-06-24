@@ -1,8 +1,7 @@
-import { Navigate, useNavigate } from "react-router-dom";
+import { Link, Navigate, useNavigate } from "react-router-dom";
 import { useMutation, useQuery } from "@tanstack/react-query";
 import { FullBookInfo, fetcher } from "../functions";
 import Books from "./Books";
-import SearchOptions from "./SearchOptions";
 
 export default function Home() {
     const navigate = useNavigate();
@@ -36,7 +35,8 @@ export default function Home() {
                     <Books queryResult={querylatestBooks!} />
                 )
             }
-            <SearchOptions />
+            <Link to="/search">Search</Link>
+            <Link to="/advanced_search">Advanced Search</Link>
         </div>
     );
 }

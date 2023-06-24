@@ -14,7 +14,6 @@ bookRouter.get('/latest', async (req, res) => {
     res.json({ result: rows[0] });
 });
 
-
 bookRouter.get('/search/:payload', async (req, res) => {
     const { payload } = req.params;
     const val = `%${payload}%`;
@@ -27,13 +26,32 @@ bookRouter.get('/search/:payload', async (req, res) => {
     res.json({ result: rows[0] });
 });
 
-bookRouter.get('/explore/:column/:value', async (req, res) => {
-    const { column,  value } = req.params;
-    const val = typeof value === "number" ? value : `\"${value}\"`;
-    
-    const rows = await conn.query(`SELECT id, title, imgUrl, authorName, category, lang, yearPubl, nbrPages, memberId FROM Books 
-        WHERE isDeleted = 0 AND ${column} = ${val}`
-    ) as any[][];
+bookRouter.get('/search', async (req, res) => {
+    const { category, year, lang } = req.query;
+
+    console.log({ category, year, lang });
+
+    let sql = `SELECT id, title, imgUrl, authorName, category, lang, yearPubl, nbrPages, memberId FROM Books WHERE 1 = 1`;
+    const params  = [];
+
+    if (category !== '') {
+        sql += ` AND category = ?`;
+        params.push(category);
+    }
+
+    if (year !== '') {
+        sql += ` AND yearPubl = ?`;
+        params.push(Number(year));
+    }
+
+    if (lang !== '') {
+        sql += ` AND lang = ?`;
+        params.push(lang);
+    }
+
+    const stmt = await conn.prepare(sql);
+    const rows = await stmt.execute(params) as any[][];
+    conn.unprepare(sql);
 
     res.json({ result: rows[0] });
 });

@@ -1,24 +1,18 @@
-import { useNavigate } from "react-router-dom";
-import { printColumnName } from "../functions";
-import { useMemo } from "react";
+import { Dispatch } from "react";
 
 type Props = {
-    columnName: string,
-    listOptions: string[] | number[]
+    fieldName: string,
+    listOptions: string[] | number[],
+    value: string,
+    onChange: Dispatch<React.SetStateAction<string>>
 }
 
-export default function SearchByParameter({ columnName, listOptions }: Props) {
-    const navigate = useNavigate();
-
-    const x = useMemo(() => {
-        return printColumnName(columnName);
-    }, []);
-
+export default function SearchByParameter({ fieldName, listOptions, value, onChange }: Props) {
     return (
         <>
             <div>
-                <select onChange={(e) => navigate(`/explore/${columnName}/${e.target.value}`)}>
-                    <option value={x}>{x}</option>
+                <select value={value} onChange={(e) => onChange(e.target.value)}>
+                    <option value="">{fieldName}</option>
                     {
                         listOptions.map(option => {
                             return <option value={option} key={option}>{option}</option>;

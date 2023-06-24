@@ -4,7 +4,7 @@ import SignIn from "./components/SignIn";
 import Home from "./components/Home";
 import BookItem from "./components/BookItem";
 import Search from "./components/Search";
-import ExploreByParameter from "./components/ExploreByParameter";
+import AdvancedSearch from "./components/AdvancedSearch";
 
 export default function App() {	
 	return (
@@ -15,7 +15,7 @@ export default function App() {
 				<Route path="signin" element={<SignIn />}></Route>
 				<Route path="books/:bookId" element={<BookItem />}></Route>
 				<Route path="search" element={<Search />}></Route>
-				<Route path="explore/:column/:value" element={<ExploreByParameter />}></Route>
+				<Route path="advanced_search" element={<AdvancedSearch />}></Route>
 				<Route path="*" element={<h1>Page not found!</h1>}></Route>
 			</Routes>
 		</>
