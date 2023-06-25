@@ -16,7 +16,8 @@ To launch it, open a new terminal:
 $ npm i -g typescript
 $ git clone https://github.com/El-Cid-Campeador/NFA021
 
--> For Windows users, replace " && " by " ; ":
+-> For Windows users, replace " && " by " ; ".
+
 $ cd server && tsc -w   
 
 Open another terminal, then run:
