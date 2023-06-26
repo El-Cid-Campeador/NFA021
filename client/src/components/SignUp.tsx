@@ -1,7 +1,8 @@
 import { FormEvent, useEffect, useState } from "react";
 import { useMutation } from "@tanstack/react-query";
 import validator from "validator";
-import { fetcher, hasEmptyValues } from "../functions";
+import { fetcher, areAllAttributesEmptyString } from "../functions";
+import { Link, useNavigate } from "react-router-dom";
 
 export default function SignUp() {
     const [showPassword, setShowPassword] = useState(false);
@@ -13,16 +14,21 @@ export default function SignUp() {
     });
     const [error, setError] = useState('');
 
+    const navigate = useNavigate();
+
     const { mutate: signUp } = useMutation({
         mutationFn: async () => {
             return await fetcher.post(`http://localhost:8080/signup`, { ...payload });
+        },
+        onSuccess: () => {
+            navigate('/home');
         }
     });
 
     function handlesubmit(e: FormEvent) {
         e.preventDefault();
 
-        if (hasEmptyValues(payload)) {
+        if (areAllAttributesEmptyString(payload)) {
             setError('No empty fields!');
             return;
         }
@@ -92,6 +98,10 @@ export default function SignUp() {
                 <input type="submit" value="Sign Up" />
             </form>
             <p>{error}</p>
+            <div>
+                <p>Already have an account?</p>
+                <Link to="/signin">Sign In</Link>
+            </div>
         </>
     );
 }

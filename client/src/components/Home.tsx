@@ -20,6 +20,9 @@ export default function Home() {
         },
         onSuccess: () => {
             navigate('/signin');
+        },
+        onError: () => {
+            navigate('/signin');
         }
     });
 
@@ -35,8 +38,12 @@ export default function Home() {
                     <Books queryResult={querylatestBooks!} />
                 )
             }
-            <Link to="/search">Search</Link>
-            <Link to="/advanced_search">Advanced Search</Link>
+            <div>
+                <Link to="/search">Search</Link>
+            </div>
+            <div>
+                <Link to="/advanced_search">Advanced Search</Link>
+            </div>
         </div>
     );
 }

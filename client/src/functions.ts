@@ -98,16 +98,6 @@ const bookLanguages = [
     'Vietnamese'
 ];
 
-function hasEmptyValues(obj: any) {
-    for (let key in obj) {
-        if (obj[key] === '') {
-            return true;
-        }
-    }
-
-    return false;
-}
-
 function generateYears(): number[] {
     const arr = [];
     for (let i = new Date().getFullYear(); i >= 1970 ; i -= 1) {
@@ -117,4 +107,14 @@ function generateYears(): number[] {
     return arr;
 }
 
-export { fetcher, bookCategories, bookLanguages, hasEmptyValues, generateYears };
+function areAllAttributesEmptyString(obj: any) {
+    for (var key in obj) {
+        if (obj[key] !== '') {
+            return false;
+        }
+    }
+
+    return true;
+}
+
+export { fetcher, bookCategories, bookLanguages, generateYears, areAllAttributesEmptyString };

@@ -29,8 +29,6 @@ bookRouter.get('/search/:payload', async (req, res) => {
 bookRouter.get('/search', async (req, res) => {
     const { category, year, lang } = req.query;
 
-    console.log({ category, year, lang });
-
     let sql = `SELECT id, title, imgUrl, authorName, category, lang, yearPubl, nbrPages, memberId FROM Books WHERE 1 = 1`;
     const params  = [];
 

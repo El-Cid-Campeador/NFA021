@@ -7,12 +7,6 @@ import { adminMiddleware, authMiddleware, conn } from "../functions.js";
 
 const userRouter = express.Router();
 
-userRouter.get('/users', async (req, res) => {
-    const rows = await conn.query(`SELECT * FROM Users WHERE isDeleted = 0`) as any[][];
-
-    res.json({ result: rows[0] }); 
-});
-
 userRouter.post('/signup', async (req, res) => {
     const { firstName, lastName, email, password } = req.body;
     const salt = bcrypt.genSaltSync(10);
@@ -67,19 +61,18 @@ userRouter.post('/login', async (req, res) => {
 });
 
 userRouter.delete('/logout', authMiddleware, async (req, res) => {
-    // const sql = `UPDATE Sessions SET isValid = 0 WHERE id = ?`;null
-    // const stmt = await conn.prepare(sql);
-
-    // // @ts-ignore
-    // await stmt.execute([req.user.sessionId]);
-    // conn.unprepare(sql);
-
     res.clearCookie('token');
 
     // @ts-ignore
     req.user = undefined;
 
     res.json({ msg: 'Successfully logged out!' });
+});
+
+userRouter.get('/users', adminMiddleware, async (req, res) => {
+    const rows = await conn.query(`SELECT * FROM Users WHERE isDeleted = 0`) as any[][];
+
+    res.json({ result: rows[0] }); 
 });
 
 userRouter.route('/users/:id')
