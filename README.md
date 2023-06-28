@@ -34,6 +34,13 @@ $ git clone https://github.com/El-Cid-Campeador/NFA021
 $ cd server && tsc -w
 ```
 
+Create a .env in *server* folder, and add **attentively** those lines:
+
+```.env
+DB_PASSWORD=YourMySQLPassword
+JWT_SECRET_KEY=YourSecretkey
+```
+
 Open another terminal, then run:
 
 ```bash

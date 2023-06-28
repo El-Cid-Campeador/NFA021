@@ -46,7 +46,7 @@ userRouter.post('/login', async (req, res) => {
             res.cookie('token', jwt.sign({ sessionId, firstName, lastName, isMember }, process.env.JWT_SECRET_KEY!), {
                 expires: new Date(Date.now() + 5 * 60 * 1000),
                 httpOnly: true,
-                sameSite: 'none',
+                sameSite: 'lax',
                 secure: true
             });
 
