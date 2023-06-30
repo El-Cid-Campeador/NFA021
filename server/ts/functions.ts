@@ -1,14 +1,19 @@
 import { Request, Response, NextFunction } from "express";
 import mysql from "mysql2/promise";
 import { SessionData } from "express-session";
+import bcrypt from "bcrypt";
+import crypto from "node:crypto";
 import "dotenv/config";
 
+type User = { 
+    id: string,
+    firstName: string, 
+    lastName: string, 
+    isMember: number 
+}
+
 interface UserSession extends SessionData {
-    user?: { 
-        firstName: string, 
-        lastName: string, 
-        isMember: number 
-    }
+    user?: User
 }
 
 const conn = await connectDB();
@@ -80,6 +85,17 @@ async function connectDB() {
     return conn;
 }
 
+async function createUser(req: Request, isMember: number) {
+    const { firstName, lastName, email, password } = req.body;
+    const salt = bcrypt.genSaltSync(10);
+    const hash = bcrypt.hashSync(password, salt);
+    
+    const sql = `INSERT INTO Users (id, firstName, lastName, email, password, isMember, isDeleted) VALUES (?, ?, ?, ?, ?, ?, 0)`;
+    const stmt = await conn.prepare(sql);
+    await stmt.execute([crypto.randomUUID(), firstName, lastName, email, hash, isMember]);
+    conn.unprepare(sql);
+}
+
 function authMiddleware(req: Request, res: Response, next: NextFunction) {
     const sessionUser = req.session as UserSession;
     if (!sessionUser.user) {
@@ -99,4 +115,4 @@ function adminMiddleware(req: Request, res: Response, next: NextFunction) {
     res.status(403).json({ msg: 'Access denied!' });
 }
 
-export { conn, UserSession, authMiddleware, adminMiddleware };
+export { conn, UserSession, createUser, authMiddleware, adminMiddleware };

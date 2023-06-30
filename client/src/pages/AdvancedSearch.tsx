@@ -23,7 +23,7 @@ export default function AdvancedSearch() {
 
             const { data } = await fetcher.get(`http://localhost:8080/books/search`, {
                 params: { ...search }
-            }) ;
+            });
             
             return data as { result: FullBookInfo[] };
         }

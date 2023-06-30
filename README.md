@@ -20,6 +20,11 @@ $ npm -v
   ```bash
   $ mariadb --version
   ```
+* Redis
+
+```$bash
+$ redis-cli --version
+```
 
 Create a database named `nfa021` in MySQL.
 

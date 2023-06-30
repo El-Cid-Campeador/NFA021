@@ -1,0 +1,25 @@
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    font-family: monospace;
+    font-size: 14px;
+    user-select: none;
+}
+
+label + * {
+    margin-left: 10px;
+    margin-bottom: 10px;
+}
+
+input[type="text"], select {
+    padding: 7px;
+    outline: none;
+    border-radius: 10px;
+    box-shadow: 0 2px 5px 1px rgba(64,60,67,.16);
+}
+
+select {
+    border-radius: 4px;
+    height: 40px;
+}

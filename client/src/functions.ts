@@ -5,9 +5,23 @@ const fetcher = axios.create({
 });
 
 export type User = { 
+    id: string,
     firstName: string, 
     lastName: string, 
     isMember: number 
+}
+
+export type PartialMemberInfo = {
+    id: string,
+    firstName: string, 
+    lastName: string
+}
+
+export type FullMemberInfo = {
+    firstName: string, 
+    lastName: string,
+    email: string,
+    createdAt: string
 }
 
 export type PartialBookInfo = {
@@ -106,7 +120,7 @@ const bookLanguages = [
 
 function generateYears(): number[] {
     const arr = [];
-    for (let i = new Date().getFullYear(); i >= 1970 ; i -= 1) {
+    for (let i = new Date().getFullYear(); i >= 1970; i -= 1) {
         arr.push(i);  
     }
 

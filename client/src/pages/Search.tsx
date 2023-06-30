@@ -15,7 +15,7 @@ export default function Search() {
             }
 
             const payload = search.toLowerCase();
-            const { data } = await fetcher.get(`http://localhost:8080/books/search/${payload}`) ;
+            const { data } = await fetcher.get(`http://localhost:8080/books/search/${payload}`);
 
             return data as { result: FullBookInfo[] };
         }

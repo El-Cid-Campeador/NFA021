@@ -1,15 +1,41 @@
-import { useQuery } from "@tanstack/react-query";
+import { useState } from "react";
+import { useMutation, useQuery } from "@tanstack/react-query";
+import { Navigate, useNavigate, useParams } from "react-router-dom";
+import { useSelector } from "react-redux";
+import { RootState } from "../app/store";
 import { PartialBookInfo, fetcher } from "../functions";
-import { Navigate, useParams } from "react-router-dom";
+import Modal from "../components/Modal";
 
 export default function BookItem() {
+    const [isModalShowing, setIsModalShowing] = useState(false);
+    
     const { bookId } = useParams();
 
-    const { data: book, isLoading, error, isFetching } = useQuery({
+    const navigate = useNavigate();
+
+    const { isMember } = useSelector((state: RootState) => state.user.value);
+
+    const { data: queryBook, isLoading, error, isFetching } = useQuery({
         queryKey: ['books', bookId],
         queryFn: async () => {
-            const { data } = await fetcher.get(`http://localhost:8080/books/${bookId}`) ;
-            return data as { result: PartialBookInfo };
+            const { data } = await fetcher.get(`http://localhost:8080/books/${bookId}`);
+            if (data.result) {
+                return data as { result: PartialBookInfo };
+            }
+
+            throw new Error();
+        }
+    });
+
+    const { mutate: deleteBook } = useMutation({
+        mutationFn: async () => {
+            return await fetcher.delete(`http://localhost:8080/books/${bookId}`);
+        },
+        onSuccess: () => {
+            navigate('/home');
+        },
+        onError: () => {
+           navigate('/signin');
         }
     });
     
@@ -18,9 +44,26 @@ export default function BookItem() {
 
     return (
         <div>
-            <h1>{book?.result.title}</h1>
-            <img src={book?.result.imgUrl} alt={book?.result.title} />
-            <p>{book?.result.descr}</p>
+            <h1>{queryBook?.result.title}</h1>
+            <img src={queryBook?.result.imgUrl} alt={queryBook?.result.title} />
+            <p>{queryBook?.result.descr}</p>
+            {
+                isMember === 0 && (
+                    <div>
+                        <button onClick={() => setIsModalShowing(true)}>Delete</button>
+                        <button>Edit</button>
+                        {
+                            isModalShowing && (
+                                <Modal 
+                                    message="Are you sure to delete this member?" 
+                                    onConfirm={() => deleteBook()} 
+                                    onCancel={() => setIsModalShowing(false)}
+                                />
+                            )
+                        }
+                    </div>
+                )
+            }
         </div>
     );
 }

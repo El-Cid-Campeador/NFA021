@@ -23,10 +23,10 @@ export default function SignIn() {
         mutationFn: async () => {
             // example@gmail.com  12345678
             // johndoe@gmail.com AbcD123_
-            const res = await fetcher.post(`http://localhost:8080/login`, { email: "example@gmail.com", password: "12345678" });
+            const res = await fetcher.post(`http://localhost:8080/login`, { email: "admin@gmail.com", password: "12345678" });
+            // const res = await fetcher.post(`http://localhost:8080/login`, { email: "example@gmail.com", password: "12345678" });
             // const res = await fetcher.post(`http://localhost:8080/login`, { ...payload }); 
             if (res.status === 200) {
-                console.log(res.data.msg);
                 dispatch(updateUser(res.data.msg));
             }
 

@@ -1,8 +1,9 @@
 import { createSlice, PayloadAction } from "@reduxjs/toolkit";
 import { User } from "../functions";
 
-const initialState = {
+const initialState: { value: User } = {
     value: {
+        id: '',
         firstName: '',
         lastName: '',
         isMember: -1

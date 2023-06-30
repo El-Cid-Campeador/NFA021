@@ -13,7 +13,8 @@ export default function Home() {
     const { data: querylatestBooks, isLoading, error, isFetching } = useQuery({
         queryKey: ['latest_books'],
         queryFn: async () => {
-            const { data } = await fetcher.get(`http://localhost:8080/books/latest`) ;
+            const { data } = await fetcher.get(`http://localhost:8080/books/latest`);
+
             return data as { result: FullBookInfo[] };
         }
     });

@@ -1,19 +1,18 @@
 import express from "express";
 import bcrypt from "bcrypt";
 import crypto from "node:crypto";
-import { conn, UserSession, authMiddleware, adminMiddleware } from "../functions.js";
+import { conn, UserSession, authMiddleware, adminMiddleware, createUser } from "../functions.js";
 
 const userRouter = express.Router();
 
 userRouter.post('/signup', async (req, res) => {
-    const { firstName, lastName, email, password } = req.body;
-    const salt = bcrypt.genSaltSync(10);
-    const hash = bcrypt.hashSync(password, salt);
-    const sql = `INSERT INTO Users (id, firstName, lastName, email, password, isMember, isDeleted) VALUES (?, ?, ?, ?, ?, 1, 0)`;
-    const stmt = await conn.prepare(sql);
+    const sessionUser = req.session as UserSession;
 
-    await stmt.execute([crypto.randomUUID(), firstName, lastName, email, hash]);
-    conn.unprepare(sql);
+    if (sessionUser.user && sessionUser.user.isMember === 0) {
+        await createUser(req, 0);
+    } else {
+        await createUser(req, 1);
+    }
     
     res.json({ msg: 'Successfully registred!' });
 });
@@ -30,17 +29,14 @@ userRouter.post('/login', async (req, res) => {
     const sql = `SELECT * FROM Users WHERE email = ? AND isDeleted = 0`;
     const stmt = await conn.prepare(sql);
     const rows = await stmt.execute([email]) as any[][];
-
     conn.unprepare(sql);
     
     if (rows[0].length) {
-        const { firstName, lastName, password: hash_db, isMember } = rows[0][0];
+        const { id, firstName, lastName, password: hash_db, isMember } = rows[0][0];
         
         if (bcrypt.compareSync(password, hash_db)) {
-            // @ts-ignore
-            sessionUser.user = { firstName, lastName, isMember };
+            sessionUser.user = { id, firstName, lastName, isMember };
 
-            // @ts-ignore
             return res.json({ msg: sessionUser.user });
         }        
     }
@@ -61,21 +57,27 @@ userRouter.delete('/logout', authMiddleware, async (req, res) => {
 });
 
 userRouter.get('/users', adminMiddleware, async (req, res) => {
-    const rows = await conn.query(`SELECT * FROM Users WHERE isDeleted = 0`) as any[][];
+    const rows = await conn.query(`SELECT id, firstName, lastName FROM Users WHERE isDeleted = 0 AND isMember = 1`) as any[][];
 
     res.json({ result: rows[0] }); 
 });
 
 userRouter.route('/users/:id')
-    .patch(adminMiddleware, async (req, res) => {
+    .get(adminMiddleware, async (req, res) => {
+        const { id: memberId } = req.params;
 
+        const sql = `SELECT firstName, lastName, email, createdAt FROM Users WHERE isDeleted = 0 AND id = ?`;
+        const stmt = await conn.prepare(sql);
+        const rows = await stmt.execute([memberId]) as any[][];
+        conn.unprepare(sql);
+        
+        res.json({ result: rows[0][0] });
     })
     .delete(adminMiddleware, async (req, res) => {
         const { id: memberId } = req.params;
 
         const sql = `UPDATE Users SET isDeleted = 1 WHERE id = ?`;
         const stmt = await conn.prepare(sql);
-
         await stmt.execute([memberId]);
         conn.unprepare(sql);
     
@@ -83,13 +85,12 @@ userRouter.route('/users/:id')
     });
 
 userRouter.route('/users/:id/fees')
-    .get(async (req, res) => {
+    .get(authMiddleware, async (req, res) => {
         const { id: memberId } = req.params;
 
         const sql = `SELECT SUM(amount) FROM Fees WHERE memberId = ?`;
         const stmt = await conn.prepare(sql);
         const rows = await stmt.execute([memberId]) as any[][];
-
         conn.unprepare(sql);
         
         res.json({ result: rows[0] });
@@ -100,7 +101,6 @@ userRouter.route('/users/:id/fees')
 
         const sql = `INSERT INTO Fees (id, amount, memberId) VALUES (?, ?, ?)`;
         const stmt = await conn.prepare(sql);
-
         await stmt.execute([crypto.randomUUID(), amount, memberId]);
         conn.unprepare(sql);
         

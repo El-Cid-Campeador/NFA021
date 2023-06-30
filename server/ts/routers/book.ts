@@ -18,7 +18,7 @@ bookRouter.get('/search/:payload', async (req, res) => {
     const { payload } = req.params;
     const val = `%${payload}%`;
 
-    const sql = `SELECT id, title, imgUrl, authorName, category, lang, yearPubl, nbrPages, memberId FROM Books WHERE title LIKE ? OR authorName LIKE ?`;
+    const sql = `SELECT id, title, imgUrl, authorName, category, lang, yearPubl, nbrPages, memberId FROM Books WHERE isDeleted = 0 AND title LIKE ? OR authorName LIKE ? `;
     const stmt = await conn.prepare(sql);
     const rows = await stmt.execute([val, val]) as any[][];
     conn.unprepare(sql);
@@ -29,7 +29,7 @@ bookRouter.get('/search/:payload', async (req, res) => {
 bookRouter.get('/search', async (req, res) => {
     const { category, year, lang } = req.query;
 
-    let sql = `SELECT id, title, imgUrl, authorName, category, lang, yearPubl, nbrPages, memberId FROM Books WHERE 1 = 1`;
+    let sql = `SELECT id, title, imgUrl, authorName, category, lang, yearPubl, nbrPages, memberId FROM Books WHERE isDeleted = 0`;
     const params  = [];
 
     if (category !== '') {
@@ -69,7 +69,7 @@ bookRouter.route('/:id')
     .get(async (req, res) => {
         const { id: bookId } = req.params;
 
-        const sql = `SELECT title, imgUrl, authorName, category, lang, descr, yearPubl, numEdition, nbrPages, memberId FROM Books WHERE id = ?`;
+        const sql = `SELECT title, imgUrl, authorName, category, lang, descr, yearPubl, numEdition, nbrPages, memberId FROM Books WHERE isDeleted = 0 AND id = ?`;
         const stmt = await conn.prepare(sql);
         const rows = await stmt.execute([bookId]) as any[][];
         conn.unprepare(sql);
@@ -116,28 +116,23 @@ bookRouter.route('/:id/suggest')
     .get(async (req, res) => {
         const { id: bookId } = req.params;
 
-        const sql = `SELECT * FROM Suggestions WHERE bookId = ?`;
+        const sql = `SELECT * FROM Suggestions WHERE isDeleted = 0 AND bookId = ?`;
         const stmt = await conn.prepare(sql);
         const rows = await stmt.execute([bookId]) as any[][];
         conn.unprepare(sql);
     
         return res.json({ result: rows[0] });
     })
-    .post(async (req, res) => {
-        // @ts-ignore
-        if (req.user.isMember === 1) {
-            const { id: bookId } = req.params;
-            const { descr, memberId } = req.body;
+    .post(adminMiddleware, async (req, res) => {
+        const { id: bookId } = req.params;
+        const { descr, memberId } = req.body;
 
-            const sql = `INSERT INTO Suggestions (id, descr, memberId, bookId, isDeleted) VALUES (?, ?, ?, ?, 0)`;
-            const stmt = await conn.prepare(sql);
-            await stmt.execute([crypto.randomUUID(), descr, memberId, bookId]);
-            conn.unprepare(sql);
+        const sql = `INSERT INTO Suggestions (id, descr, memberId, bookId, isDeleted) VALUES (?, ?, ?, ?, 0)`;
+        const stmt = await conn.prepare(sql);
+        await stmt.execute([crypto.randomUUID(), descr, memberId, bookId]);
+        conn.unprepare(sql);
 
-            return res.json({ msg: 'Successfully added!' });
-        }
-
-        return res.status(401).json({ msg: 'Unauthorized!' });
+        return res.json({ msg: 'Successfully added!' });
     });
 
 export default bookRouter;
