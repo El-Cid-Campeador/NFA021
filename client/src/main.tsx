@@ -1,8 +1,10 @@
 import React from "react";
 import ReactDOM from "react-dom/client";
 import App from "./App.tsx";
+import { Provider } from "react-redux";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { BrowserRouter } from "react-router-dom";
+import store from "./app/store.ts";
 import "./index.css";
 
 const client = new QueryClient({
@@ -29,10 +31,12 @@ const client = new QueryClient({
 
 ReactDOM.createRoot(document.getElementById('root') as HTMLElement).render(
 	<React.StrictMode>
-		<QueryClientProvider client={client}>
-			<BrowserRouter>
-				<App />
-			</BrowserRouter>
-		</QueryClientProvider>
+		<Provider store={store}>
+			<QueryClientProvider client={client}>
+				<BrowserRouter>
+					<App />
+				</BrowserRouter>
+			</QueryClientProvider>
+		</Provider>
 	</React.StrictMode>,
 );

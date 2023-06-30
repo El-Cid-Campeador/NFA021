@@ -1,10 +1,14 @@
 import { Link, Navigate, useNavigate } from "react-router-dom";
 import { useMutation, useQuery } from "@tanstack/react-query";
+import { useSelector } from "react-redux";
+import { RootState } from "../app/store";
 import { FullBookInfo, fetcher } from "../functions";
-import Books from "./Books";
+import Books from "../components/Books";
 
 export default function Home() {
     const navigate = useNavigate();
+
+    const { firstName, lastName } = useSelector((state: RootState) => state.user.value);
 
     const { data: querylatestBooks, isLoading, error, isFetching } = useQuery({
         queryKey: ['latest_books'],
@@ -31,7 +35,7 @@ export default function Home() {
 
     return (
         <div>
-            <h1>Welcome!</h1>
+            <h1>Welcome {firstName} {lastName}!</h1>
             <button onClick={() => signOut()}>Sign out</button>
             {
                 isLoading || isFetching ? <h1>Loading...</h1> : (

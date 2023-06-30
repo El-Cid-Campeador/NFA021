@@ -1,9 +1,7 @@
 import express from "express";
 import bcrypt from "bcrypt";
-import jwt from "jsonwebtoken";
 import crypto from "node:crypto";
-import "dotenv/config";
-import { adminMiddleware, authMiddleware, conn } from "../functions.js";
+import { conn, UserSession, authMiddleware, adminMiddleware } from "../functions.js";
 
 const userRouter = express.Router();
 
@@ -21,12 +19,10 @@ userRouter.post('/signup', async (req, res) => {
 });
 
 userRouter.post('/login', async (req, res) => {
-    // @ts-ignore
-    if (req.user) {
-        // @ts-ignore
-        const { firstName, lastName } = req.user;
-        
-        return res.json({ firstName, lastName });
+    const sessionUser = req.session as UserSession;
+
+    if (sessionUser.user) {
+        return res.json({ msg: sessionUser.user });
     }
 
     const { email, password } = req.body;
@@ -41,19 +37,11 @@ userRouter.post('/login', async (req, res) => {
         const { firstName, lastName, password: hash_db, isMember } = rows[0][0];
         
         if (bcrypt.compareSync(password, hash_db)) {
-            const sessionId = crypto.randomUUID();
-
-            res.cookie('token', jwt.sign({ sessionId, firstName, lastName, isMember }, process.env.JWT_SECRET_KEY!), {
-                expires: new Date(Date.now() + 5 * 60 * 1000),
-                httpOnly: true,
-                sameSite: 'lax',
-                secure: true
-            });
+            // @ts-ignore
+            sessionUser.user = { firstName, lastName, isMember };
 
             // @ts-ignore
-            req.user = { sessionId, firstName, lastName, isMember };
-
-            return res.json({ firstName, lastName });
+            return res.json({ msg: sessionUser.user });
         }        
     }
 
@@ -61,12 +49,15 @@ userRouter.post('/login', async (req, res) => {
 });
 
 userRouter.delete('/logout', authMiddleware, async (req, res) => {
-    res.clearCookie('token');
+    req.session.destroy((err) => {
+        if (err) {
+            return res.status(401).send('Unauthorized');
+        }
 
-    // @ts-ignore
-    req.user = undefined;
-
-    res.json({ msg: 'Successfully logged out!' });
+        res.clearCookie('connect.sid');
+         
+        return res.json({ msg: 'Successfully logged out!' });
+    });   
 });
 
 userRouter.get('/users', adminMiddleware, async (req, res) => {

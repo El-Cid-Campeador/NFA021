@@ -2,7 +2,7 @@ import { useQuery } from "@tanstack/react-query";
 import { FullBookInfo, fetcher } from "../functions";
 import { useState } from "react";
 import { Navigate } from "react-router-dom";
-import Books from "./Books";
+import Books from "../components/Books";
 
 export default function Search() {
     const [search, setSearch] = useState('');

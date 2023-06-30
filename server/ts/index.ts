@@ -1,6 +1,8 @@
 import express from "express";
+import session from 'express-session';
 import cors from "cors";
 import cookieParser from "cookie-parser";
+import "dotenv/config";
 import router from "./routers/index.js";
 
 const PORT = 8080;
@@ -10,6 +12,19 @@ app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 app.use(cookieParser());
 app.use(cors({ origin: 'http://localhost:5173', credentials: true }));
+
+app.use(session({
+    secret: process.env.SECRET_KEY!,
+    resave: false,
+    saveUninitialized: false,
+    cookie: {
+        secure: false,
+        httpOnly: true,
+        maxAge: 1000 * 60 * 60 * 24,
+        sameSite: 'lax'
+    }
+}));
+
 app.use(router);
 
 app.all('/*', (req, res) => {
@@ -19,5 +34,3 @@ app.all('/*', (req, res) => {
 app.listen(PORT, () => {
     console.log(`At http://localhost:${PORT}`);
 });
-
-// ['./ts/**/*'] -> ['./ts']

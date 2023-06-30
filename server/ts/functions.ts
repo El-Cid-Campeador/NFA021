@@ -1,7 +1,15 @@
 import { Request, Response, NextFunction } from "express";
 import mysql from "mysql2/promise";
-import jwt from "jsonwebtoken";
+import { SessionData } from "express-session";
 import "dotenv/config";
+
+interface UserSession extends SessionData {
+    user?: { 
+        firstName: string, 
+        lastName: string, 
+        isMember: number 
+    }
+}
 
 const conn = await connectDB();
 
@@ -72,34 +80,23 @@ async function connectDB() {
     return conn;
 }
 
-export function deserializeUser(req: Request, res: Response, next: NextFunction) {
-    try {
-        const { token } = req.cookies;
-        const decoded = jwt.verify(token, process.env.JWT_SECRET_KEY!);
-        
-        // @ts-ignore
-        req.user = decoded;
-    } catch (err) {}
-
-    return next();
-}
-
 function authMiddleware(req: Request, res: Response, next: NextFunction) {
-    // @ts-ignore
-    if (!req.user) {
-        return res.status(401).json({ msg: 'Access denied!' });
-    }
-        
-    return next();
+    const sessionUser = req.session as UserSession;
+    if (!sessionUser.user) {
+        return res.status(401).send('Unauthorized');
+    } 
+
+    next();
 }
 
 function adminMiddleware(req: Request, res: Response, next: NextFunction) {
-    // @ts-ignore
-    if (req.user.isMember === 0) {
+    const sessionUser = req.session as UserSession;
+
+    if (sessionUser.user!.isMember === 0) {
         return next();
     }
 
-    return res.status(403).json({ msg: 'Access denied!' });
+    res.status(403).json({ msg: 'Access denied!' });
 }
 
-export { conn, authMiddleware, adminMiddleware };
+export { conn, UserSession, authMiddleware, adminMiddleware };

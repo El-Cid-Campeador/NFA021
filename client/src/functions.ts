@@ -4,6 +4,12 @@ const fetcher = axios.create({
     withCredentials: true
 });
 
+export type User = { 
+    firstName: string, 
+    lastName: string, 
+    isMember: number 
+}
+
 export type PartialBookInfo = {
     title: string, 
     imgUrl: string, 

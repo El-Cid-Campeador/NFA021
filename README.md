@@ -21,6 +21,8 @@ $ npm -v
   $ mariadb --version
   ```
 
+Create a database named `nfa021` in MySQL.
+
 To launch the project, open a new terminal:
 
 ```bash
@@ -38,7 +40,7 @@ Create a .env in *server* folder, and add **attentively** those lines:
 
 ```.env
 DB_PASSWORD=YourMySQLPassword
-JWT_SECRET_KEY=YourSecretkey
+SECRET_KEY=YourSecretkey
 ```
 
 Open another terminal, then run:

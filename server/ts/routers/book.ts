@@ -1,6 +1,6 @@
 import express from "express";
 import crypto from "node:crypto";
-import { adminMiddleware, authMiddleware, conn} from "../functions.js";
+import { conn, authMiddleware, adminMiddleware } from "../functions.js";
 
 const bookRouter = express.Router();
 
