@@ -49,7 +49,7 @@ export default function UserItem() {
                 isModalShowing && (
                     isModalShowing && (
                         <Modal 
-                            message="Are you sure to delete this book?" 
+                            message="Are you sure to delete this member?" 
                             onConfirm={() => deleteUser()} 
                             onCancel={() => setIsModalShowing(false)}
                         />

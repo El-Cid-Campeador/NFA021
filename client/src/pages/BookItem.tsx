@@ -55,7 +55,7 @@ export default function BookItem() {
                         {
                             isModalShowing && (
                                 <Modal 
-                                    message="Are you sure to delete this member?" 
+                                    message="Are you sure to delete this book?" 
                                     onConfirm={() => deleteBook()} 
                                     onCancel={() => setIsModalShowing(false)}
                                 />
