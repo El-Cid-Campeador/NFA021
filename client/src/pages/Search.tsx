@@ -5,7 +5,7 @@ export default function Search() {
         <>
             <SearchByText
                 queryKey="books"
-                route="/books/search"
+                route="/books"
                 placeholder="Title or author name"
             />
         </>

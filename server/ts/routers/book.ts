@@ -14,13 +14,13 @@ bookRouter.get('/latest', async (req, res) => {
     res.json({ result: rows[0] });
 });
 
-bookRouter.get('/search/:payload', async (req, res) => {
-    const { payload } = req.params;
-    const val = `%${payload}%`;
+bookRouter.get('/', async (req, res) => {
+    const { search } = req.query;
+    const payload = `%${search}%`;
 
     const sql = `SELECT id, title, imgUrl, authorName, category, lang, yearPubl, nbrPages, memberId FROM Books WHERE isDeleted = 0 AND (title LIKE ? OR authorName LIKE ?)`;
     const stmt = await conn.prepare(sql);
-    const rows = await stmt.execute([val, val]) as any[][];
+    const rows = await stmt.execute([payload, payload]) as any[][];
     conn.unprepare(sql);
 
     res.json({ result: rows[0] });
@@ -98,8 +98,8 @@ bookRouter.route('/:id')
         return res.json({ msg: 'Successfully deleted!' });
     });
 
-bookRouter.patch('/:id/borrow', adminMiddleware, async (req, res) => {
-    const { id: bookId } = req.params;
+bookRouter.patch('/borrow', adminMiddleware, async (req, res) => {
+    const { id: bookId } = req.query;
     const { memberId } = req.body;
 
     const sql = `UPDATE Books SET memberId = ?, borrowedAt = CURRENT_TIMESTAMP WHERE id = ?`;
@@ -112,9 +112,9 @@ bookRouter.patch('/:id/borrow', adminMiddleware, async (req, res) => {
     return res.status(401).json({ msg: 'Unauthorized!' });
 });
 
-bookRouter.route('/:id/suggest')
+bookRouter.route('/suggest')
     .get(async (req, res) => {
-        const { id: bookId } = req.params;
+        const { id: bookId } = req.query;
 
         const sql = `SELECT * FROM Suggestions WHERE isDeleted = 0 AND bookId = ?`;
         const stmt = await conn.prepare(sql);
@@ -124,7 +124,7 @@ bookRouter.route('/:id/suggest')
         return res.json({ result: rows[0] });
     })
     .post(adminMiddleware, async (req, res) => {
-        const { id: bookId } = req.params;
+        const { id: bookId } = req.query;
         const { descr, memberId } = req.body;
 
         const sql = `INSERT INTO Suggestions (id, descr, memberId, bookId, isDeleted) VALUES (?, ?, ?, ?, 0)`;

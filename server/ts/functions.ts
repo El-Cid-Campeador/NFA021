@@ -62,6 +62,7 @@ async function connectDB() {
     await conn.execute(`CREATE TABLE IF NOT EXISTS Fees (
             id VARCHAR(255) PRIMARY KEY,
             amount FLOAT NOT NULL,
+            year SMALLINT UNSIGNED NOT NULL,
             memberId VARCHAR(255) NOT NULL,
             createdAt TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
             updatedAt TIMESTAMP DEFAULT 0 ON UPDATE CURRENT_TIMESTAMP,

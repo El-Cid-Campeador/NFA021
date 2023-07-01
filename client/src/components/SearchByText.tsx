@@ -33,7 +33,9 @@ export default function SearchByText({ queryKey, route, placeholder }: Props) {
             }
 
             const payload = search.toLowerCase();
-            const { data } = await fetcher.get(`http://localhost:8080${route}/${payload}`);
+            const { data } = await fetcher.get(`http://localhost:8080${route}`, {
+                params: { search: payload }
+            });
 
             return data as { result: any[] };
         }

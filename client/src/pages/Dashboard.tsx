@@ -5,7 +5,7 @@ export default function Dashboard() {
         <div>
             <SearchByText
                 queryKey="members"
-                route="/members/search"
+                route="/members"
                 placeholder="Member first name or last name"
             />
         </div>

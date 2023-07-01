@@ -56,13 +56,13 @@ userRouter.delete('/logout', authMiddleware, async (req, res) => {
     });   
 });
 
-userRouter.get('/members/search/:payload', adminMiddleware, async (req, res) => {
-    const { payload } = req.params;
-    const val = `%${payload}%`;
+userRouter.get('/members', adminMiddleware, async (req, res) => {
+    const { search } = req.query;
+    const payload = `%${search}%`;
 
     const sql = `SELECT id, firstName, lastName FROM Users WHERE isDeleted = 0 AND isMember = 1 AND (firstName LIKE ? OR lastName LIKE ?)`;
     const stmt = await conn.prepare(sql);
-    const rows = await stmt.execute([val, val]) as any[][];
+    const rows = await stmt.execute([payload, payload]) as any[][];
     conn.unprepare(sql);
 
     res.json({ result: rows[0] }); 
@@ -90,24 +90,24 @@ userRouter.route('/users/:id')
         return res.json({ msg: 'Successfully deleted!' });
     });
 
-userRouter.route('/users/:id/fees')
+userRouter.route('/users/fees')
     .get(authMiddleware, async (req, res) => {
-        const { id: memberId } = req.params;
+        const { id: memberId, year } = req.query;
 
-        const sql = `SELECT SUM(amount) FROM Fees WHERE memberId = ?`;
+        const sql = `SELECT SUM(amount) FROM Fees WHERE memberId = ? AND year = ? GROUP BY year`;
         const stmt = await conn.prepare(sql);
-        const rows = await stmt.execute([memberId]) as any[][];
+        const rows = await stmt.execute([memberId, year]) as any[][];
         conn.unprepare(sql);
         
         res.json({ result: rows[0] });
     })
     .post(adminMiddleware, async (req, res) => {
-        const { id: memberId } = req.params;
-        const { amount } = req.body;
+        const { id: memberId } = req.query;
+        const { amount, year } = req.body;
 
-        const sql = `INSERT INTO Fees (id, amount, memberId) VALUES (?, ?, ?)`;
+        const sql = `INSERT INTO Fees (id, amount, memberId, year) VALUES (?, ?, ?, ?)`;
         const stmt = await conn.prepare(sql);
-        await stmt.execute([crypto.randomUUID(), amount, memberId]);
+        await stmt.execute([crypto.randomUUID(), amount, memberId, year]);
         conn.unprepare(sql);
         
         return res.json({ msg: 'Successfully added!' });
