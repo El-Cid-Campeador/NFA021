@@ -98,17 +98,18 @@ async function createUser(req: Request, isMember: number) {
 
 function authMiddleware(req: Request, res: Response, next: NextFunction) {
     const sessionUser = req.session as UserSession;
-    if (!sessionUser.user) {
-        return res.status(401).send('Unauthorized');
+    
+    if (sessionUser.user) {
+        return next();
     } 
-
-    next();
+    
+    res.status(401).send('Unauthorized');
 }
 
 function adminMiddleware(req: Request, res: Response, next: NextFunction) {
     const sessionUser = req.session as UserSession;
 
-    if (sessionUser.user!.isMember === 0) {
+    if (sessionUser.user && sessionUser.user.isMember === 0) {
         return next();
     }
 

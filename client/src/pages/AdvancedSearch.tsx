@@ -29,7 +29,7 @@ export default function AdvancedSearch() {
         }
 	});
 
-    if (error) return <Navigate to="/signin" />
+    if (error) return <Navigate to="/signin" />;
 
     return (
         <>
@@ -42,7 +42,7 @@ export default function AdvancedSearch() {
                 isLoading ? (
                     <h1>Loading...</h1>
                 ) : queryBooks!.result.length > 0 ? (
-                    <Books queryResult={queryBooks!} />
+                    <Books result={queryBooks!.result} />
                 ) : <p>No results found!</p>
             }
         </>

@@ -2,14 +2,14 @@ import { Link } from "react-router-dom";
 import { FullBookInfo } from "../functions";
 
 type Props = {
-    queryResult: { result: FullBookInfo[] }
+    result: FullBookInfo[]
 }
 
-export default function Books({ queryResult }: Props) {
+export default function Books({ result }: Props) {
     return (
         <ul>
             {
-                queryResult.result.map(book => {
+                result.map(book => {
                     return (
                         <li key={book.id}>
                             <Link to={`/books/${book.id}`} >

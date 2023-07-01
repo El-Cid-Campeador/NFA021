@@ -56,8 +56,14 @@ userRouter.delete('/logout', authMiddleware, async (req, res) => {
     });   
 });
 
-userRouter.get('/users', adminMiddleware, async (req, res) => {
-    const rows = await conn.query(`SELECT id, firstName, lastName FROM Users WHERE isDeleted = 0 AND isMember = 1`) as any[][];
+userRouter.get('/members/search/:payload', adminMiddleware, async (req, res) => {
+    const { payload } = req.params;
+    const val = `%${payload}%`;
+
+    const sql = `SELECT id, firstName, lastName FROM Users WHERE isDeleted = 0 AND isMember = 1 AND (firstName LIKE ? OR lastName LIKE ?)`;
+    const stmt = await conn.prepare(sql);
+    const rows = await stmt.execute([val, val]) as any[][];
+    conn.unprepare(sql);
 
     res.json({ result: rows[0] }); 
 });

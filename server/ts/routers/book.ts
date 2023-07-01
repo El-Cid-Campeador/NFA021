@@ -18,7 +18,7 @@ bookRouter.get('/search/:payload', async (req, res) => {
     const { payload } = req.params;
     const val = `%${payload}%`;
 
-    const sql = `SELECT id, title, imgUrl, authorName, category, lang, yearPubl, nbrPages, memberId FROM Books WHERE isDeleted = 0 AND title LIKE ? OR authorName LIKE ? `;
+    const sql = `SELECT id, title, imgUrl, authorName, category, lang, yearPubl, nbrPages, memberId FROM Books WHERE isDeleted = 0 AND (title LIKE ? OR authorName LIKE ?)`;
     const stmt = await conn.prepare(sql);
     const rows = await stmt.execute([val, val]) as any[][];
     conn.unprepare(sql);

@@ -36,7 +36,7 @@ export default function UserItem() {
     });
     
     if (isLoading || isFetching) return <h1>Loading...</h1>;
-    if (error) return <Navigate to="/signin" />
+    if (error) return <Navigate to="/signin" />;
     
     return (
         <div>

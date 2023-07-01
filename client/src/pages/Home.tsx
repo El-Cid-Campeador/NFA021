@@ -8,9 +8,9 @@ import Books from "../components/Books";
 export default function Home() {
     const navigate = useNavigate();
 
-    const { firstName, lastName } = useSelector((state: RootState) => state.user.value);
+    const { firstName, lastName, isMember } = useSelector((state: RootState) => state.user.value);
 
-    const { data: querylatestBooks, isLoading, error, isFetching } = useQuery({
+    const { data, isLoading, error, isFetching } = useQuery({
         queryKey: ['latest_books'],
         queryFn: async () => {
             const { data } = await fetcher.get(`http://localhost:8080/books/latest`);
@@ -32,7 +32,7 @@ export default function Home() {
     });
 
     // if (isLoading || isFetching) return <h1>Loading...</h1>;
-    if (error) return <Navigate to="/signin" />
+    if (error) return <Navigate to="/signin" />;
 
     return (
         <div>
@@ -40,7 +40,8 @@ export default function Home() {
             <button onClick={() => signOut()}>Sign out</button>
             {
                 isLoading || isFetching ? <h1>Loading...</h1> : (
-                    <Books queryResult={querylatestBooks!} />
+                    <Books result={data!.result
+                    } />
                 )
             }
             <div>
@@ -49,6 +50,13 @@ export default function Home() {
             <div>
                 <Link to="/advanced_search">Advanced Search</Link>
             </div>
+            {
+                isMember === 0 && (
+                    <div>
+                        <Link to="/dashboard">Dashboard</Link>
+                    </div>
+                )
+            }
         </div>
     );
 }
