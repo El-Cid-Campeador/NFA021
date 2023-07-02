@@ -8,7 +8,7 @@ This is a project for my college subject named "NFA021". It's about building a w
 
 * NodeJS v18.16.0
 
-  Check:
+    Check:
 
 ```bash
 $ node -v
@@ -16,13 +16,16 @@ $ npm -v
 ```
 
 * MariaDB v10.5.20
-  Check:
+
+    Check:
 
 ```bash
 $ mariadb --version
 ```
 
 * Redis
+
+    Check
 
 ```$bash
 $ redis-cli --version
