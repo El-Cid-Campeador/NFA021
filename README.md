@@ -17,9 +17,11 @@ $ npm -v
 
 * MariaDB v10.5.20
   Check:
-* ```bash
-  $ mariadb --version
-  ```
+
+```bash
+$ mariadb --version
+```
+
 * Redis
 
 ```$bash
