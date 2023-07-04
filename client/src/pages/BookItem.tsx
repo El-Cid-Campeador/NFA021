@@ -3,7 +3,7 @@ import { useMutation, useQuery } from "@tanstack/react-query";
 import { Navigate, useNavigate, useParams } from "react-router-dom";
 import { useSelector } from "react-redux";
 import { RootState } from "../app/store";
-import { PartialBookInfo, fetcher } from "../functions";
+import { BookInfo, fetcher } from "../functions";
 import Modal from "../components/Modal";
 
 export default function BookItem() {
@@ -20,7 +20,7 @@ export default function BookItem() {
         queryFn: async () => {
             const { data } = await fetcher.get(`http://localhost:8080/books/${bookId}`);
             if (data.result) {
-                return data as { result: PartialBookInfo };
+                return data as { result: BookInfo };
             }
 
             throw new Error();

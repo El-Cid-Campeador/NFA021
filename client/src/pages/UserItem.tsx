@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { Navigate, useNavigate, useParams } from "react-router-dom";
 import { useMutation, useQuery } from "@tanstack/react-query";
-import { FullMemberInfo, fetcher } from "../functions";
+import { MemberInfo, fetcher } from "../functions";
 import Modal from "../components/Modal";
 
 export default function UserItem() {
@@ -16,7 +16,7 @@ export default function UserItem() {
         queryFn: async () => {
             const { data } = await fetcher.get(`http://localhost:8080/users/${memberId}`);
             if (data.result) {
-                return data as { result: FullMemberInfo };
+                return data as { result: MemberInfo };
             }
 
             throw new Error();

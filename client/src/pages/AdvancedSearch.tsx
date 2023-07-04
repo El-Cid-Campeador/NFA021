@@ -1,6 +1,6 @@
 import { useQuery } from "@tanstack/react-query";
 import { Navigate } from "react-router-dom";
-import { FullBookInfo, bookCategories, bookLanguages, generateYears, fetcher, areAllAttributesEmptyString } from "../functions";
+import { BookInfo, bookCategories, bookLanguages, generateYears, fetcher, areAllAttributesEmptyString } from "../functions";
 import Books from "../components/Books";
 import { useMemo, useState } from "react";
 import SearchByParameter from "../components/SearchByParameter";
@@ -25,7 +25,7 @@ export default function AdvancedSearch() {
                 params: { ...search }
             });
             
-            return data as { result: FullBookInfo[] };
+            return data as { result: BookInfo[] };
         }
 	});
 

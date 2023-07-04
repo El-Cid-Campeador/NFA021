@@ -2,7 +2,7 @@ import { Link, Navigate, useNavigate } from "react-router-dom";
 import { useMutation, useQuery } from "@tanstack/react-query";
 import { useSelector } from "react-redux";
 import { RootState } from "../app/store";
-import { FullBookInfo, fetcher } from "../functions";
+import { BookInfo, fetcher } from "../functions";
 import Books from "../components/Books";
 
 export default function Home() {
@@ -15,7 +15,7 @@ export default function Home() {
         queryFn: async () => {
             const { data } = await fetcher.get(`http://localhost:8080/books/latest`);
 
-            return data as { result: FullBookInfo[] };
+            return data as { result: BookInfo[] };
         }
     });
 

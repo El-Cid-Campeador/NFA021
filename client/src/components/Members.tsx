@@ -1,8 +1,8 @@
 import { Link } from "react-router-dom";
-import { PartialMemberInfo } from "../functions";
+import { MemberInfo } from "../functions";
 
 type Props = {
-    result: PartialMemberInfo[]
+    result: MemberInfo[]
 }
 
 export default function Books({ result }: Props) {

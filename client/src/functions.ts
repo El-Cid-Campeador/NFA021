@@ -11,20 +11,16 @@ export type User = {
     isMember: number 
 }
 
-export type PartialMemberInfo = {
+export type MemberInfo = {
     id: string,
-    firstName: string, 
-    lastName: string
-}
-
-export type FullMemberInfo = {
     firstName: string, 
     lastName: string,
     email: string,
     createdAt: string
 }
 
-export type PartialBookInfo = {
+export type BookInfo = {
+    id: string, 
     title: string, 
     imgUrl: string, 
     authorName: string, 
@@ -35,14 +31,16 @@ export type PartialBookInfo = {
     memberId: string
 }
 
-export type FullBookInfo = {
-    id: string, 
-    title: string, 
-    imgUrl: string, 
-    authorName: string, 
-    category: string,  
-    yearPubl: number, 
-    memberId: string
+export type BookFormData = {
+    title: string,
+    imgUrl: string,
+    authorName: string,
+    category: string,
+    lang: string,
+    descr: string,
+    yearPubl: number,
+    numEdition: number,
+    numPages: number
 }
 
 const bookCategories = [

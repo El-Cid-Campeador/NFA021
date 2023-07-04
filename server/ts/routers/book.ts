@@ -7,9 +7,7 @@ const bookRouter = express.Router();
 bookRouter.use(authMiddleware);
 
 bookRouter.get('/latest', async (req, res) => {
-    const rows = await conn.query(`SELECT id, title, imgUrl, authorName, category, lang, yearPubl, memberId 
-        FROM Books WHERE isDeleted = 0 ORDER BY yearPubl DESC, createdAt DESC LIMIT 3`
-    ) as any[][];
+    const rows = await conn.query(`SELECT * FROM Books WHERE isDeleted = 0 ORDER BY yearPubl DESC, createdAt DESC LIMIT 3`) as any[][];
 
     res.json({ result: rows[0] });
 });
@@ -18,7 +16,7 @@ bookRouter.get('/', async (req, res) => {
     const { search } = req.query;
     const payload = `%${search}%`;
 
-    const sql = `SELECT id, title, imgUrl, authorName, category, lang, yearPubl, nbrPages, memberId FROM Books WHERE isDeleted = 0 AND (title LIKE ? OR authorName LIKE ?)`;
+    const sql = `SELECT * FROM Books WHERE isDeleted = 0 AND (title LIKE ? OR authorName LIKE ?)`;
     const stmt = await conn.prepare(sql);
     const rows = await stmt.execute([payload, payload]) as any[][];
     conn.unprepare(sql);
@@ -29,7 +27,7 @@ bookRouter.get('/', async (req, res) => {
 bookRouter.get('/search', async (req, res) => {
     const { category, year, lang } = req.query;
 
-    let sql = `SELECT id, title, imgUrl, authorName, category, lang, yearPubl, nbrPages, memberId FROM Books WHERE isDeleted = 0`;
+    let sql = `SELECT * FROM Books WHERE isDeleted = 0`;
     const params  = [];
 
     if (category !== '') {
@@ -55,21 +53,23 @@ bookRouter.get('/search', async (req, res) => {
 });
 
 bookRouter.post('/', adminMiddleware, async (req, res) => {
+    console.log(req.session);
+    
     const { title, imgUrl, authorName, category, lang, descr, yearPubl, numEdition, nbrPages } = req.body;
 
     const sql = `INSERT INTO Books (id, title, imgUrl, authorName, category, lang, descr, yearPubl, numEdition, nbrPages, isDeleted) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, 0)`;
     const stmt = await conn.prepare(sql);
-    await stmt.execute([crypto.randomUUID(), title, imgUrl, authorName, category, lang, descr, yearPubl, numEdition, nbrPages]);
+    await stmt.execute([crypto.randomUUID(), title, imgUrl, authorName, category, lang, descr, Number(yearPubl), Number(numEdition), Number(nbrPages)]);
     conn.unprepare(sql);
 
-    return res.status(401).json({ msg: 'Unauthorized!' });
+    return res.json({ msg: 'Successfully patched!' });
 });
 
 bookRouter.route('/:id')
     .get(async (req, res) => {
         const { id: bookId } = req.params;
 
-        const sql = `SELECT title, imgUrl, authorName, category, lang, descr, yearPubl, numEdition, nbrPages, memberId FROM Books WHERE isDeleted = 0 AND id = ?`;
+        const sql = `SELECT * FROM Books WHERE isDeleted = 0 AND id = ?`;
         const stmt = await conn.prepare(sql);
         const rows = await stmt.execute([bookId]) as any[][];
         conn.unprepare(sql);
