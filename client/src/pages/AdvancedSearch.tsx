@@ -1,9 +1,10 @@
 import { useQuery } from "@tanstack/react-query";
 import { Navigate } from "react-router-dom";
-import { BookInfo, bookCategories, bookLanguages, generateYears, fetcher, areAllAttributesEmptyStrings } from "../functions";
-import Books from "../components/Books";
 import { useMemo, useState } from "react";
+import { Book, bookCategories, bookLanguages, generateYears, fetcher, areAllAttributesEmptyStrings } from "../functions";
+import Books from "../components/Books";
 import SearchByParameter from "../components/SearchByParameter";
+import NavBar from "./NavBar";
 
 export default function AdvancedSearch() {
     const [category, setCategory] = useState('');
@@ -25,7 +26,7 @@ export default function AdvancedSearch() {
                 params: { ...search }
             });
             
-            return data as { result: BookInfo[] };
+            return data as { result: Book[] };
         }
 	});
 
@@ -33,6 +34,7 @@ export default function AdvancedSearch() {
 
     return (
         <>
+            <NavBar />
             <div>
                 <SearchByParameter fieldName="Category" listOptions={bookCategories} value={category} onChange={setCategory} />
                 <SearchByParameter fieldName="Year of publishing" listOptions={generateYears()} value={year} onChange={setYear} />

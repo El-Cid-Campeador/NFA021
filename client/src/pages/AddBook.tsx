@@ -1,8 +1,9 @@
-import { useMutation } from "@tanstack/react-query";
-import { BookFormData, fetcher } from "../functions";
+import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { useNavigate } from "react-router-dom";
 import { useState } from "react";
 import BookForm from "../components/BookForm";
+import { BookFormData, fetcher } from "../functions";
+import NavBar from "./NavBar";
 
 const initialValues: BookFormData = {
     title: '', 
@@ -21,6 +22,8 @@ export default function AddBook() {
 
     const navigate = useNavigate();
     
+    const queryClient = useQueryClient();
+    
     const { mutate } = useMutation({
         mutationFn: async (payload: BookFormData) => {            
             const res = await fetcher.post(`http://localhost:8080/books`, { ...payload });
@@ -28,6 +31,8 @@ export default function AddBook() {
             return res;
         },
         onSuccess: () => {
+            queryClient.invalidateQueries({ queryKey: ['books'] });
+            
             navigate('/dashboard');
         },
         onError: () => {
@@ -37,6 +42,7 @@ export default function AddBook() {
 
     return (
         <>
+            <NavBar />
             <BookForm 
                 onSubmit={mutate}
                 initialValues={initialValues}

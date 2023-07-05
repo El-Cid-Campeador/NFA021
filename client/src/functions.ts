@@ -11,7 +11,7 @@ export type User = {
     isMember: number 
 }
 
-export type MemberInfo = {
+export type Member = {
     id: string,
     firstName: string, 
     lastName: string,
@@ -19,7 +19,7 @@ export type MemberInfo = {
     createdAt: string
 }
 
-export type BookInfo = {
+export type Book = {
     id: string, 
     title: string, 
     imgUrl: string, 
@@ -44,6 +44,14 @@ export type BookFormData = {
     yearPubl: number,
     numEdition: number,
     nbrPages: number
+}
+
+export type Suggestion = {
+    id: string,
+    descr: string,
+    firstName: string,
+    lastName: string,
+    createdAt: string
 }
 
 const bookCategories = [

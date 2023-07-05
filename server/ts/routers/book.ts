@@ -4,15 +4,13 @@ import { conn, authMiddleware, adminMiddleware } from "../functions.js";
 
 const bookRouter = express.Router();
 
-bookRouter.use(authMiddleware);
-
-bookRouter.get('/latest', async (req, res) => {
+bookRouter.get('/latest', authMiddleware, async (req, res) => {
     const rows = await conn.query(`SELECT * FROM Books WHERE isDeleted = 0 ORDER BY yearPubl DESC, createdAt DESC LIMIT 3`) as any[][];
 
     res.json({ result: rows[0] });
 });
 
-bookRouter.get('/', async (req, res) => {
+bookRouter.get('/', authMiddleware, async (req, res) => {
     const { search } = req.query;
     const payload = `%${search}%`;
 
@@ -24,7 +22,7 @@ bookRouter.get('/', async (req, res) => {
     res.json({ result: rows[0] });
 });
 
-bookRouter.get('/search', async (req, res) => {
+bookRouter.get('/search', authMiddleware, async (req, res) => {
     const { category, year, lang } = req.query;
 
     let sql = `SELECT * FROM Books WHERE isDeleted = 0`;
@@ -52,6 +50,32 @@ bookRouter.get('/search', async (req, res) => {
     res.json({ result: rows[0] });
 });
 
+bookRouter.route('/suggest')
+    .get(authMiddleware, async (req, res) => {
+        const { id: bookId } = req.query;
+    
+        const sql = `SELECT Suggestions.*, Users.firstName, Users.lastName 
+            FROM Suggestions JOIN Users ON Suggestions.memberId = Users.id 
+            WHERE Suggestions.isDeleted = 0 AND Users.isDeleted = 0 AND bookId = ?
+        `;
+        const stmt = await conn.prepare(sql);
+        const rows = await stmt.execute([bookId]) as any[][];
+        conn.unprepare(sql);
+        
+        return res.json({ result: rows[0] });
+    })
+    .post(authMiddleware, async (req, res) => {
+        const { id: bookId } = req.query;
+        const { descr, memberId } = req.body;
+
+        const sql = `INSERT INTO Suggestions (id, descr, memberId, bookId, isDeleted) VALUES (?, ?, ?, ?, 0)`;
+        const stmt = await conn.prepare(sql);
+        await stmt.execute([crypto.randomUUID(), descr, memberId, bookId]);
+        conn.unprepare(sql);
+
+        return res.json({ msg: 'Successfully added!' });
+    });
+
 bookRouter.post('/', adminMiddleware, async (req, res) => {
     const { title, imgUrl, authorName, category, lang, descr, yearPubl, numEdition, nbrPages } = req.body;
 
@@ -64,7 +88,7 @@ bookRouter.post('/', adminMiddleware, async (req, res) => {
 });
 
 bookRouter.route('/:id')
-    .get(async (req, res) => {
+    .get(authMiddleware, async (req, res) => {
         const { id: bookId } = req.params;
 
         const sql = `SELECT * FROM Books WHERE isDeleted = 0 AND id = ?`;
@@ -109,28 +133,5 @@ bookRouter.patch('/borrow', adminMiddleware, async (req, res) => {
 
     return res.status(401).json({ msg: 'Unauthorized!' });
 });
-
-bookRouter.route('/suggest')
-    .get(async (req, res) => {
-        const { id: bookId } = req.query;
-
-        const sql = `SELECT * FROM Suggestions WHERE isDeleted = 0 AND bookId = ?`;
-        const stmt = await conn.prepare(sql);
-        const rows = await stmt.execute([bookId]) as any[][];
-        conn.unprepare(sql);
-    
-        return res.json({ result: rows[0] });
-    })
-    .post(adminMiddleware, async (req, res) => {
-        const { id: bookId } = req.query;
-        const { descr, memberId } = req.body;
-
-        const sql = `INSERT INTO Suggestions (id, descr, memberId, bookId, isDeleted) VALUES (?, ?, ?, ?, 0)`;
-        const stmt = await conn.prepare(sql);
-        await stmt.execute([crypto.randomUUID(), descr, memberId, bookId]);
-        conn.unprepare(sql);
-
-        return res.json({ msg: 'Successfully added!' });
-    });
 
 export default bookRouter;

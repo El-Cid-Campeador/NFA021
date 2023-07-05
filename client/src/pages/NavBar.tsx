@@ -1,14 +1,26 @@
-import { Link, useLocation } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
+import { useMutation } from "@tanstack/react-query";
 import useLocalStorage from "../components/useLocalStorage";
+import { fetcher } from "../functions";
 
 export default function NavBar() {
-    const { userData: { isMember } } = useLocalStorage();
-
-    const location = useLocation();
+    const navigate = useNavigate();
     
-    if (location.pathname === '/' || location.pathname === '/signin') {
-        return null;
-    }
+    const { mutate: signOut } = useMutation({
+        mutationFn: async () => {
+            localStorage.removeItem('xUr');
+            
+            return await fetcher.delete(`http://localhost:8080/logout`);
+        },
+        onSuccess: () => {
+            navigate('/');
+        },
+        onError: () => {
+            navigate('/');
+        }
+    });
+
+    const { userData: { isMember } } = useLocalStorage();
 
     return (
         <div className="mb-[70px]">
@@ -23,7 +35,7 @@ export default function NavBar() {
                         </div>
                     )
                 }
-                <Link to="/">Sign Up</Link>
+                <span onClick={() => signOut()} className="text-white cursor-pointer ">Sign out</span>
             </nav>
         </div>
     );

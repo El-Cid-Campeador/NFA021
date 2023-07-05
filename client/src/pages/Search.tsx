@@ -1,8 +1,10 @@
 import SearchByText from "../components/SearchByText";
+import NavBar from "./NavBar";
 
 export default function Search() {
     return (
         <>
+            <NavBar />
             <SearchByText
                 queryKey="books"
                 route="/books"

@@ -1,8 +1,8 @@
 import { Link } from "react-router-dom";
-import { BookInfo } from "../functions";
+import { Book } from "../functions";
 
 type Props = {
-    result: BookInfo[]
+    result: Book[]
 }
 
 export default function Books({ result }: Props) {
