@@ -1,5 +1,5 @@
 import { useState, ChangeEvent, FormEvent, useEffect, Dispatch } from 'react';
-import { BookFormData, bookCategories, bookLanguages, generateYears } from "../functions";
+import { BookFormData, isAnyOfTheAttributesAnEmptyString, bookCategories, bookLanguages, generateYears, isNumber } from "../functions";
 import { UseMutateFunction } from '@tanstack/react-query';
 import { AxiosResponse } from 'axios';
 
@@ -15,16 +15,23 @@ export default function BookForm({ onSubmit, initialValues, error, setError }: P
 
     function handleChange(e: ChangeEvent<HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement>) {
         const { name, value } = e.target;
-        setFormData((prevData) => {
-            return ({
-                ...prevData,
-                [name]: value
-            });
-        });
+
+        setFormData((prevData) => ({ ...prevData, [name]: value }));
     }
 
     function handleSubmit(e: FormEvent<HTMLFormElement>) {
         e.preventDefault();
+
+        if (isAnyOfTheAttributesAnEmptyString(formData)) {
+            setError('No empty fields!');
+            return;
+        }
+
+        if (!isNumber(formData.yearPubl) && !isNumber(formData.numEdition) && !isNumber(formData.nbrPages) ) {
+            setError('Invalid fields type!');
+            return;
+        }
+        
         onSubmit(formData);
     };
 
@@ -43,7 +50,8 @@ export default function BookForm({ onSubmit, initialValues, error, setError }: P
                         name="title"
                         value={formData.title}
                         onChange={handleChange}
-                        required />
+                        /*required*/ 
+                    />
                 </div>
                 <div>
                     <label htmlFor="imgUrl">Image URL: </label>
@@ -53,7 +61,8 @@ export default function BookForm({ onSubmit, initialValues, error, setError }: P
                         name="imgUrl"
                         value={formData.imgUrl}
                         onChange={handleChange}
-                        required />
+                        /*required*/
+                    />
                 </div>
                 <div>
                     <label htmlFor="authorName">Author name: </label>
@@ -63,7 +72,8 @@ export default function BookForm({ onSubmit, initialValues, error, setError }: P
                         name="authorName"
                         value={formData.authorName}
                         onChange={handleChange}
-                        required />
+                        /*required*/ 
+                    />
                 </div>
                 <div>
                     <label htmlFor="category">Category: </label>
@@ -72,7 +82,7 @@ export default function BookForm({ onSubmit, initialValues, error, setError }: P
                         name="category"
                         value={formData.category}
                         onChange={handleChange}
-                        required
+                        /*required*/
                     >
                         <option value="">Category</option>
                         {bookCategories.map((option) => (
@@ -89,7 +99,7 @@ export default function BookForm({ onSubmit, initialValues, error, setError }: P
                         name="lang"
                         value={formData.lang}
                         onChange={handleChange}
-                        required
+                        /*required*/
                     >
                         <option value="">Language: </option>
                         {bookLanguages.map((option) => (
@@ -108,6 +118,7 @@ export default function BookForm({ onSubmit, initialValues, error, setError }: P
                         onChange={handleChange}
                         cols={30}
                         rows={10}
+                        /*required*/
                     ></textarea>
                 </div>
                 <div>
@@ -117,7 +128,7 @@ export default function BookForm({ onSubmit, initialValues, error, setError }: P
                         name="yearPubl"
                         value={formData.yearPubl}
                         onChange={handleChange}
-                        required
+                        /*required*/
                     >
                         <option value="">Year of publication</option>
                         {generateYears().map((option) => (
@@ -135,17 +146,19 @@ export default function BookForm({ onSubmit, initialValues, error, setError }: P
                         name="numEdition"
                         value={formData.numEdition}
                         onChange={handleChange}
-                        required />
+                        /*required*/
+                    />
                 </div>
                 <div>
-                    <label htmlFor="numPages">Number of pages: </label>
+                    <label htmlFor="nbrPages">Number of pages: </label>
                     <input
                         type="number"
-                        id="numPages"
-                        name="numPages"
-                        value={formData.numPages}
+                        id="nbrPages"
+                        name="nbrPages"
+                        value={formData.nbrPages}
                         onChange={handleChange}
-                        required />
+                        /*required*/
+                    />
                 </div>
                 <button type="submit">Submit</button>
             </form>

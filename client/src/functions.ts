@@ -25,10 +25,13 @@ export type BookInfo = {
     imgUrl: string, 
     authorName: string, 
     category: string,
+    lang: string,
     descr: string,  
     yearPubl: number, 
     numEdition: number,
-    memberId: string
+    nbrPages: number,
+    memberId: string,
+    borrowedAt: string 
 }
 
 export type BookFormData = {
@@ -40,7 +43,7 @@ export type BookFormData = {
     descr: string,
     yearPubl: number,
     numEdition: number,
-    numPages: number
+    nbrPages: number
 }
 
 const bookCategories = [
@@ -125,14 +128,32 @@ function generateYears(): number[] {
     return arr;
 }
 
-function areAllAttributesEmptyString(obj: any) {
+function isAnyOfTheAttributesAnEmptyString(obj: any) {
     for (var key in obj) {
-        if (obj[key] !== '') {
-            return false;
+        if (typeof obj[key] === 'string') {
+            if (obj[key] === '') {
+                return true;
+            }
+        }
+    }
+
+    return false;
+}
+
+function areAllAttributesEmptyStrings(obj: any) {
+    for (var key in obj) {
+        if (typeof obj[key] === 'string') {
+            if (obj[key] !== '') {
+                return false;
+            }
         }
     }
 
     return true;
 }
 
-export { fetcher, bookCategories, bookLanguages, generateYears, areAllAttributesEmptyString };
+function isNumber(x: any) {
+    return typeof x === 'number';
+}
+
+export { fetcher, bookCategories, bookLanguages, generateYears, isAnyOfTheAttributesAnEmptyString, areAllAttributesEmptyStrings, isNumber };

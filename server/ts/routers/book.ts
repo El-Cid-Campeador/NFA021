@@ -53,8 +53,6 @@ bookRouter.get('/search', async (req, res) => {
 });
 
 bookRouter.post('/', adminMiddleware, async (req, res) => {
-    console.log(req.session);
-    
     const { title, imgUrl, authorName, category, lang, descr, yearPubl, numEdition, nbrPages } = req.body;
 
     const sql = `INSERT INTO Books (id, title, imgUrl, authorName, category, lang, descr, yearPubl, numEdition, nbrPages, isDeleted) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, 0)`;
@@ -80,9 +78,9 @@ bookRouter.route('/:id')
         const { id: bookId } = req.params;
         const { title, imgUrl, authorName, category, lang, descr, yearPubl, numEdition, nbrPages } = req.body;
 
-        const sql = `UPDATE Books SET title = ?, imgUrl = ?, authorName = ?, category = ?, lang ?, descr = ?, yearPubl = ?, numEdition = ?, nbrPages = ? WHERE id = ?`;
+        const sql = `UPDATE Books SET title = ?, imgUrl = ?, authorName = ?, category = ?, lang = ?, descr = ?, yearPubl = ?, numEdition = ?, nbrPages = ? WHERE id = ?`;
         const stmt = await conn.prepare(sql);
-        await stmt.execute([title, imgUrl, authorName, category, lang, descr, yearPubl, numEdition, nbrPages, bookId]);
+        await stmt.execute([title, imgUrl, authorName, category, lang, descr, Number(yearPubl), Number(numEdition), Number(nbrPages), bookId]);
         conn.unprepare(sql);
 
         return res.json({ msg: 'Successfully patched!' });

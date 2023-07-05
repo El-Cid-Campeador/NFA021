@@ -1,7 +1,7 @@
 import { FormEvent, useEffect, useState } from "react";
 import { useMutation } from "@tanstack/react-query";
 import validator from "validator";
-import { fetcher, areAllAttributesEmptyString } from "../functions";
+import { fetcher, isAnyOfTheAttributesAnEmptyString } from "../functions";
 import { Link, useNavigate } from "react-router-dom";
 
 export default function SignUp() {
@@ -28,7 +28,7 @@ export default function SignUp() {
     function handlesubmit(e: FormEvent) {
         e.preventDefault();
 
-        if (areAllAttributesEmptyString(payload)) {
+        if (isAnyOfTheAttributesAnEmptyString(payload)) {
             setError('No empty fields!');
             return;
         }
@@ -51,7 +51,7 @@ export default function SignUp() {
     }, [payload]);
 
     return (
-        <>
+        <div className="container">
             <form onSubmit={(e) => handlesubmit(e)}>
                 <div>
                     <label htmlFor="firstName">First name: </label>
@@ -92,16 +92,22 @@ export default function SignUp() {
                         value={payload.password} 
                         onChange={(e) => setPayload({ ...payload, password: e.target.value })} 
                     />
-                    <span onClick={() => setShowPassword(prev => !prev)}>{showPassword ? 'Hide password' : 'Show password'}</span>
+                    <span onClick={() => setShowPassword(prev => !prev)} className="ml-[10px]">{showPassword ? 'Hide password' : 'Show password'}</span>
                 </div>
 
-                <input type="submit" value="Sign Up" />
+                <input 
+                    type="submit" 
+                    value="Sign Up" 
+                    className="btn" 
+                />
             </form>
             <p>{error}</p>
-            <div>
+            <div className="mt-[40px]">
                 <p>Already have an account?</p>
-                <Link to="/signin">Sign In</Link>
+                <Link to="/signin" >
+                    <button className="btn">Sign In</button>
+                </Link>
             </div>
-        </>
+        </div>
     );
 }

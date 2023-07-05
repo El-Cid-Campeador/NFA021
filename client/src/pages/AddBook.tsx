@@ -5,15 +5,15 @@ import { useState } from "react";
 import BookForm from "../components/BookForm";
 
 const initialValues: BookFormData = {
-    title: 'A', 
-    imgUrl: 'B', 
-    authorName: 'C', 
-    category: 'D',
-    lang: 'E',
-    descr: 'F',  
-    yearPubl: 0, 
-    numEdition: 0,
-    numPages: 0
+    title: '', 
+    imgUrl: '', 
+    authorName: '', 
+    category: '',
+    lang: '',
+    descr: '',  
+    yearPubl: new Date().getFullYear(), 
+    numEdition: 1,
+    nbrPages: 100
 }
 
 export default function AddBook() {
@@ -22,9 +22,7 @@ export default function AddBook() {
     const navigate = useNavigate();
     
     const { mutate } = useMutation({
-        mutationFn: async (payload: BookFormData) => {
-            console.log(payload);
-            
+        mutationFn: async (payload: BookFormData) => {            
             const res = await fetcher.post(`http://localhost:8080/books`, { ...payload });
 
             return res;

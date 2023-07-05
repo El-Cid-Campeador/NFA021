@@ -12,7 +12,7 @@ label + * {
     margin-bottom: 10px;
 }
 
-input[type="text"], select {
+input[type="text"], input[type="password"], input[type="email"], select {
     padding: 7px;
     outline: none;
     border-radius: 10px;
@@ -23,3 +23,46 @@ select {
     border-radius: 4px;
     height: 40px;
 }
+
+nav {
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    height: 50px;
+    background-color: black;
+    color: white;
+    z-index: 9999;
+}
+
+h1 {
+    font-weight: bolder;
+    font-size: x-large;
+}
+
+li {
+    height: auto;
+    padding: 10px;
+    margin: 10px 0;
+    background-color: #eee;
+    border-radius: 10px;
+}
+
+.container {
+    margin: 10px;
+}
+
+.btn {
+    margin-top: 10px;
+    padding: 7px 10px;
+    color: white;
+    border: none;
+    background-color: #007bff;
+    border-radius: 5px;
+    cursor: pointer;
+}
+
+

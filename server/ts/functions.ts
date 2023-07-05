@@ -100,7 +100,7 @@ async function createUser(req: Request, isMember: number) {
 function authMiddleware(req: Request, res: Response, next: NextFunction) {
     const sessionUser = req.session as UserSession;
     
-    if (sessionUser.user) {
+    if (sessionUser.user && (sessionUser.user.isMember === 0 || sessionUser.user.isMember === 1)) {
         return next();
     } 
     

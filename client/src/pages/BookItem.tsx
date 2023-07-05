@@ -1,10 +1,9 @@
 import { useState } from "react";
 import { useMutation, useQuery } from "@tanstack/react-query";
 import { Navigate, useNavigate, useParams } from "react-router-dom";
-import { useSelector } from "react-redux";
-import { RootState } from "../app/store";
 import { BookInfo, fetcher } from "../functions";
 import Modal from "../components/Modal";
+import useLocalStorage from "../components/useLocalStorage";
 
 export default function BookItem() {
     const [isModalShowing, setIsModalShowing] = useState(false);
@@ -13,9 +12,9 @@ export default function BookItem() {
 
     const navigate = useNavigate();
 
-    const { isMember } = useSelector((state: RootState) => state.user.value);
+    const { userData: { isMember } } = useLocalStorage();
 
-    const { data: queryBook, isLoading, error, isFetching } = useQuery({
+    const { data, isLoading, error, isFetching } = useQuery({
         queryKey: ['books', bookId],
         queryFn: async () => {
             const { data } = await fetcher.get(`http://localhost:8080/books/${bookId}`);
@@ -44,14 +43,14 @@ export default function BookItem() {
 
     return (
         <div>
-            <h1>{queryBook?.result.title}</h1>
-            <img src={queryBook?.result.imgUrl} alt={queryBook?.result.title} />
-            <p>{queryBook?.result.descr}</p>
+            <h1>{data?.result.title}</h1>
+            <img src={data?.result.imgUrl} alt={data?.result.title} />
+            <p>{data?.result.descr}</p>
             {
                 isMember === 0 && (
                     <div>
                         <button onClick={() => setIsModalShowing(true)}>Delete</button>
-                        <button>Edit</button>
+                        <button onClick={() => navigate(`/edit-book/${bookId}`, { state: data?.result })}>Edit</button>
                         {
                             isModalShowing && (
                                 <Modal 

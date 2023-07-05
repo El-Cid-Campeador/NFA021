@@ -1,14 +1,13 @@
-import { Link, Navigate, useNavigate } from "react-router-dom";
+import { Navigate, useNavigate } from "react-router-dom";
 import { useMutation, useQuery } from "@tanstack/react-query";
-import { useSelector } from "react-redux";
-import { RootState } from "../app/store";
 import { BookInfo, fetcher } from "../functions";
 import Books from "../components/Books";
+import useLocalStorage from "../components/useLocalStorage";
 
 export default function Home() {
     const navigate = useNavigate();
 
-    const { firstName, lastName, isMember } = useSelector((state: RootState) => state.user.value);
+    const { userData: { firstName, lastName } } = useLocalStorage();
 
     const { data, isLoading, error, isFetching } = useQuery({
         queryKey: ['latest_books'],
@@ -24,10 +23,10 @@ export default function Home() {
             return await fetcher.delete(`http://localhost:8080/logout`);
         },
         onSuccess: () => {
-            navigate('/signin');
+            navigate('/');
         },
         onError: () => {
-            navigate('/signin');
+            navigate('/');
         }
     });
 
@@ -35,28 +34,19 @@ export default function Home() {
     if (error) return <Navigate to="/signin" />;
 
     return (
-        <div>
-            <h1>Welcome {firstName} {lastName}!</h1>
-            <button onClick={() => signOut()}>Sign out</button>
-            {
-                isLoading || isFetching ? <h1>Loading...</h1> : (
-                    <Books result={data!.result
-                    } />
-                )
-            }
-            <div>
-                <Link to="/search">Search</Link>
+        <>
+            <div className="container">
+                <h1>Welcome {firstName} {lastName}!</h1>
+                <button onClick={() => signOut()} className="btn">
+                    Sign out
+                </button>
+                {
+                    isLoading || isFetching ? <h1>Loading...</h1> : (
+                        <Books result={data!.result
+                        } />
+                    )
+                }
             </div>
-            <div>
-                <Link to="/advanced_search">Advanced Search</Link>
-            </div>
-            {
-                isMember === 0 && (
-                    <div>
-                        <Link to="/dashboard">Dashboard</Link>
-                    </div>
-                )
-            }
-        </div>
+        </>
     );
 }

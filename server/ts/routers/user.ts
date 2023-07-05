@@ -60,9 +60,9 @@ userRouter.get('/members', adminMiddleware, async (req, res) => {
     const { search } = req.query;
     const payload = `%${search}%`;
 
-    const sql = `SELECT * FROM Users WHERE isDeleted = 0 AND isMember = 1 AND (firstName LIKE ? OR lastName LIKE ?)`;
+    const sql = `SELECT * FROM Users WHERE isDeleted = 0 AND isMember = 1 AND (id LIKE ? OR firstName LIKE ? OR lastName LIKE ?)`;
     const stmt = await conn.prepare(sql);
-    const rows = await stmt.execute([payload, payload]) as any[][];
+    const rows = await stmt.execute([payload, payload, payload]) as any[][];
     conn.unprepare(sql);
 
     res.json({ result: rows[0] }); 

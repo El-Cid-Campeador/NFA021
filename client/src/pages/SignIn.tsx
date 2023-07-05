@@ -2,9 +2,7 @@ import { FormEvent, useEffect, useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { useMutation } from "@tanstack/react-query";
 import validator from "validator";
-import { useDispatch } from "react-redux";
-import { updateUser } from "../app/userSlice";
-import { areAllAttributesEmptyString, fetcher } from "../functions";
+import { isAnyOfTheAttributesAnEmptyString, fetcher } from "../functions";
 
 export default function SignIn() {
     // const [showPassword, setShowPassword] = useState(false);
@@ -17,8 +15,6 @@ export default function SignIn() {
 
     const navigate = useNavigate();
 
-    const dispatch = useDispatch();
-
     const { mutate: signIn, isLoading } = useMutation({
         mutationFn: async () => {
             // example@gmail.com  12345678
@@ -27,7 +23,7 @@ export default function SignIn() {
             // const res = await fetcher.post(`http://localhost:8080/login`, { email: "example@gmail.com", password: "12345678" });
             // const res = await fetcher.post(`http://localhost:8080/login`, { ...payload }); 
             if (res.status === 200) {
-                dispatch(updateUser(res.data.msg));
+                localStorage.setItem('xUr', JSON.stringify(res.data.msg));
             }
 
             return res;
@@ -43,7 +39,7 @@ export default function SignIn() {
     function handlesubmit(e: FormEvent) {
         e.preventDefault();
 
-        // if (areAllAttributesEmptyString(payload)) {
+        // if (isAnyOfTheAttributesAnEmptyString(payload)) {
         //     setError('No empty fields!');
         //     return;
         // }
@@ -67,7 +63,7 @@ export default function SignIn() {
     if (isLoading) return <h1>Waiting for server...</h1>;
 
     return (
-        <>
+        <div className="container">
             <form onSubmit={(e) => handlesubmit(e)}>
                 {/* <div>
                         <label htmlFor="email">Email: </label>
@@ -91,14 +87,20 @@ export default function SignIn() {
                         <span onClick={() => setShowPassword(prev => !prev)}>{showPassword ? 'Hide password' : 'Show password'}</span>
                     </div> */}
                 
-                <input type="submit" value="SUBMIT"/>
+                <input 
+                    type="submit" 
+                    value="Login" 
+                    className="btn" 
+                />
             </form>
             {/* <p>{error}</p> */}
-            <div>
+            <div className=" mt-[40px]">
                 <p>Don't have an account?</p>
-                <Link to="/signup">Sign Up</Link>
+                <Link to="/" >
+                    <button className="btn">Sign Up</button>
+                </Link>
             </div>
-        </>
+        </div>
     );
 }
 

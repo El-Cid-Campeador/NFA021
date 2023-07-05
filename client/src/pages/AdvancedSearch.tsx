@@ -1,6 +1,6 @@
 import { useQuery } from "@tanstack/react-query";
 import { Navigate } from "react-router-dom";
-import { BookInfo, bookCategories, bookLanguages, generateYears, fetcher, areAllAttributesEmptyString } from "../functions";
+import { BookInfo, bookCategories, bookLanguages, generateYears, fetcher, areAllAttributesEmptyStrings } from "../functions";
 import Books from "../components/Books";
 import { useMemo, useState } from "react";
 import SearchByParameter from "../components/SearchByParameter";
@@ -17,7 +17,7 @@ export default function AdvancedSearch() {
     const { data: queryBooks, isLoading, error } = useQuery({
 		queryKey: ['books', { ...search }],
         queryFn: async () => {
-            if (areAllAttributesEmptyString(search)) {
+            if (areAllAttributesEmptyStrings(search)) {
                 return { result: [] };
             }
 
@@ -41,9 +41,11 @@ export default function AdvancedSearch() {
             {
                 isLoading ? (
                     <h1>Loading...</h1>
-                ) : queryBooks!.result.length > 0 ? (
-                    <Books result={queryBooks!.result} />
-                ) : <p>No results found!</p>
+                ) : (
+                    queryBooks!.result.length > 0 ? (
+                        <Books result={queryBooks!.result} />
+                    ) : <p>No results found!</p>
+                )
             }
         </>
     );

@@ -1,31 +1,27 @@
 import { useMutation } from "@tanstack/react-query";
 import { BookFormData, fetcher } from "../functions";
-import { useNavigate } from "react-router-dom";
-import { useState } from "react";
+import { useLocation, useNavigate, useParams } from "react-router-dom";
+import { useMemo, useState } from "react";
 import BookForm from "../components/BookForm";
 
-const initialValues: BookFormData = {
-    title: 'A', 
-    imgUrl: 'B', 
-    authorName: 'C', 
-    category: 'D',
-    lang: 'E',
-    descr: 'F',  
-    yearPubl: 0, 
-    numEdition: 0,
-    numPages: 0
-}
+export default function EditBook() {
+    const { bookId } = useParams();
 
-export default function AddBook() {
+    const location = useLocation();
+
+    const { state } = location;
+
+    const initialValues: BookFormData = useMemo(() => {
+        return state;
+    }, []);
+    
     const [error, setError] = useState('');
 
     const navigate = useNavigate();
     
     const { mutate } = useMutation({
         mutationFn: async (payload: BookFormData) => {
-            console.log(payload);
-            
-            const res = await fetcher.post(`http://localhost:8080/books`, { ...payload });
+            const res = await fetcher.patch(`http://localhost:8080/books/${bookId}`, { ...payload });
 
             return res;
         },

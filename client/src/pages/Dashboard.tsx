@@ -1,7 +1,10 @@
 import { Link } from "react-router-dom";
 import SearchByText from "../components/SearchByText";
+import useLocalStorage from "../components/useLocalStorage";
 
 export default function Dashboard() {
+    const { userData: _userData } = useLocalStorage();
+    
     return (
         <div>
             <SearchByText

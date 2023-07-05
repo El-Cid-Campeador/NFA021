@@ -9,10 +9,13 @@ import Dashboard from "./pages/Dashboard";
 import PageNotFound from "./pages/PageNotFound";
 import UserItem from "./pages/UserItem";
 import AddBook from "./pages/AddBook";
+import EditBook from "./pages/EditBook";
+import NavBar from "./pages/NavBar";
 
 export default function App() {	
 	return (
 		<>
+			<NavBar />
 			<Routes>
 				<Route path="/" element={<SignUp />} />
 				<Route path="signin" element={<SignIn />}></Route>
@@ -22,6 +25,7 @@ export default function App() {
 				<Route path="advanced_search" element={<AdvancedSearch />}></Route>
 				<Route path="dashboard" element={<Dashboard />}></Route>
 				<Route path="add-book" element={<AddBook />}></Route>
+				<Route path="edit-book/:bookId" element={<EditBook />}></Route>
 				<Route path="members/:memberId" element={<UserItem />}></Route>
 				<Route path="*" element={<PageNotFound />}></Route>
 			</Routes>
