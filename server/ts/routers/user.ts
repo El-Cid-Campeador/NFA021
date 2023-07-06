@@ -1,6 +1,5 @@
 import express from "express";
 import bcrypt from "bcrypt";
-import crypto from "node:crypto";
 import { conn, UserSession, authMiddleware, adminMiddleware, createUser } from "../functions.js";
 
 const userRouter = express.Router();
@@ -56,6 +55,29 @@ userRouter.delete('/logout', authMiddleware, async (req, res) => {
     });   
 });
 
+userRouter.route('/users/fees')
+    .get(authMiddleware, async (req, res) => {
+        const { id: memberId } = req.query;
+
+        const sql = `SELECT SUM(amount) AS amount FROM Fees WHERE memberId = ? GROUP BY year`;
+        const stmt = await conn.prepare(sql);
+        const rows = await stmt.execute([memberId]) as any[][];
+        conn.unprepare(sql);
+        
+        res.json({ result: rows[0] });
+    })
+    .post(adminMiddleware, async (req, res) => {
+        const { id: memberId } = req.query;
+        const { amount, year } = req.body;
+
+        const sql = `INSERT INTO Fees (id, amount, memberId, year) VALUES (UUID(), ?, ?, ?)`;
+        const stmt = await conn.prepare(sql);
+        await stmt.execute([amount, memberId, year]);
+        conn.unprepare(sql);
+        
+        return res.json({ msg: 'Successfully added!' });
+    });
+
 userRouter.get('/members', adminMiddleware, async (req, res) => {
     const { search } = req.query;
     const payload = `%${search}%`;
@@ -88,29 +110,6 @@ userRouter.route('/users/:id')
         conn.unprepare(sql);
     
         return res.json({ msg: 'Successfully deleted!' });
-    });
-
-userRouter.route('/users/fees')
-    .get(authMiddleware, async (req, res) => {
-        const { id: memberId, year } = req.query;
-
-        const sql = `SELECT SUM(amount) FROM Fees WHERE memberId = ? AND year = ? GROUP BY year`;
-        const stmt = await conn.prepare(sql);
-        const rows = await stmt.execute([memberId, year]) as any[][];
-        conn.unprepare(sql);
-        
-        res.json({ result: rows[0] });
-    })
-    .post(adminMiddleware, async (req, res) => {
-        const { id: memberId } = req.query;
-        const { amount, year } = req.body;
-
-        const sql = `INSERT INTO Fees (id, amount, memberId, year) VALUES (?, ?, ?, ?)`;
-        const stmt = await conn.prepare(sql);
-        await stmt.execute([crypto.randomUUID(), amount, memberId, year]);
-        conn.unprepare(sql);
-        
-        return res.json({ msg: 'Successfully added!' });
     });
 
 export default userRouter;

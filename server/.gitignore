@@ -1,8 +1,5 @@
 node_modules
 js
 .env
-script.sql
-test.db
-tmp.txt
-file.py
 index.js
+script.sql

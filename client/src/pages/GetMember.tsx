@@ -4,6 +4,7 @@ import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import Modal from "../components/Modal";
 import { Member, fetcher } from "../functions";
 import NavBar from "./NavBar";
+import useQueryFees from "../components/useQueryFees";
 
 export default function GetMember() {
     const [isModalShowing, setIsModalShowing] = useState(false);
@@ -14,7 +15,7 @@ export default function GetMember() {
 
     const queryClient = useQueryClient();
 
-    const { data: queryUser, isLoading, error, isFetching } = useQuery({
+    const { data: queryUser, isLoading: isLoadingUser, error: errorUser, isFetching: isFetchingUser } = useQuery({
         queryKey: ['members', memberId],
         queryFn: async () => {
             const { data } = await fetcher.get(`http://localhost:8080/users/${memberId}`);
@@ -25,6 +26,8 @@ export default function GetMember() {
             throw new Error();
         }
     });
+
+    const { data: queryFees, isLoading: isLoadingFees, error: errorFees, isFetching: isFetchingFees } = useQueryFees(memberId!);
 
     const { mutate: deleteUser} = useMutation({
         mutationFn: async () => {
@@ -40,8 +43,8 @@ export default function GetMember() {
         }
     });
     
-    if (isLoading || isFetching) return <h1>Loading...</h1>;
-    if (error) return <Navigate to="/signin" />;
+    if (isLoadingUser || isFetchingUser || isLoadingFees || isFetchingFees) return <h1>Loading...</h1>;
+    if (errorUser || errorFees) return <Navigate to="/signin" />;
     
     return (
         <>
@@ -53,6 +56,7 @@ export default function GetMember() {
                 <p>{queryUser?.result.email}</p>
                 <p>{queryUser?.result.createdAt}</p>
                 <button onClick={() => setIsModalShowing(true)}>Delete</button>
+                <button></button>
                 {
                     isModalShowing && (
                         isModalShowing && (

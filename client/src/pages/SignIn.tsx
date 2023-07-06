@@ -44,11 +44,13 @@ export default function SignIn() {
 
         if (isAnyOfTheAttributesAnEmptyString(payload)) {
             setError('No empty fields!');
+
             return;
         }
 
         if (!validator.isEmail(payload.email)) {
             setError('Invalid email!');
+            
             return;
         }
 

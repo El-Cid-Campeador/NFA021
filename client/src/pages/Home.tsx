@@ -32,12 +32,6 @@ export default function Home() {
                 <h1>Welcome {firstName} {lastName}!</h1>
 
                 <Books result={data!.result} />
-               
-                {/* {
-                    isLoading || isFetching ? <h1>Loading...</h1> : (
-                        <Books result={data!.result} />
-                    )
-                } */}
             </div>
         </>
     );

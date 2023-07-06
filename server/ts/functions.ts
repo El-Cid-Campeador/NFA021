@@ -2,7 +2,6 @@ import { Request, Response, NextFunction } from "express";
 import mysql from "mysql2/promise";
 import { SessionData } from "express-session";
 import bcrypt from "bcrypt";
-import crypto from "node:crypto";
 import "dotenv/config";
 
 type User = { 
@@ -27,11 +26,11 @@ async function connectDB() {
     });
 
     await conn.execute(`CREATE TABLE IF NOT EXISTS Users (
-            id VARCHAR(255) PRIMARY KEY,
-            firstName LONGTEXT NOT NULL,
-            lastName LONGTEXT NOT NULL,
-            email VARCHAR(255) NOT NULL UNIQUE,
-            password LONGTEXT NOT NULL,
+            id VARCHAR(12) PRIMARY KEY,
+            firstName VARCHAR(50) NOT NULL,
+            lastName VARCHAR(50) NOT NULL,
+            email VARCHAR(50) NOT NULL UNIQUE,
+            password VARCHAR(255) NOT NULL,
             isMember TINYINT UNSIGNED NOT NULL,
             isDeleted TINYINT UNSIGNED NOT NUll,
             createdAt TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
@@ -40,17 +39,17 @@ async function connectDB() {
     );
 
     await conn.execute(`CREATE TABLE IF NOT EXISTS Books (
-            id VARCHAR(255) PRIMARY KEY,
-            title LONGTEXT NOT NULL,
-            imgUrl LONGTEXT NOT NULL,
-            authorName LONGTEXT NOT NULL,
-            category LONGTEXT NOT NULL,
+            id VARCHAR(36) PRIMARY KEY,
+            title VARCHAR(255) NOT NULL,
+            imgUrl VARCHAR(255) NOT NULL,
+            authorName VARCHAR(50) NOT NULL,
+            category VARCHAR(50) NOT NULL,
             lang VARCHAR(255) NOT NULL,
             descr LONGTEXT NOT NULL,
             yearPubl SMALLINT UNSIGNED NOT NULL,
             numEdition TINYINT UNSIGNED NOT NULL,
             nbrPages SMALLINT UNSIGNED NOT NULL,
-            memberId VARCHAR(255),
+            memberId VARCHAR(12),
             borrowedAt TIMESTAMP DEFAULT 0,
             isDeleted TINYINT UNSIGNED NOT NUll,
             createdAt TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
@@ -63,7 +62,7 @@ async function connectDB() {
             id VARCHAR(255) PRIMARY KEY,
             amount FLOAT NOT NULL,
             year SMALLINT UNSIGNED NOT NULL,
-            memberId VARCHAR(255) NOT NULL,
+            memberId VARCHAR(12) NOT NULL,
             createdAt TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
             updatedAt TIMESTAMP DEFAULT 0 ON UPDATE CURRENT_TIMESTAMP,
             FOREIGN KEY(memberId) REFERENCES Users(id)
@@ -73,8 +72,8 @@ async function connectDB() {
     await conn.execute(`CREATE TABLE IF NOT EXISTS Suggestions (
             id VARCHAR(255) PRIMARY KEY,
             descr LONGTEXT NOT NULL,
-            memberId VARCHAR(255) NOT NULL,
-            bookId VARCHAR(255) NOT NULL,
+            memberId VARCHAR(12) NOT NULL,
+            bookId VARCHAR(36) NOT NULL,
             isDeleted TINYINT UNSIGNED NOT NUll,
             createdAt TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
             updatedAt TIMESTAMP DEFAULT 0 ON UPDATE CURRENT_TIMESTAMP,
@@ -87,13 +86,13 @@ async function connectDB() {
 }
 
 async function createUser(req: Request, isMember: number) {
-    const { firstName, lastName, email, password } = req.body;
+    const { id, firstName, lastName, email, password } = req.body;
     const salt = bcrypt.genSaltSync(10);
     const hash = bcrypt.hashSync(password, salt);
     
     const sql = `INSERT INTO Users (id, firstName, lastName, email, password, isMember, isDeleted) VALUES (?, ?, ?, ?, ?, ?, 0)`;
     const stmt = await conn.prepare(sql);
-    await stmt.execute([crypto.randomUUID(), firstName, lastName, email, hash, isMember]);
+    await stmt.execute([id, firstName, lastName, email, hash, isMember]);
     conn.unprepare(sql);
 }
 

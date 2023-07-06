@@ -24,11 +24,13 @@ export default function BookForm({ onSubmit, initialValues, error, setError }: P
 
         if (isAnyOfTheAttributesAnEmptyString(formData)) {
             setError('No empty fields!');
+
             return;
         }
 
         if (!isNumber(formData.yearPubl) && !isNumber(formData.numEdition) && !isNumber(formData.nbrPages) ) {
             setError('Invalid fields type!');
+            
             return;
         }
         

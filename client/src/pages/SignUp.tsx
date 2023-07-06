@@ -7,6 +7,7 @@ import { Link, useNavigate } from "react-router-dom";
 export default function SignUp() {
     const [showPassword, setShowPassword] = useState(false);
     const [payload, setPayload] = useState({
+        id: '',
         firstName: '',
         lastName: '',
         email: '',
@@ -30,16 +31,25 @@ export default function SignUp() {
 
         if (isAnyOfTheAttributesAnEmptyString(payload)) {
             setError('No empty fields!');
+            
+            return;
+        }
+
+        if (isNaN(Number(payload.id)) || (payload.id).length !== 12) {
+            setError('Invalid ID! The ID must be numeric and exactly have 12 characters.');
+            
             return;
         }
 
         if (!validator.isEmail(payload.email)) {
             setError('Invalid email!');
+
             return;
         }
 
         if (!validator.isStrongPassword(payload.password, { minLength: 8, minLowercase: 1, minUppercase: 1, minNumbers: 1, minSymbols: 1, })) {
-            setError('Please use a strong password! (Minimum 8 characters & at least: 1 uppercase character, 1 lowercase character, 1 digit/number, 1special character)');
+            setError('Please use a strong password! (Minimum 8 characters & at least: 1 uppercase character, 1 lowercase character, 1 digit/number, 1 special character)');
+            
             return;
         }
 
@@ -53,6 +63,19 @@ export default function SignUp() {
     return (
         <div className="container">
             <form onSubmit={(e) => handlesubmit(e)}>
+                <div>
+                    <label htmlFor="id">ID: </label>
+                    <input 
+                        type="tel" 
+                        id="id" 
+                        pattern="\d*"
+                        minLength={12}
+                        maxLength={12}
+                        required 
+                        value={payload.id} 
+                        onChange={(e) => setPayload({ ...payload, id: e.target.value })} 
+                    />
+                </div>
                 <div>
                     <label htmlFor="firstName">First name: </label>
                     <input 

@@ -1,5 +1,4 @@
 import express from "express";
-import crypto from "node:crypto";
 import { conn, authMiddleware, adminMiddleware } from "../functions.js";
 
 const bookRouter = express.Router();
@@ -68,9 +67,9 @@ bookRouter.route('/suggest')
         const { id: bookId } = req.query;
         const { descr, memberId } = req.body;
 
-        const sql = `INSERT INTO Suggestions (id, descr, memberId, bookId, isDeleted) VALUES (?, ?, ?, ?, 0)`;
+        const sql = `INSERT INTO Suggestions (id, descr, memberId, bookId, isDeleted) VALUES (UUID(), ?, ?, ?, 0)`;
         const stmt = await conn.prepare(sql);
-        await stmt.execute([crypto.randomUUID(), descr, memberId, bookId]);
+        await stmt.execute([descr, memberId, bookId]);
         conn.unprepare(sql);
 
         return res.json({ msg: 'Successfully added!' });
@@ -79,9 +78,9 @@ bookRouter.route('/suggest')
 bookRouter.post('/', adminMiddleware, async (req, res) => {
     const { title, imgUrl, authorName, category, lang, descr, yearPubl, numEdition, nbrPages } = req.body;
 
-    const sql = `INSERT INTO Books (id, title, imgUrl, authorName, category, lang, descr, yearPubl, numEdition, nbrPages, isDeleted) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, 0)`;
+    const sql = `INSERT INTO Books (id, title, imgUrl, authorName, category, lang, descr, yearPubl, numEdition, nbrPages, isDeleted) VALUES (UUID(), ?, ?, ?, ?, ?, ?, ?, ?, ?, 0)`;
     const stmt = await conn.prepare(sql);
-    await stmt.execute([crypto.randomUUID(), title, imgUrl, authorName, category, lang, descr, Number(yearPubl), Number(numEdition), Number(nbrPages)]);
+    await stmt.execute([title, imgUrl, authorName, category, lang, descr, Number(yearPubl), Number(numEdition), Number(nbrPages)]);
     conn.unprepare(sql);
 
     return res.json({ msg: 'Successfully patched!' });
