@@ -1,5 +1,5 @@
 import express from "express";
-import { conn, authMiddleware, adminMiddleware } from "../functions.js";
+import { conn, authMiddleware, adminMiddleware, checkIfMemberExists } from "../functions.js";
 
 const bookRouter = express.Router();
 
@@ -9,17 +9,27 @@ bookRouter.get('/latest', authMiddleware, async (req, res) => {
     res.json({ result: rows[0] });
 });
 
-bookRouter.get('/', authMiddleware, async (req, res) => {
-    const { search } = req.query;
-    const payload = `%${search}%`;
+bookRouter.route('/').get(authMiddleware, async (req, res) => {
+        const { search } = req.query;
+        const payload = `%${search}%`;
 
-    const sql = `SELECT * FROM Books WHERE isDeleted = 0 AND (title LIKE ? OR authorName LIKE ?)`;
-    const stmt = await conn.prepare(sql);
-    const rows = await stmt.execute([payload, payload]) as any[][];
-    conn.unprepare(sql);
+        const sql = `SELECT * FROM Books WHERE isDeleted = 0 AND (title LIKE ? OR authorName LIKE ?)`;
+        const stmt = await conn.prepare(sql);
+        const rows = await stmt.execute([payload, payload]) as any[][];
+        conn.unprepare(sql);
 
-    res.json({ result: rows[0] });
-});
+        res.json({ result: rows[0] });
+    })
+    .post(adminMiddleware, async (req, res) => {
+        const { title, imgUrl, authorName, category, lang, descr, yearPubl, numEdition, nbrPages } = req.body;
+
+        const sql = `INSERT INTO Books (id, title, imgUrl, authorName, category, lang, descr, yearPubl, numEdition, nbrPages, isDeleted) VALUES (UUID(), ?, ?, ?, ?, ?, ?, ?, ?, ?, 0)`;
+        const stmt = await conn.prepare(sql);
+        await stmt.execute([title, imgUrl, authorName, category, lang, descr, Number(yearPubl), Number(numEdition), Number(nbrPages)]);
+        conn.unprepare(sql);
+
+        res.json({ msg: 'Successfully added!' });
+    });
 
 bookRouter.get('/search', authMiddleware, async (req, res) => {
     const { category, year, lang } = req.query;
@@ -75,27 +85,29 @@ bookRouter.route('/suggest')
         res.json({ msg: 'Successfully added!' });
     });
 
-bookRouter.post('/', adminMiddleware, async (req, res) => {
-    const { title, imgUrl, authorName, category, lang, descr, yearPubl, numEdition, nbrPages } = req.body;
-
-    const sql = `INSERT INTO Books (id, title, imgUrl, authorName, category, lang, descr, yearPubl, numEdition, nbrPages, isDeleted) VALUES (UUID(), ?, ?, ?, ?, ?, ?, ?, ?, ?, 0)`;
-    const stmt = await conn.prepare(sql);
-    await stmt.execute([title, imgUrl, authorName, category, lang, descr, Number(yearPubl), Number(numEdition), Number(nbrPages)]);
-    conn.unprepare(sql);
-
-    res.json({ msg: 'Successfully patched!' });
-});
-
-bookRouter.patch('/borrow', adminMiddleware, async (req, res) => {
+bookRouter.patch('/lend', adminMiddleware, async (req, res) => {
     const { id: bookId } = req.query;
     const { memberId } = req.body;
 
-    const sql = `UPDATE Books SET memberId = ?, borrowedAt = CURRENT_TIMESTAMP WHERE id = ?`;
-    const stmt = await conn.prepare(sql);
-    await stmt.execute([memberId, Date.now(), bookId]);
+    let sql = '';
+
+    if (memberId) {
+        if (await checkIfMemberExists(memberId)) {
+            sql = `UPDATE Books SET memberId = ?, borrowedAt = CURRENT_TIMESTAMP WHERE id = ?`;
+            const stmt = await conn.prepare(sql);
+            await stmt.execute([memberId, bookId]);
+        } else {
+            return res.status(404).send('User not found!');
+        }
+    } else {
+        sql = `UPDATE Books SET memberId = ?, borrowedAt = ? WHERE id = ?`;
+        const stmt = await conn.prepare(sql);
+        await stmt.execute([null, null, bookId]);
+    }
+
     conn.unprepare(sql);
 
-    res.json({ msg: 'Successfully patched!' });
+    res.json({ msg: 'Successfully added!' });
 });
 
 bookRouter.route('/:id')

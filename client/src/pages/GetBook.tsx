@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { FormEvent, useEffect, useState } from "react";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { Navigate, useNavigate, useParams } from "react-router-dom";
 import useLocalStorage from "../components/useLocalStorage";
@@ -6,14 +6,20 @@ import Modal from "../components/Modal";
 import { fetcher } from "../functions";
 import NavBar from "../components/NavBar";
 import Suggestions from "../components/Suggestions";
+import { AxiosError } from "axios";
 
 export default function GetBook() {
     const [isModalShowing, setIsModalShowing] = useState(false);
+
     const [isSuggestionFormShowing, setIsSuggestionFormShowing] = useState(false);
+    const [suggestion, setSuggestion] = useState('');
+    const [descrError, setDescrError] = useState('');
+
     const [areSuggestionsShowing, setAreSuggestionsShowing] = useState(false);
 
-    const [suggestion, setSuggestion] = useState('');
-    const [errorDescr, setErrorDescr] = useState('');
+    const [isInputIdFormShowing, setIsInputIdFormShowing] = useState(false);
+    const [memberId, setMemberId] = useState('');
+    const [inputIdError, setInputIdError] = useState('');
     
     const { bookId } = useParams();
 
@@ -84,6 +90,35 @@ export default function GetBook() {
         }
     });
 
+    const { mutate: lendBook } = useMutation({
+        mutationFn: async (memberId: string | null) => {
+            return await fetcher.patch(`http://localhost:8080/books/lend`, {
+                    memberId
+                }, {
+                    params: {
+                        id: bookId
+                    }
+                }
+            );
+        },
+        onSuccess: () => {
+            queryClient.invalidateQueries({ queryKey: ['books', bookId], exact: true });
+
+            setIsInputIdFormShowing(false);
+        },
+        onError: (error: AxiosError<any, any>) => {
+            if (error.response!.status === 401) {
+                return navigate('/signin');
+            }
+
+            if (error.response!.status === 404) {
+                setInputIdError(error.response!.data);
+
+                return;
+            }
+        }
+    });
+
     const { userData: { isMember } } = useLocalStorage();
     
     function displayStatus() {
@@ -104,16 +139,33 @@ export default function GetBook() {
 
     function handleAddSuggestion() {
         if (suggestion === '') {
-            setErrorDescr('Suggestion must not be null!');
+            setDescrError('Suggestion must not be null!');
+            
             return;
         }
 
         addSuggestion();
     }
 
+    function handleLending(e: FormEvent) {
+        e.preventDefault();
+
+        if (isNaN(Number(memberId)) || memberId.length !== 12) {
+            setInputIdError('Invalid ID! The ID must be numeric and exactly have 12 characters.');
+            
+            return;
+        }
+
+        lendBook(memberId);
+    }
+
     useEffect(() => {
-        setErrorDescr('');
-    }, []);
+        setDescrError('');
+    }, [suggestion]);
+
+    useEffect(() => {
+        setInputIdError('');
+    }, [memberId]);
     
     if (isLoading || isFetching) return <h1>Loading...</h1>;
     if (error || errorSugg) return <Navigate to="/signin" />;
@@ -131,6 +183,35 @@ export default function GetBook() {
                         <div className="flex justify-between w-[150px]">
                             <button onClick={() => setIsModalShowing(true)} className="btn">Delete</button>
                             <button onClick={() => navigate(`/edit-book/${bookId}`, { state: queryBook?.result })} className="btn">Edit</button>
+
+                            {
+                                queryBook?.result.memberId ? (
+                                    <button onClick={() => lendBook(null)}>Return</button>
+                                ) : (
+                                    <button onClick={() => setIsInputIdFormShowing(true)}>Lend</button>
+                                )
+                            }
+
+                            {
+                                isInputIdFormShowing && (
+                                    <>
+                                        <form onSubmit={(e) => handleLending(e)}>
+                                            <input 
+                                                type="tel" 
+                                                id="id" 
+                                                pattern="\d*"
+                                                minLength={12}
+                                                maxLength={12}
+                                                required 
+                                                value={memberId} 
+                                                onChange={(e) => setMemberId(e.target.value)} 
+                                            />
+                                        </form>
+                                        <p>{inputIdError}</p>
+                                    </>
+                                )
+                            }
+
                             {
                                 isModalShowing && (
                                     <Modal 
@@ -162,7 +243,7 @@ export default function GetBook() {
                                             onChange={(e) => setSuggestion(e.target.value)}
                                         ></textarea>
                                         <button onClick={() => handleAddSuggestion()}>Post suggestion</button>
-                                        <p>{errorDescr}</p>
+                                        <p>{descrError}</p>
                                     </div>
                                 )
                             }

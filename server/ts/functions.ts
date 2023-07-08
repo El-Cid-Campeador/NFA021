@@ -96,6 +96,15 @@ async function createUser(req: Request, isMember: number) {
     conn.unprepare(sql);
 }
 
+async function checkIfMemberExists(id: string) {
+    const sql = `SELECT id FROM Users WHERE isMember = 1 AND id = ?`;
+    const stmt = await conn.prepare(sql);
+    const rows = await stmt.execute([id]) as any[][];
+    conn.unprepare(sql);
+
+    return rows[0][0] ? true : false;
+}
+
 function authMiddleware(req: Request, res: Response, next: NextFunction) {
     const sessionUser = req.session as UserSession;
     
@@ -103,7 +112,7 @@ function authMiddleware(req: Request, res: Response, next: NextFunction) {
         return next();
     } 
     
-    res.status(401).send('Unauthorized');
+    res.status(401).send('Unauthorized!');
 }
 
 function adminMiddleware(req: Request, res: Response, next: NextFunction) {
@@ -113,7 +122,7 @@ function adminMiddleware(req: Request, res: Response, next: NextFunction) {
         return next();
     }
 
-    res.status(403).json({ msg: 'Access denied!' });
+    res.status(403).send('Access denied!');
 }
 
-export { conn, UserSession, createUser, authMiddleware, adminMiddleware };
+export { conn, UserSession, createUser, checkIfMemberExists, authMiddleware, adminMiddleware };
