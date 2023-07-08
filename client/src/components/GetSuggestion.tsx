@@ -1,5 +1,3 @@
-import { Suggestion } from "../functions";
-
 type Props = {
     sugg: Suggestion
 }

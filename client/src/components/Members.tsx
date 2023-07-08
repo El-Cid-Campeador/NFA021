@@ -1,5 +1,4 @@
 import { Link } from "react-router-dom";
-import { Member } from "../functions";
 
 type Props = {
     result: Member[]

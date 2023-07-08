@@ -1,5 +1,5 @@
 import { useState, ChangeEvent, FormEvent, useEffect, Dispatch } from 'react';
-import { BookFormData, isAnyOfTheAttributesAnEmptyString, bookCategories, bookLanguages, generateYears, isNumber } from "../functions";
+import { isAnyOfTheAttributesAnEmptyString, bookCategories, bookLanguages, generateYears, isNumber } from "../functions";
 import { UseMutateFunction } from '@tanstack/react-query';
 import { AxiosResponse } from 'axios';
 

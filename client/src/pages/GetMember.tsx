@@ -1,10 +1,9 @@
 import { useState } from "react";
-import { Navigate, useNavigate, useParams } from "react-router-dom";
+import { Link, Navigate, useNavigate, useParams } from "react-router-dom";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import Modal from "../components/Modal";
-import { Member, fetcher } from "../functions";
-import NavBar from "./NavBar";
-import useQueryFees from "../components/useQueryFees";
+import { fetcher } from "../functions";
+import NavBar from "../components/NavBar";
 
 export default function GetMember() {
     const [isModalShowing, setIsModalShowing] = useState(false);
@@ -27,24 +26,22 @@ export default function GetMember() {
         }
     });
 
-    const { data: queryFees, isLoading: isLoadingFees, error: errorFees, isFetching: isFetchingFees } = useQueryFees(memberId!);
-
     const { mutate: deleteUser} = useMutation({
         mutationFn: async () => {
-            queryClient.invalidateQueries({ queryKey: ['members'] });
-
             return await fetcher.delete(`http://localhost:8080/users/${memberId}`);
         },
         onSuccess: () => {
-            navigate('/home');
+            queryClient.invalidateQueries({ queryKey: ['members'] });
+
+            navigate('/dashboard');
         },
         onError: () => {
            navigate('/signin');
         }
     });
     
-    if (isLoadingUser || isFetchingUser || isLoadingFees || isFetchingFees) return <h1>Loading...</h1>;
-    if (errorUser || errorFees) return <Navigate to="/signin" />;
+    if (isLoadingUser || isFetchingUser) return <h1>Loading...</h1>;
+    if (errorUser) return <Navigate to="/signin" />;
     
     return (
         <>
@@ -55,17 +52,16 @@ export default function GetMember() {
                 <p>{queryUser?.result.lastName}</p>
                 <p>{queryUser?.result.email}</p>
                 <p>{queryUser?.result.createdAt}</p>
-                <button onClick={() => setIsModalShowing(true)}>Delete</button>
-                <button></button>
+                <Link to={`/fees/${memberId}`}>View user fees</Link>
+                <button onClick={() => setIsModalShowing(true)} className="btn">Delete</button>
+
                 {
                     isModalShowing && (
-                        isModalShowing && (
-                            <Modal 
-                                message="Are you sure to delete this member?" 
-                                onConfirm={() => deleteUser()} 
-                                onCancel={() => setIsModalShowing(false)}
-                            />
-                        )
+                        <Modal 
+                            message="Are you sure to delete this member?" 
+                            onConfirm={() => deleteUser()} 
+                            onCancel={() => setIsModalShowing(false)}
+                        />
                     )
                 }
             </div>

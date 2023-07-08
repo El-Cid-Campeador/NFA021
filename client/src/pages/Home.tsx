@@ -2,9 +2,9 @@ import { Navigate } from "react-router-dom";
 import { useQuery } from "@tanstack/react-query";
 import useLocalStorage from "../components/useLocalStorage";
 import Books from "../components/Books";
-import { Book, fetcher } from "../functions";
+import { fetcher } from "../functions";
 import { useEffect } from "react";
-import NavBar from "./NavBar";
+import NavBar from "../components/NavBar";
 
 export default function Home() {
     const { data, isLoading, error, isFetching } = useQuery({

@@ -3,8 +3,8 @@ import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { Navigate, useNavigate, useParams } from "react-router-dom";
 import useLocalStorage from "../components/useLocalStorage";
 import Modal from "../components/Modal";
-import { Book, Suggestion, fetcher } from "../functions";
-import NavBar from "./NavBar";
+import { fetcher } from "../functions";
+import NavBar from "../components/NavBar";
 import Suggestions from "../components/Suggestions";
 
 export default function GetBook() {

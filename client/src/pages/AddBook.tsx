@@ -2,8 +2,8 @@ import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { useNavigate } from "react-router-dom";
 import { useState } from "react";
 import BookForm from "../components/BookForm";
-import { BookFormData, fetcher } from "../functions";
-import NavBar from "./NavBar";
+import NavBar from "../components/NavBar";
+import { fetcher } from "../functions";
 
 const initialValues: BookFormData = {
     title: '', 

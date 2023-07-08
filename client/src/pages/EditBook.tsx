@@ -2,8 +2,8 @@ import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { useLocation, useNavigate, useParams } from "react-router-dom";
 import { useMemo, useState } from "react";
 import BookForm from "../components/BookForm";
-import { BookFormData, fetcher } from "../functions";
-import NavBar from "./NavBar";
+import { fetcher } from "../functions";
+import NavBar from "../components/NavBar";
 
 export default function EditBook() {
     const { bookId } = useParams();

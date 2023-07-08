@@ -4,56 +4,6 @@ const fetcher = axios.create({
     withCredentials: true
 });
 
-export type User = { 
-    id: string,
-    firstName: string, 
-    lastName: string, 
-    isMember: number 
-}
-
-export type Member = {
-    id: string,
-    firstName: string, 
-    lastName: string,
-    email: string,
-    createdAt: string
-}
-
-export type Book = {
-    id: string, 
-    title: string, 
-    imgUrl: string, 
-    authorName: string, 
-    category: string,
-    lang: string,
-    descr: string,  
-    yearPubl: number, 
-    numEdition: number,
-    nbrPages: number,
-    memberId: string,
-    borrowedAt: string 
-}
-
-export type BookFormData = {
-    title: string,
-    imgUrl: string,
-    authorName: string,
-    category: string,
-    lang: string,
-    descr: string,
-    yearPubl: number,
-    numEdition: number,
-    nbrPages: number
-}
-
-export type Suggestion = {
-    id: string,
-    descr: string,
-    firstName: string,
-    lastName: string,
-    createdAt: string
-}
-
 const bookCategories = [
     'Adventure',
     'Art',
@@ -62,7 +12,6 @@ const bookCategories = [
     'Business',
     'Children',
     'Comics',
-    'Computer science',
     'Cooking',
     'Dystopian',
     'Education',

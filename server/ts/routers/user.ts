@@ -1,5 +1,7 @@
 import express from "express";
 import bcrypt from "bcrypt";
+import path from "node:path";
+import fs from "node:fs";
 import { conn, UserSession, authMiddleware, adminMiddleware, createUser } from "../functions.js";
 
 const userRouter = express.Router();
@@ -40,7 +42,7 @@ userRouter.post('/login', async (req, res) => {
         }        
     }
 
-    return res.status(401).json({ msg: 'Unauthorized!' });
+    res.status(401).json({ msg: 'Unauthorized!' });
 });
 
 userRouter.delete('/logout', authMiddleware, async (req, res) => {
@@ -51,32 +53,9 @@ userRouter.delete('/logout', authMiddleware, async (req, res) => {
 
         res.clearCookie('connect.sid');
          
-        return res.json({ msg: 'Successfully logged out!' });
+        res.json({ msg: 'Successfully logged out!' });
     });   
 });
-
-userRouter.route('/users/fees')
-    .get(authMiddleware, async (req, res) => {
-        const { id: memberId } = req.query;
-
-        const sql = `SELECT SUM(amount) AS amount FROM Fees WHERE memberId = ? GROUP BY year`;
-        const stmt = await conn.prepare(sql);
-        const rows = await stmt.execute([memberId]) as any[][];
-        conn.unprepare(sql);
-        
-        res.json({ result: rows[0] });
-    })
-    .post(adminMiddleware, async (req, res) => {
-        const { id: memberId } = req.query;
-        const { amount, year } = req.body;
-
-        const sql = `INSERT INTO Fees (id, amount, memberId, year) VALUES (UUID(), ?, ?, ?)`;
-        const stmt = await conn.prepare(sql);
-        await stmt.execute([amount, memberId, year]);
-        conn.unprepare(sql);
-        
-        return res.json({ msg: 'Successfully added!' });
-    });
 
 userRouter.get('/members', adminMiddleware, async (req, res) => {
     const { search } = req.query;
@@ -89,6 +68,30 @@ userRouter.get('/members', adminMiddleware, async (req, res) => {
 
     res.json({ result: rows[0] }); 
 });
+
+userRouter.route('/users/fees')
+    .get(adminMiddleware, async (req, res) => {
+        const { id: memberId } = req.query;
+
+        const sql = `SELECT id, year, SUM(amount) AS amount FROM Fees WHERE memberId = ? GROUP BY year`;
+        const stmt = await conn.prepare(sql);
+        const rows = await stmt.execute([memberId]) as any[][];
+        conn.unprepare(sql);
+
+        const jsonContent = fs.readFileSync(path.resolve('data.json'), { encoding: 'utf-8' });
+        
+        res.json({ result: rows[0], price: JSON.parse(jsonContent).price });
+    }).post(adminMiddleware, async (req, res) => {
+        const { id: memberId } = req.query;
+        const { amount, year } = req.body;
+        
+        const sql = `INSERT INTO Fees (id, amount, memberId, year) VALUES (UUID(), ?, ?, ?)`;
+        const stmt = await conn.prepare(sql);
+        await stmt.execute([amount, memberId, year]);
+        conn.unprepare(sql);
+        
+        res.json({ msg: 'Successfully added!' });
+    });
 
 userRouter.route('/users/:id')
     .get(adminMiddleware, async (req, res) => {
@@ -109,7 +112,7 @@ userRouter.route('/users/:id')
         await stmt.execute([memberId]);
         conn.unprepare(sql);
     
-        return res.json({ msg: 'Successfully deleted!' });
+        res.json({ msg: 'Successfully deleted!' });
     });
 
 export default userRouter;

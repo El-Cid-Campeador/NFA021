@@ -1,4 +1,3 @@
-import { Suggestion } from "../functions";
 import GetSuggestion from "./GetSuggestion";
 
 type Props = {

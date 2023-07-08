@@ -1,7 +1,7 @@
 import { Link } from "react-router-dom";
 import SearchByText from "../components/SearchByText";
 import useLocalStorage from "../components/useLocalStorage";
-import NavBar from "./NavBar";
+import NavBar from "../components/NavBar";
 
 export default function Dashboard() {
     const { userData: _userData } = useLocalStorage();

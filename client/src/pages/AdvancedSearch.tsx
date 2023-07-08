@@ -1,10 +1,10 @@
 import { useQuery } from "@tanstack/react-query";
 import { Navigate } from "react-router-dom";
 import { useMemo, useState } from "react";
-import { Book, bookCategories, bookLanguages, generateYears, fetcher, areAllAttributesEmptyStrings } from "../functions";
+import { bookCategories, bookLanguages, generateYears, fetcher, areAllAttributesEmptyStrings } from "../functions";
 import Books from "../components/Books";
 import SearchByParameter from "../components/SearchByParameter";
-import NavBar from "./NavBar";
+import NavBar from "../components/NavBar";
 
 export default function AdvancedSearch() {
     const [category, setCategory] = useState('');

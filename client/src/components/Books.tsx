@@ -1,5 +1,4 @@
 import { Link } from "react-router-dom";
-import { Book } from "../functions";
 
 type Props = {
     result: Book[]

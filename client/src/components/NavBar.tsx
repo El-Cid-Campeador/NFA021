@@ -1,10 +1,14 @@
 import { Link, useNavigate } from "react-router-dom";
 import { useMutation } from "@tanstack/react-query";
-import useLocalStorage from "../components/useLocalStorage";
+import useLocalStorage from "./useLocalStorage";
 import { fetcher } from "../functions";
+import { useState } from "react";
+import Modal from "./Modal";
 
 export default function NavBar() {
     const navigate = useNavigate();
+
+    const [isModalShowing, setIsModalShowing] = useState(false);
     
     const { mutate: signOut } = useMutation({
         mutationFn: async () => {
@@ -39,8 +43,17 @@ export default function NavBar() {
                         </div>
                     )
                 }
-                <span onClick={() => signOut()} className="text-white cursor-pointer ">Sign out</span>
+                <span onClick={() => setIsModalShowing(true)} className="text-white cursor-pointer ">Sign out</span>
             </nav>
+            {
+                isModalShowing && (
+                    <Modal 
+                        message="Are you sure to log out?" 
+                        onConfirm={() => signOut()} 
+                        onCancel={() => setIsModalShowing(false)}
+                    />
+                )
+            }
         </div>
     );
 }

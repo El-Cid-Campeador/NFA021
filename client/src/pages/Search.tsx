@@ -1,5 +1,5 @@
 import SearchByText from "../components/SearchByText";
-import NavBar from "./NavBar";
+import NavBar from "../components/NavBar";
 
 export default function Search() {
     return (
