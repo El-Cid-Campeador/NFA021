@@ -78,8 +78,8 @@ const bookLanguages = [
 
 function generateYears(): number[] {
     const arr = [];
-    for (let i = new Date().getFullYear(); i >= 1970; i -= 1) {
-        arr.push(i);  
+    for (let year = new Date().getFullYear(); year >= 1970; year -= 1) {
+        arr.push(year);  
     }
 
     return arr;
@@ -113,4 +113,14 @@ function isNumber(x: any) {
     return typeof x === 'number';
 }
 
-export { fetcher, bookCategories, bookLanguages, generateYears, isAnyOfTheAttributesAnEmptyString, areAllAttributesEmptyStrings, isNumber };
+function generateFeesYears() {
+    const arr = [];
+
+    for (let year = 2023; year <= new Date().getFullYear(); year += 1) {
+        arr.push(year);
+    }
+
+    return arr;
+}
+
+export { fetcher, bookCategories, bookLanguages, generateYears, isAnyOfTheAttributesAnEmptyString, areAllAttributesEmptyStrings, isNumber, generateFeesYears };

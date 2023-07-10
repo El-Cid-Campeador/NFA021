@@ -1,7 +1,7 @@
 import { Navigate, useNavigate, useParams } from "react-router-dom";
 import NavBar from "../components/NavBar";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
-import { fetcher } from "../functions";
+import { fetcher, generateFeesYears } from "../functions";
 import { FormEvent, useState } from "react";
 
 export default function Fees() {
@@ -11,7 +11,10 @@ export default function Fees() {
 
     const [isPayingFormShowing, setIsPayingFormShowing] = useState(false);
 
-    const [amount, setAmount] = useState('');
+    const [payload, setPayload] = useState({
+        amount: '',
+        year: ''
+    });
     const [inputError, setInputError] = useState('');
 
     const queryClient = useQueryClient();
@@ -30,11 +33,8 @@ export default function Fees() {
     });
 
     const { mutate: postAmount } = useMutation({
-        mutationFn: async (year: number) => {
-            return await fetcher.post(`http://localhost:8080/users/fees`, {
-                amount,
-                year 
-            }, {
+        mutationFn: async () => {
+            return await fetcher.post(`http://localhost:8080/users/fees`, { ...payload }, {
                 params: {
                     id: memberId
                 }
@@ -51,17 +51,15 @@ export default function Fees() {
     function handlePayment(e: FormEvent) {
         e.preventDefault();
 
+        const { amount } = payload;
+
         if (amount === '' || isNaN(Number(amount))) {
             setInputError('Invalid amount!');
 
             return;
         }
 
-        let year = new Date().getFullYear();
-
-        if (data?.result)
-
-        postAmount(year);
+        postAmount();
     }
     
     if (isLoading || isFetching) return <h1>Loading...</h1>;
@@ -101,9 +99,18 @@ export default function Fees() {
                                     type="text" 
                                     id="amount" 
                                     required
-                                    value={amount} 
-                                    onChange={(e) => setAmount(e.target.value)} 
+                                    value={payload.amount} 
+                                    onChange={(e) => setPayload({ ...payload, amount: e.target.value })} 
                                 />
+                                <select value={payload.year} onChange={(e) => setPayload({ ...payload, year: e.target.value })}>
+                                    <option value="">Year</option>
+                                    {
+                                        generateFeesYears().map(year => {
+                                            return <option value={year} key={year}>{year}</option>;
+                                        })
+                                    }
+                                </select> 
+                                <input type="submit" value="Pay" />
                             </form>
                             <p>{inputError}</p>
                         </>
