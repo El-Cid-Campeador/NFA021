@@ -35,10 +35,13 @@ export default function AdvancedSearch() {
     return (
         <>
             <NavBar />
-            <div>
-                <SearchByParameter fieldName="Category" listOptions={bookCategories} value={category} onChange={setCategory} />
-                <SearchByParameter fieldName="Year of publishing" listOptions={generateYears()} value={year} onChange={setYear} />
-                <SearchByParameter fieldName="Language" listOptions={bookLanguages} value={lang} onChange={setLang} />
+            <div className="w-[510px] max-h-[200px] y-[10px] mx-auto p-[10px] border-[1px] border-solid border-customBlue rounded-2xl">
+                <div className="flex gap-[10px]">
+                    <SearchByParameter fieldName="Category" listOptions={bookCategories} value={category} onChange={setCategory} />
+                    <SearchByParameter fieldName="Year of publishing" listOptions={generateYears()} value={year} onChange={setYear} />
+                    <SearchByParameter fieldName="Language" listOptions={bookLanguages} value={lang} onChange={setLang} />
+                </div>
+                
             </div>
             {
                 isLoading ? (
@@ -46,7 +49,7 @@ export default function AdvancedSearch() {
                 ) : (
                     queryBooks!.result.length > 0 ? (
                         <Books result={queryBooks!.result} />
-                    ) : <p>No results found!</p>
+                    ) : <p className="text-center mt-[10px]">No results found!</p>
                 )
             }
         </>

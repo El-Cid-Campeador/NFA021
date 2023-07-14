@@ -5,6 +5,10 @@ type Props = {
 }
 
 export default function Suggestions({ list }: Props) {
+    if (list.length <= 0) {
+        return <h1>No suggestions found!</h1>;
+    }
+
     return (
         <ul>
             {

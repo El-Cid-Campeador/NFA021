@@ -33,13 +33,9 @@ export default function NavBar() {
                 <Link to="/search">Search</Link>
                 <Link to="/advanced_search">Advanced Search</Link>
                 {
-                    isMember === 0 ? (
+                    isMember === 0 && (
                         <div>
                             <Link to="/dashboard">Dashboard</Link>
-                        </div>
-                    ) : isMember === 1 && (
-                        <div>
-                            <Link to={`/fees/${id}`}>My fees</Link>
                         </div>
                     )
                 }

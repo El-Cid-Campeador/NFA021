@@ -131,7 +131,7 @@ export default function GetBook() {
                 status += ` by ${memberId}`;
             }
         } else {
-            status = 'In possession'
+            status = `In possession`
         }
         
         return status;
@@ -139,7 +139,7 @@ export default function GetBook() {
 
     function handleAddSuggestion() {
         if (suggestion === '') {
-            setDescrError('Suggestion must not be null!');
+            setDescrError('Suggestion must not have an empty value!');
             
             return;
         }
@@ -173,10 +173,14 @@ export default function GetBook() {
     return (
         <>
             <NavBar />
-            <div className="container">
-                <h1>{queryBook?.result.title}</h1>
-                <img src={queryBook?.result.imgUrl} alt={queryBook?.result.title} />
-                <p>{queryBook?.result.descr}</p>
+            <div className="m-[10px]">
+                <div className="flex gap-[20px]">
+                    <img src={queryBook?.result.imgUrl} alt={queryBook?.result.title} width={250} height={250} />
+                    <div className="w-[1000px]">
+                        <h1>{queryBook?.result.title}</h1>
+                        <p>{queryBook?.result.descr}</p>
+                    </div>
+                </div>
                 <p>Status: {displayStatus()}</p>
                 {
                     isMember === 0 && (
@@ -225,37 +229,37 @@ export default function GetBook() {
                     )
                 }
 
+                <button 
+                    onClick={() => setAreSuggestionsShowing(prev => !prev)}
+                    className="btn mr-[20px]"
+                >{areSuggestionsShowing ? 'Hide' : 'Show'} suggestions</button>
+                {
+                    areSuggestionsShowing && (
+                        isLoadingSugg || isFetchingSugg ? (
+                            <h1>Loading...</h1>
+                        ) : (
+                            <Suggestions list={querySugg!.result} />
+                        )
+                    )
+                }
+
                 {
                     isMember === 1 && (
                         <>
                             <button onClick={() => setIsSuggestionFormShowing(prev => !prev)} className="btn">Add suggestion</button>
-                            <button 
-                                onClick={() => setAreSuggestionsShowing(prev => !prev)}
-                                className="btn"
-                            >{areSuggestionsShowing ? 'Hide' : 'Show'} suggestions</button>
+                          
                             { 
                                 isSuggestionFormShowing && (
-                                    <div>
-                                        <textarea
-                                            cols={30} 
-                                            rows={10}
-                                            value={suggestion}
-                                            onChange={(e) => setSuggestion(e.target.value)}
-                                        ></textarea>
-                                        <button onClick={() => handleAddSuggestion()}>Post suggestion</button>
-                                        <p>{descrError}</p>
+                                    <div className="mt-[20px]">
+                                        <textarea cols={30} rows={10} value={suggestion} onChange={(e) => setSuggestion(e.target.value)}></textarea>
+                                        <div>
+                                            <button onClick={() => handleAddSuggestion()} className="btn">Post suggestion</button>
+                                        </div>
+                                        <p className="error">{descrError}</p>
                                     </div>
                                 )
                             }
-                            {
-                                areSuggestionsShowing && (
-                                    isLoadingSugg || isFetchingSugg ? (
-                                        <h1>Loading...</h1>
-                                    ) : (
-                                        <Suggestions list={querySugg!.result} />
-                                    )
-                                )
-                            }
+                            
                         </>
                     )
                 }

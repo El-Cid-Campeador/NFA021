@@ -13,7 +13,7 @@ export default function SignUp() {
         email: '',
         password: ''
     });
-    const [error, setError] = useState('');
+    const [inputError, setInputError] = useState('');
 
     const navigate = useNavigate();
 
@@ -30,25 +30,25 @@ export default function SignUp() {
         e.preventDefault();
 
         if (isAnyOfTheAttributesAnEmptyString(payload)) {
-            setError('No empty fields!');
+            setInputError('No empty fields!');
             
             return;
         }
 
         if (isNaN(Number(payload.id)) || (payload.id).length !== 12) {
-            setError('Invalid ID! The ID must be numeric and exactly have 12 characters.');
+            setInputError('Invalid ID! The ID must be numeric and exactly have 12 characters.');
             
             return;
         }
 
         if (!validator.isEmail(payload.email)) {
-            setError('Invalid email!');
+            setInputError('Invalid email!');
 
             return;
         }
 
         if (!validator.isStrongPassword(payload.password, { minLength: 8, minLowercase: 1, minUppercase: 1, minNumbers: 1, minSymbols: 1, })) {
-            setError('Please use a strong password! (Minimum 8 characters & at least: 1 uppercase character, 1 lowercase character, 1 digit/number, 1 special character)');
+            setInputError('Please use a strong password! (Minimum 8 characters & at least: 1 uppercase character, 1 lowercase character, 1 digit/number, 1 special character)');
             
             return;
         }
@@ -57,11 +57,11 @@ export default function SignUp() {
     }
 
     useEffect(() => {
-        setError('');
+        setInputError('');
     }, [payload]);
 
     return (
-        <div className="container">
+        <div className="w-[500px] h-[95vh] my-[10px] mx-auto p-[10px] border-[1px]  border-solid border-customBlue rounded-2xl">
             <form onSubmit={(e) => handlesubmit(e)}>
                 <div>
                     <label htmlFor="id">ID: </label>
@@ -106,7 +106,7 @@ export default function SignUp() {
                         onChange={(e) => setPayload({ ...payload, email: e.target.value })} 
                     />
                 </div>
-                <div>
+                <div className="flex items-center">
                     <label htmlFor="password">New password: </label>
                     <input 
                         type={showPassword ? 'text' : 'password'} 
@@ -115,7 +115,11 @@ export default function SignUp() {
                         value={payload.password} 
                         onChange={(e) => setPayload({ ...payload, password: e.target.value })} 
                     />
-                    <span onClick={() => setShowPassword(prev => !prev)} className="ml-[10px]">{showPassword ? 'Hide password' : 'Show password'}</span>
+                    <div onClick={() => setShowPassword(prev => !prev)} className="ml-[10px] cursor-pointer">
+                        {
+                            showPassword ? <img src="/eye-slash.svg" alt="Hide password" width={20} height={20} /> : <img src="/eye.svg" alt="Show password" width={20} height={20} />
+                        }
+                    </div>
                 </div>
 
                 <input 
@@ -124,12 +128,15 @@ export default function SignUp() {
                     className="btn" 
                 />
             </form>
-            <p>{error}</p>
-            <div className="mt-[40px]">
-                <p>Already have an account?</p>
-                <Link to="/signin" >
-                    <button className="btn">Sign In</button>
-                </Link>
+            <p className="error">{inputError}</p>
+
+            <br />
+            <hr />
+            <br />
+            
+            <div className="flex items-center">
+                <p className="mr-[10px]">Already have an account?</p>
+                <Link to="/signin" className="text-customBlue">Sign In</Link>
             </div>
         </div>
     );

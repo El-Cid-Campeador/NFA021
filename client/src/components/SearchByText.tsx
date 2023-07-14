@@ -45,7 +45,7 @@ export default function SearchByText({ queryKey, route, placeholder }: Props) {
     
     return (
         <>
-            <div>
+            <div className="w-[500px] max-h-[200px] y-[10px] mx-auto p-[10px] border-[1px]  border-solid border-customBlue rounded-2xl">
                 <input 
                     type="text" 
                     placeholder={placeholder} 

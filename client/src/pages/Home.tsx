@@ -28,9 +28,9 @@ export default function Home() {
     return (
         <>
             <NavBar />
-            <div className="container">
+            <div className="m-[10px]">
                 <h1>Welcome {firstName} {lastName}!</h1>
-
+                <h2 className="font-extrabold ">The 3 latest books: </h2>
                 <Books result={data!.result} />
             </div>
         </>

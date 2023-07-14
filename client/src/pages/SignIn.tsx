@@ -12,14 +12,12 @@ export default function SignIn() {
         password: ''
     }); 
 
-    const [error, setError] = useState('');
+    const [inputError, setInputError] = useState('');
 
     const navigate = useNavigate();
 
     const { mutate: signIn, isLoading } = useMutation({
         mutationFn: async () => {
-            // const res = await fetcher.post(`http://localhost:8080/login`, { email: "admin@gmail.com", password: "12345678" });
-            // const res = await fetcher.post(`http://localhost:8080/login`, { email: "example@gmail.com", password: "12345678" });
             const res = await fetcher.post(`http://localhost:8080/login`, { ...payload }); 
             
             return res;
@@ -31,10 +29,10 @@ export default function SignIn() {
         },
         onError: () => {
             if (isFirstLoad) {
-                setError('');
+                setInputError('');
                 setIsFirstLoad(false);
             } else {
-                setError('Invalid credentials!');
+                setInputError('Invalid credentials!');
             }
         }
     });
@@ -43,13 +41,13 @@ export default function SignIn() {
         e.preventDefault();
 
         if (isAnyOfTheAttributesAnEmptyString(payload)) {
-            setError('No empty fields!');
+            setInputError('No empty fields!');
 
             return;
         }
 
         if (!validator.isEmail(payload.email)) {
-            setError('Invalid email!');
+            setInputError('Invalid email!');
             
             return;
         }
@@ -62,13 +60,13 @@ export default function SignIn() {
     }, []);
 
     useEffect(() => {
-        setError('');
+        setInputError('');
     }, [payload]);
 
     if (isLoading) return <h1>Waiting for server...</h1>;
 
     return (
-        <div className="container">
+        <div className="w-[500px] h-[95vh] my-[10px] mx-auto p-[10px] border-[1px]  border-solid border-customBlue rounded-2xl">
             <form onSubmit={(e) => handlesubmit(e)}>
                 <div>
                         <label htmlFor="email">Email: </label>
@@ -80,7 +78,7 @@ export default function SignIn() {
                             onChange={(e) => setPayload({ ...payload, email: e.target.value })} 
                         />
                     </div>
-                    <div>
+                    <div className="flex items-center">
                         <label htmlFor="password">Password: </label>
                         <input 
                             type={showPassword ? 'text' : 'password'} 
@@ -89,7 +87,11 @@ export default function SignIn() {
                             value={payload.password} 
                             onChange={(e) => setPayload({ ...payload, password: e.target.value })} 
                         />
-                        <span onClick={() => setShowPassword(prev => !prev)}>{showPassword ? 'Hide password' : 'Show password'}</span>
+                        <div onClick={() => setShowPassword(prev => !prev)} className="ml-[10px] cursor-pointer">
+                        {
+                            showPassword ? <img src="/eye-slash.svg" alt="Hide password" width={20} height={20} /> : <img src="/eye.svg" alt="Show password" width={20} height={20} />
+                        }
+                    </div>
                     </div>
                 
                 <input 
@@ -98,12 +100,15 @@ export default function SignIn() {
                     className="btn" 
                 />
             </form>
-            <p>{error}</p>
-            <div className=" mt-[40px]">
-                <p>Don't have an account?</p>
-                <Link to="/" >
-                    <button className="btn">Sign Up</button>
-                </Link>
+            <p className="error">{inputError}</p>
+
+            <br />
+            <hr />
+            <br />
+
+            <div className="flex items-center">
+                <p className="mr-[10px]">Don't have an account?</p>
+                <Link to="/" className="text-customBlue">Sign Up</Link>
             </div>
         </div>
     );
