@@ -52,7 +52,9 @@ export default function GetMember() {
                 <p>{queryUser?.result.lastName}</p>
                 <p>{queryUser?.result.email}</p>
                 <p>{queryUser?.result.createdAt}</p>
-                <Link to={`/fees/${memberId}`}>View user fees</Link>
+                <Link to={`/fees/${memberId}`}>
+                    <button className="btn">View {queryUser?.result.firstName} {queryUser?.result.lastName}'s fees</button>
+                </Link>
                 <button onClick={() => setIsModalShowing(true)} className="btn">Delete</button>
 
                 {

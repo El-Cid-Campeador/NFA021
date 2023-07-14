@@ -186,13 +186,13 @@ export default function GetBook() {
                     isMember === 0 && (
                         <div className="flex justify-between w-[150px]">
                             <button onClick={() => setIsModalShowing(true)} className="btn">Delete</button>
-                            <button onClick={() => navigate(`/edit-book/${bookId}`, { state: queryBook?.result })} className="btn">Edit</button>
+                            <button onClick={() => navigate(`/books/edit/${bookId}`, { state: queryBook?.result })} className="btn">Edit</button>
 
                             {
                                 queryBook?.result.memberId ? (
                                     <button onClick={() => lendBook(null)}>Return</button>
                                 ) : (
-                                    <button onClick={() => setIsInputIdFormShowing(true)}>Lend</button>
+                                    <button onClick={() => setIsInputIdFormShowing(true)} className="btn">Lend</button>
                                 )
                             }
 

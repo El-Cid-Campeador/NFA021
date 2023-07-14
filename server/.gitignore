@@ -2,4 +2,3 @@ node_modules
 js
 .env
 index.js
-script.sql

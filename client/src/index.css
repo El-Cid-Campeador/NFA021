@@ -15,7 +15,7 @@ label + * {
     margin-bottom: 10px;
 }
 
-input[type="text"], input[type="tel"], input[type="password"], input[type="email"], select  {
+input[type="text"], input[type="tel"], input[type="password"], input[type="email"], input[type="number"], select  {
     padding: 7px;
     outline: none;
     border-radius: 10px;
@@ -53,6 +53,7 @@ li {
     background-color: #eee;
     border-radius: 10px;
 }
+
 textarea {
     padding: 7px;
     outline: 1px solid black;
@@ -63,6 +64,7 @@ textarea {
 
 .btn {
     margin-top: 10px;
+    margin-right: 10px;
     padding: 7px 10px;
     color: white;
     border: none;

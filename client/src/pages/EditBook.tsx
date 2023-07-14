@@ -42,8 +42,9 @@ export default function EditBook() {
         <>
             <NavBar />
             <BookForm 
-                onSubmit={mutate}
                 initialValues={initialValues}
+                onSubmit={mutate}
+                onCancel={() => navigate(`/books/${bookId}`)}
                 error={error}
                 setError={setError}
             />

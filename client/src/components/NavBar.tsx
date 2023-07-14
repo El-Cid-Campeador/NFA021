@@ -24,14 +24,14 @@ export default function NavBar() {
         }
     });
 
-    const { userData: { isMember, id } } = useLocalStorage();
+    const { userData: { isMember } } = useLocalStorage();
 
     return (
         <div className="mb-[70px]">
-            <nav>
+            <nav className="px-[10px]">
                 <Link to="/home">Home</Link>
-                <Link to="/search">Search</Link>
-                <Link to="/advanced_search">Advanced Search</Link>
+                <Link to="/search">Books Search</Link>
+                <Link to="/advanced_search">Advanced Books Search</Link>
                 {
                     isMember === 0 && (
                         <div>

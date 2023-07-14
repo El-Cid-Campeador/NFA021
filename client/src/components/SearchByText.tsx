@@ -51,6 +51,7 @@ export default function SearchByText({ queryKey, route, placeholder }: Props) {
                     placeholder={placeholder} 
                     value={search} 
                     onChange={(e) => setSearch(e.target.value)} 
+                    className="w-[450px]"
                 />
             </div>
             {

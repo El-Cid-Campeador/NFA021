@@ -23,8 +23,8 @@ export default function App() {
 				<Route path="search" element={<Search />}></Route>
 				<Route path="advanced_search" element={<AdvancedSearch />}></Route>
 				<Route path="dashboard" element={<Dashboard />}></Route>
-				<Route path="add-book" element={<AddBook />}></Route>
-				<Route path="edit-book/:bookId" element={<EditBook />}></Route>
+				<Route path="books/add" element={<AddBook />}></Route>
+				<Route path="books/edit/:bookId" element={<EditBook />}></Route>
 				<Route path="members/:memberId" element={<GetMember />}></Route>
 				<Route path="fees/:memberId" element={<Fees />}></Route>
 				<Route path="*" element={<PageNotFound />}></Route>

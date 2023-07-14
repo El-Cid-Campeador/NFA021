@@ -44,8 +44,9 @@ export default function AddBook() {
         <>
             <NavBar />
             <BookForm 
-                onSubmit={mutate}
                 initialValues={initialValues}
+                onSubmit={mutate}
+                onCancel={() => navigate('/dashboard')}
                 error={error}
                 setError={setError}
             />

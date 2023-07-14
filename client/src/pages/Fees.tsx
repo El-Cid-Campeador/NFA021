@@ -68,54 +68,56 @@ export default function Fees() {
     return (
         <>
             <NavBar />
-            <div>Fees</div>
-            <table>
-                <thead>
-                    <tr>
-                        <th>Year</th>
-                        <th>Amount</th>
-                    </tr>
-                </thead>
-                <tbody>
+            <div className="m-[10px]">
+                <table>
+                    <caption>- Fees -</caption>
+                    <thead>
+                        <tr>
+                            <th>Year</th>
+                            <th>Amount</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {
+                            data?.result.map(fees => {
+                                return (
+                                    <tr key={fees.id}>
+                                        <td className="mr-5 ">{fees.year}</td>
+                                        <td>{fees.amount}</td>
+                                    </tr>
+                                );
+                            })
+                        }
+                    </tbody>
+                </table>
+                <button onClick={() => setIsPayingFormShowing(prev => !prev)} className="btn">Pay fees</button>
                     {
-                        data?.result.map(fees => {
-                            return (
-                                <tr key={fees.id}>
-                                    <td className="mr-5 ">{fees.year}</td>
-                                    <td>{fees.amount}</td>
-                                </tr>
-                            );
-                        })
+                        isPayingFormShowing && (
+                            <>
+                                <form onSubmit={(e) => handlePayment(e)} className="w-[500px] my-[10px] p-[10px] border-[1px] border-solid border-customBlue rounded-2xl">
+                                    <label htmlFor="amount">Amount: </label>
+                                    <input 
+                                        type="text" 
+                                        id="amount" 
+                                        required
+                                        value={payload.amount} 
+                                        onChange={(e) => setPayload({ ...payload, amount: e.target.value })} 
+                                    />
+                                    <select value={payload.year} onChange={(e) => setPayload({ ...payload, year: e.target.value })}>
+                                        <option value="">Year</option>
+                                        {
+                                            generateFeesYears().map(year => {
+                                                return <option value={year} key={year}>{year}</option>;
+                                            })
+                                        }
+                                    </select> 
+                                    <input type="submit" value="Pay" className="block btn" />
+                                </form>
+                                <p className="error">{inputError}</p>
+                            </>
+                        )
                     }
-                </tbody>
-            </table>
-            <button onClick={() => setIsPayingFormShowing(prev => !prev)} className="btn">Pay fees</button>
-                {
-                    isPayingFormShowing && (
-                        <>
-                            <form onSubmit={(e) => handlePayment(e)}>
-                                <label htmlFor="amount">Amount: </label>
-                                <input 
-                                    type="text" 
-                                    id="amount" 
-                                    required
-                                    value={payload.amount} 
-                                    onChange={(e) => setPayload({ ...payload, amount: e.target.value })} 
-                                />
-                                <select value={payload.year} onChange={(e) => setPayload({ ...payload, year: e.target.value })}>
-                                    <option value="">Year</option>
-                                    {
-                                        generateFeesYears().map(year => {
-                                            return <option value={year} key={year}>{year}</option>;
-                                        })
-                                    }
-                                </select> 
-                                <input type="submit" value="Pay" />
-                            </form>
-                            <p>{inputError}</p>
-                        </>
-                    )
-                }
+            </div>
         </>
     );
 }

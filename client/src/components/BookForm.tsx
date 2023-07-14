@@ -1,16 +1,17 @@
-import { useState, ChangeEvent, FormEvent, useEffect, Dispatch } from 'react';
+import { useState, ChangeEvent, useEffect, Dispatch } from 'react';
 import { isAnyOfTheAttributesAnEmptyString, bookCategories, bookLanguages, generateYears, isNumber } from "../functions";
 import { UseMutateFunction } from '@tanstack/react-query';
 import { AxiosResponse } from 'axios';
 
 type Props = {
-    onSubmit: UseMutateFunction<AxiosResponse<any, any>, unknown, BookFormData, unknown>,
     initialValues: BookFormData,
+    onSubmit: UseMutateFunction<AxiosResponse<any, any>, unknown, BookFormData, unknown>,
+    onCancel: () => void,
     error: string,
     setError: Dispatch<React.SetStateAction<string>>
 }
 
-export default function BookForm({ onSubmit, initialValues, error, setError }: Props) {
+export default function BookForm({ initialValues, onSubmit, onCancel, error, setError }: Props) {
     const [formData, setFormData] = useState<BookFormData>(initialValues);
 
     function handleChange(e: ChangeEvent<HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement>) {
@@ -19,9 +20,7 @@ export default function BookForm({ onSubmit, initialValues, error, setError }: P
         setFormData((prevData) => ({ ...prevData, [name]: value }));
     }
 
-    function handleSubmit(e: FormEvent<HTMLFormElement>) {
-        e.preventDefault();
-
+    function handleSubmit() {
         if (isAnyOfTheAttributesAnEmptyString(formData)) {
             setError('No empty fields!');
 
@@ -42,8 +41,8 @@ export default function BookForm({ onSubmit, initialValues, error, setError }: P
     }, [formData]);
 
     return (
-        <>
-            <form onSubmit={handleSubmit}>
+        <div className="w-[500px] h-[95vh] my-[10px] mx-auto p-[10px] border-[1px]  border-solid border-customBlue rounded-2xl">
+            <>
                 <div>
                     <label htmlFor="title">Title: </label>
                     <input
@@ -52,7 +51,7 @@ export default function BookForm({ onSubmit, initialValues, error, setError }: P
                         name="title"
                         value={formData.title}
                         onChange={handleChange}
-                        /*required*/ 
+                        required
                     />
                 </div>
                 <div>
@@ -63,7 +62,7 @@ export default function BookForm({ onSubmit, initialValues, error, setError }: P
                         name="imgUrl"
                         value={formData.imgUrl}
                         onChange={handleChange}
-                        /*required*/
+                        required
                     />
                 </div>
                 <div>
@@ -74,7 +73,7 @@ export default function BookForm({ onSubmit, initialValues, error, setError }: P
                         name="authorName"
                         value={formData.authorName}
                         onChange={handleChange}
-                        /*required*/ 
+                        required
                     />
                 </div>
                 <div>
@@ -84,7 +83,7 @@ export default function BookForm({ onSubmit, initialValues, error, setError }: P
                         name="category"
                         value={formData.category}
                         onChange={handleChange}
-                        /*required*/
+                        required
                     >
                         <option value="">Category</option>
                         {bookCategories.map((option) => (
@@ -101,7 +100,7 @@ export default function BookForm({ onSubmit, initialValues, error, setError }: P
                         name="lang"
                         value={formData.lang}
                         onChange={handleChange}
-                        /*required*/
+                        required
                     >
                         <option value="">Language: </option>
                         {bookLanguages.map((option) => (
@@ -111,7 +110,7 @@ export default function BookForm({ onSubmit, initialValues, error, setError }: P
                         ))}
                     </select>
                 </div>
-                <div>
+                <div className="flex items-center">
                     <label htmlFor="descr">Description: </label>
                     <textarea
                         name="descr"
@@ -120,7 +119,7 @@ export default function BookForm({ onSubmit, initialValues, error, setError }: P
                         onChange={handleChange}
                         cols={30}
                         rows={10}
-                        /*required*/
+                        required
                     ></textarea>
                 </div>
                 <div>
@@ -130,7 +129,7 @@ export default function BookForm({ onSubmit, initialValues, error, setError }: P
                         name="yearPubl"
                         value={formData.yearPubl}
                         onChange={handleChange}
-                        /*required*/
+                        required
                     >
                         <option value="">Year of publication</option>
                         {generateYears().map((option) => (
@@ -148,7 +147,7 @@ export default function BookForm({ onSubmit, initialValues, error, setError }: P
                         name="numEdition"
                         value={formData.numEdition}
                         onChange={handleChange}
-                        /*required*/
+                        required
                     />
                 </div>
                 <div>
@@ -159,12 +158,13 @@ export default function BookForm({ onSubmit, initialValues, error, setError }: P
                         name="nbrPages"
                         value={formData.nbrPages}
                         onChange={handleChange}
-                        /*required*/
+                        required
                     />
                 </div>
-                <button type="submit">Submit</button>
-            </form>
+                <button className="btn" onClick={() => handleSubmit()}>Submit</button>
+                <button className="btn" onClick={() => onCancel()}>Cancel</button>
+            </>
             <p>{error}</p>
-        </>
+        </div>
     );
 }
