@@ -29,7 +29,9 @@ export default function NavBar() {
     return (
         <div className="mb-[70px]">
             <nav className="px-[10px]">
-                <Link to="/home">Home</Link>
+                <Link to="/home">
+                    <img src="/home.svg" alt="Home" title="Home" width={50} height={50} />
+                </Link>
                 <Link to="/search">Books Search</Link>
                 <Link to="/advanced_search">Advanced Books Search</Link>
                 {

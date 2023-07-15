@@ -179,6 +179,12 @@ export default function GetBook() {
                     <div className="w-[1000px]">
                         <h1>{queryBook?.result.title}</h1>
                         <p>{queryBook?.result.descr}</p>
+                        <br />
+                        <p>{queryBook?.result.authorName}</p>
+                        <p>{queryBook?.result.category}</p>
+                        <p>{queryBook?.result.lang}</p>
+                        <p>{queryBook?.result.numEdition}</p>
+                        <p>{queryBook?.result.nbrPages}</p>
                     </div>
                 </div>
                 <p>Status: {displayStatus()}</p>

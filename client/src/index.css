@@ -35,7 +35,7 @@ nav {
     display: flex;
     justify-content: space-between;
     align-items: center;
-    height: 50px;
+    height: 55px;
     background-color: black;
     color: white;
     z-index: 9999;
