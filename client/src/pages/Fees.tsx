@@ -2,7 +2,7 @@ import { Navigate, useNavigate, useParams } from "react-router-dom";
 import NavBar from "../components/NavBar";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { fetcher, generateFeesYears } from "../functions";
-import { FormEvent, useState } from "react";
+import { FormEvent, useEffect, useState } from "react";
 
 export default function Fees() {
     const { memberId } = useParams();
@@ -51,7 +51,13 @@ export default function Fees() {
     function handlePayment(e: FormEvent) {
         e.preventDefault();
 
-        const { amount } = payload;
+        const { amount, year } = payload;
+
+        if (year == '') {
+            setInputError('Invalid year!');
+
+            return;
+        }
 
         if (amount === '' || isNaN(Number(amount)) || amount.length > 5) {
             setInputError('Invalid amount!');
@@ -59,8 +65,14 @@ export default function Fees() {
             return;
         }
 
+        setIsPayingFormShowing(false);
+
         postAmount();
     }
+
+    useEffect(() => {
+        setInputError('');
+    }, [payload]);
     
     if (isLoading || isFetching) return <h1>Loading...</h1>;
     if (error) return <Navigate to="/signin" />;

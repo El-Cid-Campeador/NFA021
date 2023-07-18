@@ -45,13 +45,15 @@ export default function SignIn() {
             return;
         }
 
-        if ((payload.emailOrID).length > 50) {
+        const { emailOrID, password } = payload;
+
+        if (emailOrID.length > 50) {
             setInputError('Invalid email! It must not exceed 50 characters!');
 
             return;
         }
 
-        if ((payload.password).length > 64) {
+        if (password.length > 64) {
             setInputError('Invalid email! It must not exceed 64 characters!');
 
             return;

@@ -1,12 +1,12 @@
 import { FormEvent, useEffect, useState } from "react";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { Navigate, useNavigate, useParams } from "react-router-dom";
+import { AxiosError } from "axios";
 import useLocalStorage from "../components/useLocalStorage";
 import Modal from "../components/Modal";
 import { fetcher } from "../functions";
 import NavBar from "../components/NavBar";
 import Suggestions from "../components/Suggestions";
-import { AxiosError } from "axios";
 
 export default function GetBook() {
     const [isModalShowing, setIsModalShowing] = useState(false);
@@ -83,7 +83,9 @@ export default function GetBook() {
         onSuccess: () => {
             queryClient.invalidateQueries({ queryKey: ['suggestions'] });
 
-            setIsSuggestionFormShowing(false);
+            setAreSuggestionsShowing(true);
+
+            setSuggestion('');
         },
         onError: () => {
             navigate('/signin');
@@ -144,6 +146,8 @@ export default function GetBook() {
             return;
         }
 
+        setIsSuggestionFormShowing(false);
+
         addSuggestion();
     }
 
@@ -196,7 +200,7 @@ export default function GetBook() {
 
                             {
                                 queryBook?.result.memberId ? (
-                                    <button onClick={() => lendBook(null)}>Return</button>
+                                    <button onClick={() => lendBook(null)} className="btn">Return</button>
                                 ) : (
                                     <button onClick={() => setIsInputIdFormShowing((prev) => !prev)} className="btn">Lend</button>
                                 )

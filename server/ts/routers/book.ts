@@ -9,7 +9,8 @@ bookRouter.get('/latest', authMiddleware, async (req, res) => {
     res.json({ result: rows[0] });
 });
 
-bookRouter.route('/').get(authMiddleware, async (req, res) => {
+bookRouter.route('/')
+    .get(authMiddleware, async (req, res) => {
         const { search } = req.query;
         const payload = `%${search}%`;
 

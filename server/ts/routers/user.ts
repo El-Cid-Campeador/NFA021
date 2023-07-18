@@ -87,7 +87,7 @@ userRouter.route('/users/fees')
         
         const sql = `INSERT INTO Fees (id, amount, memberId, year) VALUES (UUID(), ?, ?, ?)`;
         const stmt = await conn.prepare(sql);
-        await stmt.execute([amount, memberId, year]);
+        await stmt.execute([Number(amount), memberId, Number(year)]);
         conn.unprepare(sql);
         
         res.json({ msg: 'Successfully added!' });
