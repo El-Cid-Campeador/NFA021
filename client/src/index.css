@@ -73,6 +73,6 @@ textarea {
     cursor: pointer;
 }
 
-.error {
+.error-msg {
     color: crimson;
 }

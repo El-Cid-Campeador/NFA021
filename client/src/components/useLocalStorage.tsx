@@ -19,7 +19,7 @@ export default function useLocalStorage() {
         } else {
             navigate('/signin');
         }
-    }, []);
+    }, [navigate]);
 
     return { userData };
 }

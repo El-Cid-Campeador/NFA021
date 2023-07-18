@@ -11,7 +11,7 @@ type Props = {
     placeholder: string
 }
 
-function RenderResultByQueryType(queryKey: string, data: any[]) {
+function RenderResultByQueryType(queryKey: string, data: never[]) {
     switch (queryKey) {
         case "books":
             return <Books result={data} />
@@ -28,7 +28,7 @@ export default function SearchByText({ queryKey, route, placeholder }: Props) {
     const { data, isLoading, error } = useQuery({
 		queryKey: [queryKey, search],
         queryFn: async () => {
-            if (search === '') {
+            if (search === '' || search.length > 100) {
                 return { result: [] };
             }
 
@@ -37,7 +37,7 @@ export default function SearchByText({ queryKey, route, placeholder }: Props) {
                 params: { search: payload }
             });
 
-            return data as { result: any[] };
+            return data as { result: never[] };
         }
 	});
 
@@ -48,10 +48,11 @@ export default function SearchByText({ queryKey, route, placeholder }: Props) {
             <div className="w-[500px] max-h-[200px] y-[10px] mx-auto p-[10px] border-[1px]  border-solid border-customBlue rounded-2xl">
                 <input 
                     type="text" 
+                    className="w-[450px]"
                     placeholder={placeholder} 
+                    maxLength={100}
                     value={search} 
                     onChange={(e) => setSearch(e.target.value)} 
-                    className="w-[450px]"
                 />
             </div>
             {

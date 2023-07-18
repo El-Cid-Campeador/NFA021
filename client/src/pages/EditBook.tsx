@@ -14,7 +14,7 @@ export default function EditBook() {
     
     const initialValues: BookFormData = useMemo(() => {
         return state;
-    }, []);
+    }, [state]);
     
     const [error, setError] = useState('');
     

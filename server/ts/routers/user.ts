@@ -25,11 +25,11 @@ userRouter.post('/login', async (req, res) => {
         return res.json({ msg: sessionUser.user });
     }
 
-    const { email, password } = req.body;
+    const { emailOrID, password } = req.body;
 
-    const sql = `SELECT * FROM Users WHERE email = ? AND isDeleted = 0`;
+    const sql = `SELECT * FROM Users WHERE (email = ? OR id = ?) AND isDeleted = 0`;
     const stmt = await conn.prepare(sql);
-    const rows = await stmt.execute([email]) as any[][];
+    const rows = await stmt.execute([emailOrID, emailOrID]) as any[][];
     conn.unprepare(sql);
     
     if (rows[0].length) {

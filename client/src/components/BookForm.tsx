@@ -5,7 +5,7 @@ import { AxiosResponse } from 'axios';
 
 type Props = {
     initialValues: BookFormData,
-    onSubmit: UseMutateFunction<AxiosResponse<any, any>, unknown, BookFormData, unknown>,
+    onSubmit: UseMutateFunction<AxiosResponse<unknown, unknown>, unknown, BookFormData, unknown>,
     onCancel: () => void,
     error: string,
     setError: Dispatch<React.SetStateAction<string>>
@@ -27,18 +27,48 @@ export default function BookForm({ initialValues, onSubmit, onCancel, error, set
             return;
         }
 
+        if ((formData.title).length > 255) {
+            setError('Invalid title! It must not exceed 255 characters!');
+
+            return;
+        }
+
+        if ((formData.imgUrl).length > 255) {
+            setError('Invalid image URL! It must not exceed 255 characters!');
+
+            return;
+        }
+
+        if ((formData.authorName).length > 50) {
+            setError('Invalid author name! It must not exceed 50 characters!');
+
+            return;
+        }
+
         if (!isNumber(formData.yearPubl) && !isNumber(formData.numEdition) && !isNumber(formData.nbrPages) ) {
             setError('Invalid fields type!');
             
             return;
         }
+
+        if (String(formData.numEdition).length > 3) {
+            setError('Invalid No. Edition! It must not exceed 3 characters!');
+
+            return;
+        }
+
+        if (String(formData.nbrPages).length > 5) {
+            setError('Invalid number of pages! It must not exceed 5 characters!');
+
+            return;
+        }
         
         onSubmit(formData);
-    };
+    }
 
     useEffect(() => {
         setError('');
-    }, [formData]);
+    }, [formData, setError]);
 
     return (
         <div className="w-[500px] h-[95vh] my-[10px] mx-auto p-[10px] border-[1px]  border-solid border-customBlue rounded-2xl">
@@ -49,6 +79,7 @@ export default function BookForm({ initialValues, onSubmit, onCancel, error, set
                         type="text"
                         id="title"
                         name="title"
+                        maxLength={255}
                         value={formData.title}
                         onChange={handleChange}
                         required
@@ -60,6 +91,7 @@ export default function BookForm({ initialValues, onSubmit, onCancel, error, set
                         type="text"
                         id="imgUrl"
                         name="imgUrl"
+                        maxLength={255}
                         value={formData.imgUrl}
                         onChange={handleChange}
                         required
@@ -71,6 +103,7 @@ export default function BookForm({ initialValues, onSubmit, onCancel, error, set
                         type="text"
                         id="authorName"
                         name="authorName"
+                        maxLength={50}
                         value={formData.authorName}
                         onChange={handleChange}
                         required
@@ -145,6 +178,7 @@ export default function BookForm({ initialValues, onSubmit, onCancel, error, set
                         type="number"
                         id="numEdition"
                         name="numEdition"
+                        maxLength={3}
                         value={formData.numEdition}
                         onChange={handleChange}
                         required
@@ -156,6 +190,7 @@ export default function BookForm({ initialValues, onSubmit, onCancel, error, set
                         type="number"
                         id="nbrPages"
                         name="nbrPages"
+                        maxLength={5}
                         value={formData.nbrPages}
                         onChange={handleChange}
                         required
@@ -164,7 +199,7 @@ export default function BookForm({ initialValues, onSubmit, onCancel, error, set
                 <button className="btn" onClick={() => handleSubmit()}>Submit</button>
                 <button className="btn" onClick={() => onCancel()}>Cancel</button>
             </>
-            <p>{error}</p>
+            <p className='error-msg'>{error}</p>
         </div>
     );
 }

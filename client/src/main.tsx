@@ -10,8 +10,6 @@ const client = new QueryClient({
 		queries: {
 			refetchOnWindowFocus: false,
 			refetchOnMount: true,
-			// staleTime: Infinity,
-			// cacheTime: 
 			retry: false,
 			retryOnMount: false,
 			networkMode: 'always'

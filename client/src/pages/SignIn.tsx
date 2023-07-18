@@ -1,14 +1,13 @@
 import { FormEvent, useEffect, useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { useMutation } from "@tanstack/react-query";
-import validator from "validator";
 import { isAnyOfTheAttributesAnEmptyString, fetcher } from "../functions";
 
 export default function SignIn() {
     const [showPassword, setShowPassword] = useState(false);
     const [isFirstLoad, setIsFirstLoad] = useState(true);
     const [payload, setPayload] = useState({
-        email: '',
+        emailOrID: '',
         password: ''
     }); 
 
@@ -46,9 +45,15 @@ export default function SignIn() {
             return;
         }
 
-        if (!validator.isEmail(payload.email)) {
-            setInputError('Invalid email!');
-            
+        if ((payload.emailOrID).length > 50) {
+            setInputError('Invalid email! It must not exceed 50 characters!');
+
+            return;
+        }
+
+        if ((payload.password).length > 64) {
+            setInputError('Invalid email! It must not exceed 64 characters!');
+
             return;
         }
 
@@ -57,7 +62,7 @@ export default function SignIn() {
 
     useEffect(() => {
         signIn();
-    }, []);
+    }, [signIn]);
 
     useEffect(() => {
         setInputError('');
@@ -69,13 +74,14 @@ export default function SignIn() {
         <div className="w-[500px] h-[95vh] my-[10px] mx-auto p-[10px] border-[1px]  border-solid border-customBlue rounded-2xl">
             <form onSubmit={(e) => handlesubmit(e)}>
                 <div>
-                        <label htmlFor="email">Email: </label>
+                        <label htmlFor="emailOrID">Email or ID: </label>
                         <input 
-                            type="email" 
-                            id="email" 
+                            type="text" 
+                            id="emailOrID"
+                            maxLength={50} 
                             required 
-                            value={payload.email} 
-                            onChange={(e) => setPayload({ ...payload, email: e.target.value })} 
+                            value={payload.emailOrID} 
+                            onChange={(e) => setPayload({ ...payload, emailOrID: e.target.value })} 
                         />
                     </div>
                     <div className="flex items-center">
@@ -83,6 +89,7 @@ export default function SignIn() {
                         <input 
                             type={showPassword ? 'text' : 'password'} 
                             id="password" 
+                            maxLength={64}
                             required 
                             value={payload.password} 
                             onChange={(e) => setPayload({ ...payload, password: e.target.value })} 
@@ -100,7 +107,7 @@ export default function SignIn() {
                     className="btn" 
                 />
             </form>
-            <p className="error">{inputError}</p>
+            <p className="error-msg">{inputError}</p>
 
             <br />
             <hr />

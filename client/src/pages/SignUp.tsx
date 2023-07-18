@@ -41,14 +41,36 @@ export default function SignUp() {
             return;
         }
 
+        if ((payload.firstName).length > 50) {
+            setInputError('Invalid first name! It must not exceed 50 characters!');
+
+            return;
+        }
+
+        if ((payload.lastName).length > 50) {
+            setInputError('Invalid last name! It must not exceed 50 characters!');
+
+            return;
+        }
+
+        if ((payload.email).length > 50) {
+            setInputError('Invalid email! It must not exceed 50 characters!');
+
+            return;
+        }
+
         if (!validator.isEmail(payload.email)) {
             setInputError('Invalid email!');
 
             return;
         }
 
-        if (!validator.isStrongPassword(payload.password, { minLength: 8, minLowercase: 1, minUppercase: 1, minNumbers: 1, minSymbols: 1, })) {
-            setInputError('Please use a strong password! (Minimum 8 characters & at least: 1 uppercase character, 1 lowercase character, 1 digit/number, 1 special character)');
+        if (!validator.isStrongPassword(payload.password, { minLength: 8, minLowercase: 1, minUppercase: 1, minNumbers: 1, minSymbols: 1 }) 
+            || (payload.password).length > 64
+        ) {
+            setInputError(`Please use a strong password! (Between 8 and 64 characters, and must contain at least: 
+                1 uppercase character, 1 lowercase character, 1 digit/number, 1 special character)`
+            );
             
             return;
         }
@@ -81,6 +103,7 @@ export default function SignUp() {
                     <input 
                         type="text" 
                         id="firstName" 
+                        maxLength={50}
                         required 
                         value={payload.firstName} 
                         onChange={(e) => setPayload({ ...payload, firstName: e.target.value })} 
@@ -91,6 +114,7 @@ export default function SignUp() {
                     <input 
                         type="text" 
                         id="lastName" 
+                        maxLength={50}
                         required 
                         value={payload.lastName} 
                         onChange={(e) => setPayload({ ...payload, lastName: e.target.value })} 
@@ -101,6 +125,7 @@ export default function SignUp() {
                     <input 
                         type="email" 
                         id="email" 
+                        maxLength={50}
                         required 
                         value={payload.email} 
                         onChange={(e) => setPayload({ ...payload, email: e.target.value })} 
@@ -128,7 +153,7 @@ export default function SignUp() {
                     className="btn" 
                 />
             </form>
-            <p className="error">{inputError}</p>
+            <p className="error-msg">{inputError}</p>
 
             <br />
             <hr />

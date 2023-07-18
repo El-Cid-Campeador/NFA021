@@ -49,7 +49,7 @@ export default function AdvancedSearch() {
                 ) : (
                     queryBooks!.result.length > 0 ? (
                         <Books result={queryBooks!.result} />
-                    ) : <p className="text-center mt-[10px]">No results found!</p>
+                    ) : <h1 className="text-center mt-[10px]">No results found!</h1>
                 )
             }
         </>

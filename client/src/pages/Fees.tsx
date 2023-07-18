@@ -53,7 +53,7 @@ export default function Fees() {
 
         const { amount } = payload;
 
-        if (amount === '' || isNaN(Number(amount))) {
+        if (amount === '' || isNaN(Number(amount)) || amount.length > 5) {
             setInputError('Invalid amount!');
 
             return;
@@ -99,6 +99,7 @@ export default function Fees() {
                                     <input 
                                         type="text" 
                                         id="amount" 
+                                        maxLength={5}
                                         required
                                         value={payload.amount} 
                                         onChange={(e) => setPayload({ ...payload, amount: e.target.value })} 
@@ -113,7 +114,7 @@ export default function Fees() {
                                     </select> 
                                     <input type="submit" value="Pay" className="block btn" />
                                 </form>
-                                <p className="error">{inputError}</p>
+                                <p className="error-msg">{inputError}</p>
                             </>
                         )
                     }

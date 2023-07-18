@@ -86,7 +86,7 @@ function generateYears(): number[] {
 }
 
 function isAnyOfTheAttributesAnEmptyString(obj: any) {
-    for (var key in obj) {
+    for (const key in obj) {
         if (typeof obj[key] === 'string') {
             if (obj[key] === '') {
                 return true;
@@ -98,7 +98,7 @@ function isAnyOfTheAttributesAnEmptyString(obj: any) {
 }
 
 function areAllAttributesEmptyStrings(obj: any) {
-    for (var key in obj) {
+    for (const key in obj) {
         if (typeof obj[key] === 'string') {
             if (obj[key] !== '') {
                 return false;

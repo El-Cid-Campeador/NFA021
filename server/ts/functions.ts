@@ -30,7 +30,7 @@ async function connectDB() {
             firstName VARCHAR(50) NOT NULL,
             lastName VARCHAR(50) NOT NULL,
             email VARCHAR(50) NOT NULL UNIQUE,
-            password VARCHAR(255) NOT NULL,
+            password VARCHAR(100) NOT NULL,
             isMember TINYINT UNSIGNED NOT NULL,
             isDeleted TINYINT UNSIGNED NOT NUll,
             createdAt TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
@@ -44,11 +44,11 @@ async function connectDB() {
             imgUrl VARCHAR(255) NOT NULL,
             authorName VARCHAR(50) NOT NULL,
             category VARCHAR(50) NOT NULL,
-            lang VARCHAR(255) NOT NULL,
+            lang VARCHAR(50) NOT NULL,
             descr LONGTEXT NOT NULL,
             yearPubl SMALLINT UNSIGNED NOT NULL,
-            numEdition TINYINT UNSIGNED NOT NULL,
-            nbrPages SMALLINT UNSIGNED NOT NULL,
+            numEdition SMALLINT UNSIGNED NOT NULL,
+            nbrPages MEDIUMINT UNSIGNED NOT NULL,
             memberId VARCHAR(12),
             borrowedAt TIMESTAMP DEFAULT 0,
             isDeleted TINYINT UNSIGNED NOT NUll,
@@ -59,7 +59,7 @@ async function connectDB() {
     );
 
     await conn.execute(`CREATE TABLE IF NOT EXISTS Fees (
-            id VARCHAR(255) PRIMARY KEY,
+            id VARCHAR(36) PRIMARY KEY,
             amount FLOAT NOT NULL,
             year SMALLINT UNSIGNED NOT NULL,
             memberId VARCHAR(12) NOT NULL,
@@ -70,7 +70,7 @@ async function connectDB() {
     );
 
     await conn.execute(`CREATE TABLE IF NOT EXISTS Suggestions (
-            id VARCHAR(255) PRIMARY KEY,
+            id VARCHAR(36) PRIMARY KEY,
             descr LONGTEXT NOT NULL,
             memberId VARCHAR(12) NOT NULL,
             bookId VARCHAR(36) NOT NULL,

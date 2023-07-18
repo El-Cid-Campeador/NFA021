@@ -5,10 +5,10 @@ type Props = {
 export default function GetSuggestion({ sugg }: Props) {
     return (
         <li>
-            <p>{sugg.descr}</p>
             <p>{sugg.firstName}</p>
             <p>{sugg.lastName}</p>
             <p>{sugg.createdAt}</p>
+            <p>{sugg.descr}</p>
         </li>
     );
 }

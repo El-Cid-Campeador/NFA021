@@ -106,7 +106,7 @@ export default function GetBook() {
 
             setIsInputIdFormShowing(false);
         },
-        onError: (error: AxiosError<any, any>) => {
+        onError: (error: AxiosError<never, never>) => {
             if (error.response!.status === 401) {
                 return navigate('/signin');
             }
@@ -190,7 +190,7 @@ export default function GetBook() {
                 <p>Status: {displayStatus()}</p>
                 {
                     isMember === 0 && (
-                        <div className="flex justify-between w-[150px]">
+                        <div className="flex gap-[10px] w-[150px]">
                             <button onClick={() => setIsModalShowing(true)} className="btn">Delete</button>
                             <button onClick={() => navigate(`/books/edit/${bookId}`, { state: queryBook?.result })} className="btn">Edit</button>
 
@@ -198,29 +198,11 @@ export default function GetBook() {
                                 queryBook?.result.memberId ? (
                                     <button onClick={() => lendBook(null)}>Return</button>
                                 ) : (
-                                    <button onClick={() => setIsInputIdFormShowing(true)} className="btn">Lend</button>
+                                    <button onClick={() => setIsInputIdFormShowing((prev) => !prev)} className="btn">Lend</button>
                                 )
                             }
 
-                            {
-                                isInputIdFormShowing && (
-                                    <>
-                                        <form onSubmit={(e) => handleLending(e)}>
-                                            <input 
-                                                type="tel" 
-                                                id="id" 
-                                                pattern="\d*"
-                                                minLength={12}
-                                                maxLength={12}
-                                                required 
-                                                value={memberId} 
-                                                onChange={(e) => setMemberId(e.target.value)} 
-                                            />
-                                        </form>
-                                        <p>{inputIdError}</p>
-                                    </>
-                                )
-                            }
+                            
 
                             {
                                 isModalShowing && (
@@ -231,6 +213,32 @@ export default function GetBook() {
                                     />
                                 )
                             }
+                        </div>
+                    )
+                }
+
+                {
+                    isInputIdFormShowing && (
+                        <div>
+                            <form onSubmit={(e) => handleLending(e)}>
+                                <label htmlFor="id">Member ID: </label>
+                                <input 
+                                    type="tel" 
+                                    id="id" 
+                                    pattern="\d*"
+                                    minLength={12}
+                                    maxLength={12}
+                                    required 
+                                    value={memberId} 
+                                    onChange={(e) => setMemberId(e.target.value)} 
+                                />
+                                {
+                                    memberId ? (
+                                        <input type="submit" value={`Lend to ${memberId}`} className="btn" />
+                                    ) : <></>
+                                }
+                            </form>
+                            <p className="error-msg">{inputIdError}</p>
                         </div>
                     )
                 }
