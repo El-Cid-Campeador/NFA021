@@ -10,7 +10,7 @@ type Member = {
     firstName: string, 
     lastName: string,
     email: string,
-    createdAt: string
+    creationDate: string
 }
 
 type Book = {
@@ -45,5 +45,5 @@ type Suggestion = {
     descr: string,
     firstName: string,
     lastName: string,
-    createdAt: string
+    creationDate: string
 }
