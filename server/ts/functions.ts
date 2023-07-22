@@ -1,15 +1,7 @@
 import { Request, Response, NextFunction } from "express";
 import mysql from "mysql2/promise";
 import { SessionData } from "express-session";
-import bcrypt from "bcrypt";
 import "dotenv/config";
-
-type User = { 
-    id: string,
-    firstName: string, 
-    lastName: string, 
-    role?: string 
-}
 
 interface UserSession extends SessionData {
     user?: User
@@ -21,7 +13,7 @@ async function connectDB() {
     const conn = await mysql.createConnection({
         host: 'localhost',
         user: 'root',
-        password: 'root',
+        password: process.env.DB_PASSWORD!,
         database: 'nfa021'
     });
 
@@ -46,7 +38,7 @@ async function connectDB() {
 
     await conn.execute(`CREATE TABLE IF NOT EXISTS Librarians (
             id VARCHAR(12) PRIMARY KEY,
-            addedBy VARCHAR(12),
+            addedBy VARCHAR(12) NOT NULL,
             FOREIGN KEY (id) REFERENCES Users(id),
             FOREIGN KEY (addedBy) REFERENCES Librarians(id)
         )`
@@ -75,24 +67,15 @@ async function connectDB() {
     await conn.execute(`CREATE TABLE IF NOT EXISTS Borrowings (
             memberId VARCHAR(12),
             bookId VARCHAR(36),
-            lendingDate TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-            librarianId VARCHAR(12) NOT NULL,
-            PRIMARY KEY (memberId, bookId, lendingDate),
+            borrowDate TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+            lenderId VARCHAR(12) NOT NULL,
+            returnDate TIMESTAMP,
+            receiverId VARCHAR(12),
+            PRIMARY KEY (memberId, bookId, borrowDate),
             FOREIGN KEY (memberId) REFERENCES Members(id),
             FOREIGN KEY (bookId) REFERENCES Books(id),
-            FOREIGN KEY (librarianId) REFERENCES Books(id)
-        )`
-    );
-
-    await conn.execute(`CREATE TABLE IF NOT EXISTS Returns (
-            memberId VARCHAR(12),
-            bookId VARCHAR(36),
-            returnDate TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-            librarianId VARCHAR(12) NOT NULL,
-            PRIMARY KEY (memberId, bookId, returnDate),
-            FOREIGN KEY (memberId) REFERENCES Use Members(id),
-            FOREIGN KEY (bookId) REFERENCES Books(id),
-            FOREIGN KEY (librarianId) REFERENCES Books(id)
+            FOREIGN KEY (lenderId) REFERENCES Librarians(id),
+            FOREIGN KEY (receiverId) REFERENCES Librarians(id)
         )`
     );
 
@@ -142,6 +125,37 @@ async function checkIfMemberExists(memberId: string) {
     return rows[0].length ? true : false;
 }
 
+async function getUser(emailOrID: string, password: string) {
+    const sql = `SELECT * FROM Users WHERE (email = ? OR id = ?) AND isDeleted = 0`;
+    
+    const stmt = await conn.prepare(sql);
+    const rows = await stmt.execute([emailOrID, emailOrID]) as any[][];
+    conn.unprepare(sql);
+
+    return rows[0];
+}
+
+async function getBookBorrowInfo(bookId: string) {
+    const sql = `SELECT * FROM Borrowings WHERE bookId = ? ORDER BY borrowDate LIMIT 1`;
+    const stmt = await conn.prepare(sql);
+    const rows = await stmt.execute([bookId]) as any[][];
+    conn.unprepare(sql);
+
+    return rows[0][0];
+}
+
+async function registerChanges(bookId: string, librarianId: string, newValues: any) {
+    let sql = `SELECT title, imgUrl, authorName, category, lang, descr, yearPubl, numEdition, nbrPages FROM Books WHERE id = ?`;
+    let stmt = await conn.prepare(sql);
+    const rows = await stmt.execute([bookId]) as any[][];
+    conn.unprepare(sql);
+
+    sql = `INSERT INTO Modifications (librarianId, bookId, oldValues, newValues) VALUES (?, ?, ?, ?)`;
+    stmt = await conn.prepare(sql);
+    await stmt.execute([librarianId, bookId, JSON.stringify(rows[0][0]), JSON.stringify(newValues)]);
+    conn.unprepare(sql);
+}
+
 async function getTotalFeesByYear(memberId: string) {
     const sql = `SELECT id, year, SUM(amount) AS amount FROM Fees WHERE memberId = ? GROUP BY year`;
     const stmt = await conn.prepare(sql);
@@ -171,4 +185,4 @@ function librarianMiddleware(req: Request, res: Response, next: NextFunction) {
     res.status(403).send('Access denied!');
 }
 
-export { conn, UserSession, checkIfMemberExists, getTotalFeesByYear, authMiddleware, librarianMiddleware };
+export { UserSession, conn, checkIfMemberExists, getUser, getBookBorrowInfo, registerChanges, getTotalFeesByYear, authMiddleware, librarianMiddleware };

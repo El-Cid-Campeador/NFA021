@@ -1,7 +1,7 @@
 import express from "express";
 import bcrypt from "bcrypt";
 
-import { conn, UserSession, authMiddleware } from "../../functions.js";
+import { conn, authMiddleware, getUser, UserSession } from "../../functions.js";
 import memberRouter from "./member.js";
 
 const userRouter = express.Router();
@@ -48,14 +48,10 @@ userRouter.post('/login', async (req, res) => {
 
     const { emailOrID, password } = req.body;
 
-    const sql = `SELECT * FROM Users WHERE (email = ? OR id = ?) AND isDeleted = 0`;
+    const result = await getUser(emailOrID, password);
     
-    const stmt = await conn.prepare(sql);
-    const rows = await stmt.execute([emailOrID, emailOrID]) as any[][];
-    conn.unprepare(sql);
-    
-    if (rows[0].length) {
-        const { id, firstName, lastName, password: hash_db } = rows[0][0];
+    if (result.length) {
+        const { id, firstName, lastName, password: hash_db } = result[0];
         
         if (bcrypt.compareSync(password, hash_db)) {
             const sql = `SELECT addedBy FROM Librarians WHERE id = ?`;

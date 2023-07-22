@@ -1,5 +1,5 @@
 import express from "express";
-import { conn, authMiddleware, librarianMiddleware, checkIfMemberExists, UserSession } from "../functions.js";
+import { conn, authMiddleware, librarianMiddleware, checkIfMemberExists, UserSession, registerChanges, getBookBorrowInfo } from "../functions.js";
 
 const bookRouter = express.Router();
 
@@ -101,6 +101,28 @@ bookRouter.route('/suggest')
         res.json({ msg: 'Successfully added!' });
     });
 
+bookRouter.get('/modifications', async (req, res) => {
+    const { id: bookId } = req.query;
+
+    const sql = `SELECT * FROM Modifications WHERE bookId = ? ORDER BY modificationDate`;
+    const stmt = await conn.prepare(sql);
+    const rows = await stmt.execute([bookId]) as any[][];
+    conn.unprepare(sql);
+
+    res.json({ result: rows[0] });
+});
+    
+bookRouter.get('/borrowings', async (req, res) => {
+    const { id: bookId } = req.query;
+
+    const sql = `SELECT * FROM borrowings WHERE bookId = ? ORDER BY borrowDate`;
+    const stmt = await conn.prepare(sql);
+    const rows = await stmt.execute([bookId]) as any[][];
+    conn.unprepare(sql);
+
+    res.json({ result: rows[0] });
+});
+
 bookRouter.post('/lend', librarianMiddleware, async (req, res) => {
     const { bookId, librarianId } = req.query;
     const { memberId } = req.body;
@@ -109,7 +131,7 @@ bookRouter.post('/lend', librarianMiddleware, async (req, res) => {
         return res.status(404).send('User not found!');
     }
 
-    const sql = `INSERT INTO Borrowings (memberId, bookId, librarianId)`;
+    const sql = `INSERT INTO Borrowings (memberId, bookId, lenderId) VALUES (?, ?, ?)`;
     const stmt = await conn.prepare(sql);
     await stmt.execute([memberId, bookId, librarianId]);
     conn.unprepare(sql);
@@ -117,17 +139,12 @@ bookRouter.post('/lend', librarianMiddleware, async (req, res) => {
     res.json({ msg: 'Successfully borrowed!' });
 });
 
-bookRouter.post('/return', librarianMiddleware, async (req, res) => {
-    const { bookId, librarianId } = req.query;
-    const { memberId } = req.body;
+bookRouter.patch('/return', librarianMiddleware, async (req, res) => {
+    const { memberId, bookId, librarianId, borrowDate } = req.body;
 
-    if (!await checkIfMemberExists(memberId)) {
-        return res.status(404).send('User not found!');
-    }
-
-    const sql = `INSERT INTO Returns (memberId, bookId, librarianId)`;
+    const sql = `UPDATE Borrowings SET returnDate = CURRENT_TIMESTAMP, receiverId = ? WHERE memberId = ? AND bookId = ? AND borrowDate = ?`;
     const stmt = await conn.prepare(sql);
-    await stmt.execute([memberId, bookId, librarianId]);
+    await stmt.execute([librarianId, memberId, bookId, borrowDate]);
     conn.unprepare(sql);
 
     res.json({ msg: 'Successfully returned back!' });
@@ -148,12 +165,17 @@ bookRouter.route('/:id')
         const stmt = await conn.prepare(sql);
         const rows = await stmt.execute([bookId]) as any[][];
         conn.unprepare(sql);
+
+        const info = await getBookBorrowInfo(bookId);
         
-        res.json({ result: rows[0][0] });
+        res.json({ result: rows[0][0], info });
     })
     .patch(librarianMiddleware, async (req, res) => {
+        const { librarianId } = req.query;
         const { id: bookId } = req.params;
         const { title, imgUrl, authorName, category, lang, descr, yearPubl, numEdition, nbrPages } = req.body;
+
+        await registerChanges(bookId, String(librarianId), req.body);
 
         const sql = `UPDATE Books SET title = ?, imgUrl = ?, authorName = ?, category = ?, lang = ?, descr = ?, yearPubl = ?, numEdition = ?, nbrPages = ? WHERE id = ?`;
         const stmt = await conn.prepare(sql);
