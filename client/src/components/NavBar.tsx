@@ -24,7 +24,7 @@ export default function NavBar() {
         }
     });
 
-    const { userData: { isMember } } = useLocalStorage();
+    const { userData: { role } } = useLocalStorage();
 
     return (
         <div className="mb-[70px]">
@@ -35,7 +35,7 @@ export default function NavBar() {
                 <Link to="/search">Books Search</Link>
                 <Link to="/advanced_search">Advanced Books Search</Link>
                 {
-                    isMember === 0 && (
+                    role && (
                         <div>
                             <Link to="/dashboard">Dashboard</Link>
                         </div>

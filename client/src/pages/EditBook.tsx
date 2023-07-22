@@ -12,7 +12,7 @@ export default function EditBook() {
     
     const { state } = location;
     
-    const initialValues: BookFormData = useMemo(() => {
+    const initialValues: Book = useMemo(() => {
         return state;
     }, [state]);
     
@@ -23,7 +23,7 @@ export default function EditBook() {
     const queryClient = useQueryClient();
     
     const { mutate } = useMutation({
-        mutationFn: async (payload: BookFormData) => {
+        mutationFn: async (payload: Book) => {
             const res = await fetcher.patch(`http://localhost:8080/books/${bookId}`, { ...payload });
 
             return res;

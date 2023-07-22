@@ -7,7 +7,7 @@ export default function GetSuggestion({ sugg }: Props) {
         <li>
             <p>{sugg.firstName}</p>
             <p>{sugg.lastName}</p>
-            <p>{sugg.creationDate}</p>
+            <p>{sugg.additionDate}</p>
             <p>{sugg.descr}</p>
         </li>
     );

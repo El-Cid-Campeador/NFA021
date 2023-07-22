@@ -2,7 +2,7 @@ type User = {
     id: string,
     firstName: string, 
     lastName: string, 
-    isMember: number 
+    role?: string 
 }
 
 type Member = {
@@ -10,11 +10,11 @@ type Member = {
     firstName: string, 
     lastName: string,
     email: string,
-    creationDate: string
+    additionDate: string
 }
 
 type Book = {
-    id: string, 
+    id?: string, 
     title: string, 
     imgUrl: string, 
     authorName: string, 
@@ -23,21 +23,7 @@ type Book = {
     descr: string,  
     yearPubl: number, 
     numEdition: number,
-    nbrPages: number,
-    memberId: string,
-    borrowedAt: string 
-}
-
-type BookFormData = {
-    title: string,
-    imgUrl: string,
-    authorName: string,
-    category: string,
-    lang: string,
-    descr: string,
-    yearPubl: number,
-    numEdition: number,
-    nbrPages: number
+    nbrPages: number 
 }
 
 type Suggestion = {
@@ -45,5 +31,5 @@ type Suggestion = {
     descr: string,
     firstName: string,
     lastName: string,
-    creationDate: string
+    additionDate: string
 }

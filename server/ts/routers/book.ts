@@ -1,5 +1,5 @@
 import express from "express";
-import { conn, authMiddleware, librarianMiddleware, checkIfMemberExists, UserSession, registerChanges, getBookBorrowInfo } from "../functions.js";
+import { conn, authMiddleware, librarianMiddleware, getMember, UserSession, registerChanges, getBookBorrowInfo } from "../functions.js";
 
 const bookRouter = express.Router();
 
@@ -113,7 +113,7 @@ bookRouter.get('/modifications', async (req, res) => {
 });
     
 bookRouter.get('/borrowings', async (req, res) => {
-    const { id: bookId } = req.query;
+    const { bookId } = req.query;
 
     const sql = `SELECT * FROM borrowings WHERE bookId = ? ORDER BY borrowDate`;
     const stmt = await conn.prepare(sql);
@@ -127,7 +127,7 @@ bookRouter.post('/lend', librarianMiddleware, async (req, res) => {
     const { bookId, librarianId } = req.query;
     const { memberId } = req.body;
 
-    if (!await checkIfMemberExists(memberId)) {
+    if (!(await getMember(memberId)).length) {
         return res.status(404).send('User not found!');
     }
 
@@ -140,7 +140,8 @@ bookRouter.post('/lend', librarianMiddleware, async (req, res) => {
 });
 
 bookRouter.patch('/return', librarianMiddleware, async (req, res) => {
-    const { memberId, bookId, librarianId, borrowDate } = req.body;
+    const { bookId, librarianId, borrowDate } = req.query;
+    const { memberId } = req.body;
 
     const sql = `UPDATE Borrowings SET returnDate = CURRENT_TIMESTAMP, receiverId = ? WHERE memberId = ? AND bookId = ? AND borrowDate = ?`;
     const stmt = await conn.prepare(sql);

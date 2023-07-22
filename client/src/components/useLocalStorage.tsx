@@ -2,11 +2,11 @@ import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 
 export default function useLocalStorage() {
-    const [userData, setUserData] = useState({
+    const [userData, setUserData] = useState<User>({
         id: '',
         firstName: '',
         lastName: '',
-        isMember: -1
+        role: ''
     });
 
     const navigate = useNavigate();

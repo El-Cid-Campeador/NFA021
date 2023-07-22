@@ -116,13 +116,13 @@ async function connectDB() {
     return conn;
 }
 
-async function checkIfMemberExists(memberId: string) {
-    const sql = `SELECT id FROM Users WHERE id IN (SELECT id FROM Members) AND id = ?`;
+async function getMember(memberId: string) {
+    const sql = `SELECT Users.*, Members.deletedBy FROM Users JOIN Members ON Users.id = Members.id WHERE id = ?`;
     const stmt = await conn.prepare(sql);
     const rows = await stmt.execute([memberId]) as any[][];
     conn.unprepare(sql);
 
-    return rows[0].length ? true : false;
+    return rows[0];
 }
 
 async function getUser(emailOrID: string, password: string) {
@@ -185,4 +185,4 @@ function librarianMiddleware(req: Request, res: Response, next: NextFunction) {
     res.status(403).send('Access denied!');
 }
 
-export { UserSession, conn, checkIfMemberExists, getUser, getBookBorrowInfo, registerChanges, getTotalFeesByYear, authMiddleware, librarianMiddleware };
+export { UserSession, conn, getMember, getUser, getBookBorrowInfo, registerChanges, getTotalFeesByYear, authMiddleware, librarianMiddleware };

@@ -5,7 +5,7 @@ import BookForm from "../components/BookForm";
 import NavBar from "../components/NavBar";
 import { fetcher } from "../functions";
 
-const initialValues: BookFormData = {
+const initialValues: Book = {
     title: '', 
     imgUrl: '', 
     authorName: '', 
@@ -25,7 +25,7 @@ export default function AddBook() {
     const queryClient = useQueryClient();
     
     const { mutate } = useMutation({
-        mutationFn: async (payload: BookFormData) => {            
+        mutationFn: async (payload: Book) => {            
             const res = await fetcher.post(`http://localhost:8080/books`, { ...payload });
 
             return res;

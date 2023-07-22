@@ -32,7 +32,7 @@ export default function GetBook() {
         queryFn: async () => {
             const { data } = await fetcher.get(`http://localhost:8080/books/${bookId}`);
             if (data.result) {
-                return data as { result: Book };
+                return data as { result: Book, info: any };
             }
             
             throw new Error();
@@ -93,12 +93,13 @@ export default function GetBook() {
     });
 
     const { mutate: lendBook } = useMutation({
-        mutationFn: async (memberId: string | null) => {
-            return await fetcher.patch(`http://localhost:8080/books/lend`, {
+        mutationFn: async () => {
+            return await fetcher.post(`http://localhost:8080/books/lend`, {
                     memberId
                 }, {
                     params: {
-                        id: bookId
+                        bookId,
+                        librarianId: id
                     }
                 }
             );
@@ -121,15 +122,39 @@ export default function GetBook() {
         }
     });
 
-    const { userData: { isMember } } = useLocalStorage();
+    const { mutate: returnBook } = useMutation({
+        mutationFn: async () => {
+            return await fetcher.patch(`http://localhost:8080/books/return`, {
+                    memberId
+                }, {
+                    params: {
+                        bookId,
+                        librarianId: id,
+                        borrowDate: queryBook?.info.borrowDate
+                    }
+                }
+            );
+        },
+        onSuccess: () => {
+            queryClient.invalidateQueries({ queryKey: ['books', bookId], exact: true });
+
+            setIsInputIdFormShowing(false);
+        },
+        onError: () => {
+            navigate('/signin');
+        }
+    });
+
+    const { userData: { role } } = useLocalStorage();
     
     function displayStatus() {
-        const memberId = queryBook?.result.memberId;
+        // eslint-disable-next-line no-unsafe-optional-chaining
+        const { memberId, returnDate } = queryBook?.info;
         let status = '';
         
-        if (memberId) {
-            status = `Borrowed on ${queryBook?.result.borrowedAt}`;
-            if (isMember === 0) {
+        if (!returnDate) {
+            status = `Borrowed on ${returnDate}`;
+            if (role) {
                 status += ` by ${memberId}`;
             }
         } else {
@@ -160,7 +185,7 @@ export default function GetBook() {
             return;
         }
 
-        lendBook(memberId);
+        lendBook();
     }
 
     useEffect(() => {
@@ -193,20 +218,18 @@ export default function GetBook() {
                 </div>
                 <p>Status: {displayStatus()}</p>
                 {
-                    isMember === 0 && (
+                    role && (
                         <div className="flex gap-[10px] w-[150px]">
                             <button onClick={() => setIsModalShowing(true)} className="btn">Delete</button>
                             <button onClick={() => navigate(`/books/edit/${bookId}`, { state: queryBook?.result })} className="btn">Edit</button>
 
                             {
-                                queryBook?.result.memberId ? (
-                                    <button onClick={() => lendBook(null)} className="btn">Return</button>
-                                ) : (
+                                queryBook?.info.returnDate ? (
                                     <button onClick={() => setIsInputIdFormShowing((prev) => !prev)} className="btn">Lend</button>
+                                ) : (
+                                    <button onClick={() => returnBook()} className="btn">Return</button>
                                 )
                             }
-
-                            
 
                             {
                                 isModalShowing && (
@@ -262,7 +285,7 @@ export default function GetBook() {
                 }
 
                 {
-                    isMember === 1 && (
+                    !role && (
                         <>
                             <button onClick={() => setIsSuggestionFormShowing(prev => !prev)} className="btn">Add suggestion</button>
                           

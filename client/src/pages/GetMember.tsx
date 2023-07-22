@@ -17,7 +17,7 @@ export default function GetMember() {
     const { data: queryUser, isLoading: isLoadingUser, error: errorUser, isFetching: isFetchingUser } = useQuery({
         queryKey: ['members', memberId],
         queryFn: async () => {
-            const { data } = await fetcher.get(`http://localhost:8080/users/${memberId}`);
+            const { data } = await fetcher.get(`http://localhost:8080/members/${memberId}`);
             if (data.result) {
                 return data as { result: Member };
             }
@@ -28,7 +28,7 @@ export default function GetMember() {
 
     const { mutate: deleteUser} = useMutation({
         mutationFn: async () => {
-            return await fetcher.delete(`http://localhost:8080/users/${memberId}`);
+            return await fetcher.delete(`http://localhost:8080/members/${memberId}`);
         },
         onSuccess: () => {
             queryClient.invalidateQueries({ queryKey: ['members'] });
@@ -51,7 +51,7 @@ export default function GetMember() {
                 <p>{queryUser?.result.firstName}</p>
                 <p>{queryUser?.result.lastName}</p>
                 <p>{queryUser?.result.email}</p>
-                <p>{queryUser?.result.createdAt}</p>
+                <p>{queryUser?.result.additionDate}</p>
                 <Link to={`/fees/${memberId}`}>
                     <button className="btn">View {queryUser?.result.firstName} {queryUser?.result.lastName}'s fees</button>
                 </Link>

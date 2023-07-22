@@ -4,15 +4,15 @@ import { UseMutateFunction } from '@tanstack/react-query';
 import { AxiosResponse } from 'axios';
 
 type Props = {
-    initialValues: BookFormData,
-    onSubmit: UseMutateFunction<AxiosResponse<unknown, unknown>, unknown, BookFormData, unknown>,
+    initialValues: Book,
+    onSubmit: UseMutateFunction<AxiosResponse<unknown, unknown>, unknown, Book, unknown>,
     onCancel: () => void,
     error: string,
     setError: Dispatch<React.SetStateAction<string>>
 }
 
 export default function BookForm({ initialValues, onSubmit, onCancel, error, setError }: Props) {
-    const [formData, setFormData] = useState<BookFormData>(initialValues);
+    const [formData, setFormData] = useState<Book>(initialValues);
 
     function handleChange(e: ChangeEvent<HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement>) {
         const { name, value } = e.target;
