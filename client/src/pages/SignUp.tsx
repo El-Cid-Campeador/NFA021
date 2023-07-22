@@ -3,6 +3,7 @@ import { useMutation } from "@tanstack/react-query";
 import validator from "validator";
 import { fetcher, isAnyOfTheAttributesAnEmptyString } from "../functions";
 import { Link, useNavigate } from "react-router-dom";
+import { AxiosError } from "axios";
 
 export default function SignUp() {
     const [showPassword, setShowPassword] = useState(false);
@@ -22,7 +23,10 @@ export default function SignUp() {
             return await fetcher.post(`http://localhost:8080/signup`, { ...payload });
         },
         onSuccess: () => {
-            navigate('/home');
+            navigate('/signin');
+        },
+        onError: (error: AxiosError<never, never>) => {
+            setInputError(error.response!.data);
         }
     });
 

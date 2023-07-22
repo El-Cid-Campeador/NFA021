@@ -23,8 +23,16 @@ async function connectDB() {
             lastName VARCHAR(50) NOT NULL,
             email VARCHAR(50) NOT NULL UNIQUE,
             password VARCHAR(100) NOT NULL,
-            additionDate TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+            additionDate TIMESTAMP DEFAULT NOW(),
             deletionDate TIMESTAMP
+        )`
+    ); 
+
+    await conn.execute(`CREATE TABLE IF NOT EXISTS Librarians (
+            id VARCHAR(12) PRIMARY KEY,
+            addedBy VARCHAR(12) NOT NULL,
+            FOREIGN KEY (id) REFERENCES Users(id),
+            FOREIGN KEY (addedBy) REFERENCES Librarians(id)
         )`
     );
 
@@ -33,14 +41,6 @@ async function connectDB() {
             deletedBy VARCHAR(12),
             FOREIGN KEY (id) REFERENCES Users(id),
             FOREIGN KEY (deletedBy) REFERENCES Librarians(id)
-        )`
-    );
-
-    await conn.execute(`CREATE TABLE IF NOT EXISTS Librarians (
-            id VARCHAR(12) PRIMARY KEY,
-            addedBy VARCHAR(12) NOT NULL,
-            FOREIGN KEY (id) REFERENCES Users(id),
-            FOREIGN KEY (addedBy) REFERENCES Librarians(id)
         )`
     );
 
@@ -56,8 +56,8 @@ async function connectDB() {
             numEdition SMALLINT UNSIGNED NOT NULL,
             nbrPages MEDIUMINT UNSIGNED NOT NULL,
             addedBy VARCHAR(12) NOT NULL,
-            additionDate TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-            deletedBy VARCHAR(12),
+            additionDate TIMESTAMP DEFAULT NOW(),
+            deletedBy VARCHAR(12) ,
             deletionDate TIMESTAMP,
             FOREIGN KEY (addedBy) REFERENCES Librarians(id),
             FOREIGN KEY (deletedBy) REFERENCES Librarians(id)
@@ -67,10 +67,10 @@ async function connectDB() {
     await conn.execute(`CREATE TABLE IF NOT EXISTS Borrowings (
             memberId VARCHAR(12),
             bookId VARCHAR(36),
-            borrowDate TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+            borrowDate TIMESTAMP DEFAULT NOW(),
             lenderId VARCHAR(12) NOT NULL,
             returnDate TIMESTAMP,
-            receiverId VARCHAR(12),
+            receiverId VARCHAR(12) ,
             PRIMARY KEY (memberId, bookId, borrowDate),
             FOREIGN KEY (memberId) REFERENCES Members(id),
             FOREIGN KEY (bookId) REFERENCES Books(id),
@@ -82,7 +82,7 @@ async function connectDB() {
     await conn.execute(`CREATE TABLE IF NOT EXISTS Modifications (
             librarianId VARCHAR(12),
             bookId VARCHAR(36),
-            modificationDate TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+            modificationDate TIMESTAMP DEFAULT NOW(),
             oldValues JSON NOT NULL,
             newValues JSON NOT NULL,
             PRIMARY KEY (librarianId, bookId, modificationDate),
@@ -97,7 +97,7 @@ async function connectDB() {
             year SMALLINT UNSIGNED NOT NULL,
             memberId VARCHAR(12) NOT NULL,
             librarianId VARCHAR(12) NOT NULL,
-            paymentDate TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+            paymentDate TIMESTAMP DEFAULT NOW(),
             FOREIGN KEY (memberId) REFERENCES Members(id)
         )`
     );
@@ -107,7 +107,7 @@ async function connectDB() {
             descr LONGTEXT NOT NULL,
             memberId VARCHAR(12) NOT NULL,
             bookId VARCHAR(36) NOT NULL,
-            additionDate TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+            additionDate TIMESTAMP DEFAULT NOW(),
             FOREIGN KEY (memberId) REFERENCES Members(id),
             FOREIGN KEY (bookId) REFERENCES Books(id)
         )`
@@ -117,7 +117,7 @@ async function connectDB() {
 }
 
 async function getMember(memberId: string) {
-    const sql = `SELECT Users.*, Members.deletedBy FROM Users JOIN Members ON Users.id = Members.id WHERE id = ?`;
+    const sql = `SELECT Users.*, Members.deletedBy FROM Users JOIN Members ON Users.id = Members.id WHERE Members.id = ?`;
     const stmt = await conn.prepare(sql);
     const rows = await stmt.execute([memberId]) as any[][];
     conn.unprepare(sql);
@@ -125,8 +125,8 @@ async function getMember(memberId: string) {
     return rows[0];
 }
 
-async function getUser(emailOrID: string, password: string) {
-    const sql = `SELECT * FROM Users WHERE (email = ? OR id = ?) AND isDeleted = 0`;
+async function getUserByEmail(emailOrID: string) {
+    const sql = `SELECT * FROM Users WHERE (email = ? OR id = ?) AND deletionDate = '0000-00-00 00:00:00'`;
     
     const stmt = await conn.prepare(sql);
     const rows = await stmt.execute([emailOrID, emailOrID]) as any[][];
@@ -165,6 +165,10 @@ async function getTotalFeesByYear(memberId: string) {
     return rows[0];
 }
 
+function formatDate(date: string) {
+    return new Date(date).toISOString().slice(0, 19).replace('T', ' ');
+}
+
 function authMiddleware(req: Request, res: Response, next: NextFunction) {
     const sessionUser = req.session as UserSession;
     
@@ -185,4 +189,4 @@ function librarianMiddleware(req: Request, res: Response, next: NextFunction) {
     res.status(403).send('Access denied!');
 }
 
-export { UserSession, conn, getMember, getUser, getBookBorrowInfo, registerChanges, getTotalFeesByYear, authMiddleware, librarianMiddleware };
+export { UserSession, conn, getMember, getUserByEmail, getBookBorrowInfo, registerChanges, getTotalFeesByYear, formatDate, authMiddleware, librarianMiddleware };

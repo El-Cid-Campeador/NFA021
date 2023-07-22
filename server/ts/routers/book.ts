@@ -1,10 +1,10 @@
 import express from "express";
-import { conn, authMiddleware, librarianMiddleware, getMember, UserSession, registerChanges, getBookBorrowInfo } from "../functions.js";
+import { conn, authMiddleware, librarianMiddleware, getMember, UserSession, registerChanges, getBookBorrowInfo, formatDate } from "../functions.js";
 
 const bookRouter = express.Router();
 
 bookRouter.get('/latest', authMiddleware, async (req, res) => {
-    const rows = await conn.query(`SELECT * FROM Books WHERE deletedBy = NULL ORDER BY yearPubl DESC, additionDate DESC LIMIT 3`) as any[][];
+    const rows = await conn.query(`SELECT * FROM Books WHERE deletedBy IS NULL ORDER BY yearPubl DESC, additionDate DESC LIMIT 3`) as any[][];  
 
     res.json({ result: rows[0] });
 });
@@ -16,7 +16,7 @@ bookRouter.route('/')
 
         const sessionUser = req.session as UserSession;
 
-        let sql = `SELECT * FROM Books WHERE isDeleted = NULL AND (title LIKE ? OR authorName LIKE ?)`;
+        let sql = `SELECT * FROM Books WHERE deletedBy IS NULL AND (title LIKE ? OR authorName LIKE ?)`;
 
         if (sessionUser.user?.role) {
             sql = `SELECT * FROM Books WHERE title LIKE ? OR authorName LIKE ?`;
@@ -37,7 +37,7 @@ bookRouter.route('/')
         await stmt.execute([title, imgUrl, authorName, category, lang, descr, Number(yearPubl), Number(numEdition), Number(nbrPages), librarianId]);
         conn.unprepare(sql);
 
-        res.json({ msg: 'Successfully added!' });
+        res.send('Successfully added!');
     });
 
 bookRouter.get('/search', authMiddleware, async (req, res) => {
@@ -45,10 +45,10 @@ bookRouter.get('/search', authMiddleware, async (req, res) => {
 
     const sessionUser = req.session as UserSession;
 
-    let sql = `SELECT * FROM Books WHERE deletedBy = NULL`;
+    let sql = `SELECT * FROM Books WHERE deletedBy IS NULL`;
 
     if (sessionUser.user?.role) {
-        sql = `SELECT * FROM Books`;
+        sql = `SELECT * FROM Books WHERE 1 = 1`;
     }
 
     const params  = [];
@@ -77,11 +77,11 @@ bookRouter.get('/search', authMiddleware, async (req, res) => {
 
 bookRouter.route('/suggest')
     .get(authMiddleware, async (req, res) => {
-        const { id: bookId } = req.query;
+        const { bookId } = req.query;
     
-        const sql = `SELECT Suggestions.*, Users.firstName, Users.lastName 
-            FROM Suggestions JOIN Users ON Suggestions.memberId = Users.id, Members 
-            WHERE Users.id IN (SELECT id FROM Members) AND Members.deletedBy = NULL AND bookId = ?
+        const sql = `SELECT Suggestions.*, firstName, lastName 
+            FROM Suggestions INNER JOIN Users ON Suggestions.memberId = Users.id INNER JOIN Members ON Users.id = Members.id
+            WHERE Members.deletedBy IS NULL AND bookId = ?
         `;
         const stmt = await conn.prepare(sql);
         const rows = await stmt.execute([bookId]) as any[][];
@@ -98,7 +98,7 @@ bookRouter.route('/suggest')
         await stmt.execute([descr, memberId, bookId]);
         conn.unprepare(sql);
 
-        res.json({ msg: 'Successfully added!' });
+        res.send('Successfully added!');
     });
 
 bookRouter.get('/modifications', async (req, res) => {
@@ -136,19 +136,19 @@ bookRouter.post('/lend', librarianMiddleware, async (req, res) => {
     await stmt.execute([memberId, bookId, librarianId]);
     conn.unprepare(sql);
 
-    res.json({ msg: 'Successfully borrowed!' });
+    res.send('Successfully borrowed!');
 });
 
 bookRouter.patch('/return', librarianMiddleware, async (req, res) => {
     const { bookId, librarianId, borrowDate } = req.query;
     const { memberId } = req.body;
 
-    const sql = `UPDATE Borrowings SET returnDate = CURRENT_TIMESTAMP, receiverId = ? WHERE memberId = ? AND bookId = ? AND borrowDate = ?`;
+    const sql = `UPDATE Borrowings SET returnDate = NOW(), receiverId = ? WHERE memberId = ? AND bookId = ? AND borrowDate = CONVERT_TZ(?, '+00:00', @@session.time_zone)`;
     const stmt = await conn.prepare(sql);
-    await stmt.execute([librarianId, memberId, bookId, borrowDate]);
+    await stmt.execute([librarianId, memberId, bookId, formatDate(String(borrowDate))]);
     conn.unprepare(sql);
 
-    res.json({ msg: 'Successfully returned back!' });
+    res.send('Successfully returned back!');
 });
 
 bookRouter.route('/:id')
@@ -157,7 +157,7 @@ bookRouter.route('/:id')
 
         const sessionUser = req.session as UserSession;
 
-        let sql = `SELECT * FROM Books WHERE deletedBy = NULL AND id = ?`;
+        let sql = `SELECT * FROM Books WHERE deletedBy IS NULL AND id = ?`;
 
         if (sessionUser.user?.role) {
             sql = `SELECT * FROM Books WHERE id = ?`;
@@ -167,8 +167,8 @@ bookRouter.route('/:id')
         const rows = await stmt.execute([bookId]) as any[][];
         conn.unprepare(sql);
 
-        const info = await getBookBorrowInfo(bookId);
-        
+        const info = await getBookBorrowInfo(bookId) ?? '';
+
         res.json({ result: rows[0][0], info });
     })
     .patch(librarianMiddleware, async (req, res) => {
@@ -176,25 +176,25 @@ bookRouter.route('/:id')
         const { id: bookId } = req.params;
         const { title, imgUrl, authorName, category, lang, descr, yearPubl, numEdition, nbrPages } = req.body;
 
-        await registerChanges(bookId, String(librarianId), req.body);
+        await registerChanges(bookId, String(librarianId), { title, imgUrl, authorName, category, lang, descr, yearPubl, numEdition, nbrPages });
 
         const sql = `UPDATE Books SET title = ?, imgUrl = ?, authorName = ?, category = ?, lang = ?, descr = ?, yearPubl = ?, numEdition = ?, nbrPages = ? WHERE id = ?`;
         const stmt = await conn.prepare(sql);
         await stmt.execute([title, imgUrl, authorName, category, lang, descr, Number(yearPubl), Number(numEdition), Number(nbrPages), bookId]);
         conn.unprepare(sql);
 
-        res.json({ msg: 'Successfully patched!' });
+        res.send('Successfully patched!');
     })
     .delete(librarianMiddleware, async (req, res) => {
         const { librarianId } = req.query;
         const { id: bookId } = req.params;
 
-        const sql = `UPDATE Books SET deletedBy = ?, deletionDate = CURRENT_TIMESTAMP WHERE id = ?`;
+        const sql = `UPDATE Books SET deletedBy = ?, deletionDate = NOW() WHERE id = ?`;
         const stmt = await conn.prepare(sql);
         await stmt.execute([librarianId, bookId]);
         conn.unprepare(sql);
     
-        res.json({ msg: 'Successfully deleted!' });
+        res.send('Successfully deleted!');
     });
 
 export default bookRouter;

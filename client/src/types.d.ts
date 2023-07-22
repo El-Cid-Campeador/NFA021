@@ -23,7 +23,11 @@ type Book = {
     descr: string,  
     yearPubl: number, 
     numEdition: number,
-    nbrPages: number 
+    nbrPages: number,
+    addedBy?: string,
+    additionDate?: string,
+    deletedBy?: string,
+    deletionDate?: string
 }
 
 type Suggestion = {

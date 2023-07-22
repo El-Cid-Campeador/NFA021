@@ -4,15 +4,8 @@ CREATE TABLE IF NOT EXISTS Users (
     lastName VARCHAR(50) NOT NULL,
     email VARCHAR(50) NOT NULL UNIQUE,
     password VARCHAR(100) NOT NULL,
-    additionDate TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    additionDate TIMESTAMP DEFAULT NOW(),
     deletionDate TIMESTAMP
-);
-
-CREATE TABLE IF NOT EXISTS Members (
-    id VARCHAR(12) PRIMARY KEY,
-    deletedBy VARCHAR(12),
-    FOREIGN KEY (id) REFERENCES Users(id),
-    FOREIGN KEY (deletedBy) REFERENCES Librarians(id)
 );
 
 CREATE TABLE IF NOT EXISTS Librarians (
@@ -20,6 +13,13 @@ CREATE TABLE IF NOT EXISTS Librarians (
     addedBy VARCHAR(12) NOT NULL,
     FOREIGN KEY (id) REFERENCES Users(id),
     FOREIGN KEY (addedBy) REFERENCES Librarians(id)
+);
+
+CREATE TABLE IF NOT EXISTS Members (
+    id VARCHAR(12) PRIMARY KEY,
+    deletedBy VARCHAR(12),
+    FOREIGN KEY (id) REFERENCES Users(id),
+    FOREIGN KEY (deletedBy) REFERENCES Librarians(id)
 );
 
 CREATE TABLE IF NOT EXISTS Books (
@@ -34,8 +34,8 @@ CREATE TABLE IF NOT EXISTS Books (
     numEdition SMALLINT UNSIGNED NOT NULL,
     nbrPages MEDIUMINT UNSIGNED NOT NULL,
     addedBy VARCHAR(12) NOT NULL,
-    additionDate TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-    deletedBy VARCHAR(12),
+    additionDate TIMESTAMP DEFAULT NOW(),
+    deletedBy VARCHAR(12) ,
     deletionDate TIMESTAMP,
     FOREIGN KEY (addedBy) REFERENCES Librarians(id),
     FOREIGN KEY (deletedBy) REFERENCES Librarians(id)
@@ -44,10 +44,10 @@ CREATE TABLE IF NOT EXISTS Books (
 CREATE TABLE IF NOT EXISTS Borrowings (
     memberId VARCHAR(12),
     bookId VARCHAR(36),
-    borrowDate TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    borrowDate TIMESTAMP DEFAULT NOW(),
     lenderId VARCHAR(12) NOT NULL,
     returnDate TIMESTAMP,
-    receiverId VARCHAR(12),
+    receiverId VARCHAR(12) ,
     PRIMARY KEY (memberId, bookId, borrowDate),
     FOREIGN KEY (memberId) REFERENCES Members(id),
     FOREIGN KEY (bookId) REFERENCES Books(id),
@@ -58,7 +58,7 @@ CREATE TABLE IF NOT EXISTS Borrowings (
 CREATE TABLE IF NOT EXISTS Modifications (
     librarianId VARCHAR(12),
     bookId VARCHAR(36),
-    modificationDate TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    modificationDate TIMESTAMP DEFAULT NOW(),
     oldValues JSON NOT NULL,
     newValues JSON NOT NULL,
     PRIMARY KEY (librarianId, bookId, modificationDate),
@@ -72,7 +72,7 @@ CREATE TABLE IF NOT EXISTS Fees (
     year SMALLINT UNSIGNED NOT NULL,
     memberId VARCHAR(12) NOT NULL,
     librarianId VARCHAR(12) NOT NULL,
-    paymentDate TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    paymentDate TIMESTAMP DEFAULT NOW(),
     FOREIGN KEY (memberId) REFERENCES Members(id)
 );
 
@@ -81,7 +81,7 @@ CREATE TABLE IF NOT EXISTS Suggestions (
     descr LONGTEXT NOT NULL,
     memberId VARCHAR(12) NOT NULL,
     bookId VARCHAR(36) NOT NULL,
-    additionDate TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    additionDate TIMESTAMP DEFAULT NOW(),
     FOREIGN KEY (memberId) REFERENCES Members(id),
     FOREIGN KEY (bookId) REFERENCES Books(id)
 );
@@ -101,7 +101,7 @@ INSERT INTO Members (id) VALUES ('118101256890');
 
 -- Plain passwords (for dev purpose): 12345678
 
-INSERT INTO Books (id, title, imgUrl, authorName, category, lang, descr, yearPubl, numEdition, nbrPages, isDeleted) VALUES (
+INSERT INTO Books (id, title, imgUrl, authorName, category, lang, descr, yearPubl, numEdition, nbrPages, addedBy) VALUES (
     UUID(),
     'Head First Java : A Brain-Friendly Guide',
     'https://images.bwbcovers.com/059/Head-First-Java-Sierra-Kathy-9780596009205.jpg',
@@ -112,7 +112,7 @@ INSERT INTO Books (id, title, imgUrl, authorName, category, lang, descr, yearPub
     2005,
     2,
     688,
-    0
+    '111101246123'
 ), ( 
     UUID(),
     'The Da Vinci Code : A Novel', 
@@ -127,7 +127,7 @@ INSERT INTO Books (id, title, imgUrl, authorName, category, lang, descr, yearPub
     2003, 
     1,
     454,
-    0
+    '111101246123'
 ), (
     UUID(),
     'Influencer: the New Science of Leading Change', 
@@ -139,7 +139,7 @@ INSERT INTO Books (id, title, imgUrl, authorName, category, lang, descr, yearPub
     2013, 
     2,
     320,
-    0
+    '111101246123'
 ), (
     UUID(),
     'The Seven Spiritual Laws of Success : A Practical Guide to the Fulfillment of Your Dreams', 
@@ -151,7 +151,7 @@ INSERT INTO Books (id, title, imgUrl, authorName, category, lang, descr, yearPub
     2009, 
     2,
     106,
-    0
+    '111101246123'
 ), (
     UUID(),
     'Les châtiments', 
@@ -163,7 +163,7 @@ INSERT INTO Books (id, title, imgUrl, authorName, category, lang, descr, yearPub
     1998,
     1,
     416,
-    0
+    '111101246123'
 ), (
     UUID(),
     'Physique-Chimie - Exercices incontournables BCPST 2', 
@@ -175,7 +175,7 @@ INSERT INTO Books (id, title, imgUrl, authorName, category, lang, descr, yearPub
     2023, 
     3,
     368,
-    0
+    '111101246123'
 );
 
 -- mysql -u root -p nfa021 < ./server/script.sql

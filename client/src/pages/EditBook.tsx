@@ -4,6 +4,7 @@ import { useMemo, useState } from "react";
 import BookForm from "../components/BookForm";
 import { fetcher } from "../functions";
 import NavBar from "../components/NavBar";
+import useLocalStorage from "../components/useLocalStorage";
 
 export default function EditBook() {
     const { bookId } = useParams();
@@ -21,17 +22,23 @@ export default function EditBook() {
     const navigate = useNavigate();
 
     const queryClient = useQueryClient();
+
+    const { userData: { id } } = useLocalStorage();
     
     const { mutate } = useMutation({
         mutationFn: async (payload: Book) => {
-            const res = await fetcher.patch(`http://localhost:8080/books/${bookId}`, { ...payload });
+            const res = await fetcher.patch(`http://localhost:8080/books/${bookId}`, { ...payload }, {
+                params: {
+                    librarianId: id
+                }
+            });
 
             return res;
         },
         onSuccess: () => {
             queryClient.invalidateQueries({ queryKey: ['books'] });
             
-            navigate('/dashboard');
+            navigate(`/books/${bookId}`);
         },
         onError: () => {
             setError('Invalid credentials!');

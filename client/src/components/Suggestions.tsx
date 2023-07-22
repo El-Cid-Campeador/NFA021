@@ -1,5 +1,3 @@
-import GetSuggestion from "./GetSuggestion";
-
 type Props = {
     list: Suggestion[]
 }
@@ -13,7 +11,13 @@ export default function Suggestions({ list }: Props) {
         <ul>
             {
                 list.map(sugg => {
-                    return <GetSuggestion sugg={sugg} key={sugg.id} />;
+                    return (
+                        <li key={sugg.id}>
+                            <p>{sugg.firstName} {sugg.lastName}</p>
+                            <p>{sugg.additionDate}</p>
+                            <p>{sugg.descr}</p>
+                        </li>
+                    );
                 })
             }
         </ul>

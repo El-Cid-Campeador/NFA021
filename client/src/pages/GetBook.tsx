@@ -32,7 +32,7 @@ export default function GetBook() {
         queryFn: async () => {
             const { data } = await fetcher.get(`http://localhost:8080/books/${bookId}`);
             if (data.result) {
-                return data as { result: Book, info: any };
+                return data as { result: Book, info: any | string };
             }
             
             throw new Error();
@@ -41,7 +41,11 @@ export default function GetBook() {
     
     const { mutate: deleteBook } = useMutation({
         mutationFn: async () => {
-            return await fetcher.delete(`http://localhost:8080/books/${bookId}`);
+            return await fetcher.delete(`http://localhost:8080/books/${bookId}`, {
+                params: {
+                    librarianId: id
+                }
+            });
         },
         onSuccess: () => {
             queryClient.invalidateQueries({ queryKey: ['books'] });
@@ -58,7 +62,7 @@ export default function GetBook() {
         queryFn: async () => {
             const { data } = await fetcher.get(`http://localhost:8080/books/suggest`, {
                 params: {
-                    id: bookId
+                    bookId
                 }
             });
 
@@ -125,7 +129,7 @@ export default function GetBook() {
     const { mutate: returnBook } = useMutation({
         mutationFn: async () => {
             return await fetcher.patch(`http://localhost:8080/books/return`, {
-                    memberId
+                    memberId: queryBook?.info.memberId
                 }, {
                     params: {
                         bookId,
@@ -148,20 +152,22 @@ export default function GetBook() {
     const { userData: { role } } = useLocalStorage();
     
     function displayStatus() {
-        // eslint-disable-next-line no-unsafe-optional-chaining
-        const { memberId, returnDate } = queryBook?.info;
-        let status = '';
-        
-        if (!returnDate) {
-            status = `Borrowed on ${returnDate}`;
-            if (role) {
-                status += ` by ${memberId}`;
-            }
-        } else {
-            status = `In possession`
+        if (queryBook?.info !== '') {
+            // eslint-disable-next-line no-unsafe-optional-chaining
+            const { memberId, borrowDate, returnDate } = queryBook?.info;
+            
+            if (borrowDate && !returnDate) {
+                let status = `Borrowed on ${borrowDate}`;
+
+                if (role) {
+                    status += ` by ${memberId}`;
+                }
+                
+                return status;
+            } 
         }
         
-        return status;
+        return `In possession`;
     }
 
     function handleAddSuggestion() {
@@ -217,30 +223,38 @@ export default function GetBook() {
                     </div>
                 </div>
                 <p>Status: {displayStatus()}</p>
-                {
+                
+                {    
                     role && (
-                        <div className="flex gap-[10px] w-[150px]">
-                            <button onClick={() => setIsModalShowing(true)} className="btn">Delete</button>
-                            <button onClick={() => navigate(`/books/edit/${bookId}`, { state: queryBook?.result })} className="btn">Edit</button>
-
+                        <>
                             {
-                                queryBook?.info.returnDate ? (
-                                    <button onClick={() => setIsInputIdFormShowing((prev) => !prev)} className="btn">Lend</button>
-                                ) : (
-                                    <button onClick={() => returnBook()} className="btn">Return</button>
+                                queryBook?.result.deletedBy ? (
+                                    <div>Deleted by {queryBook?.result.deletedBy} on {queryBook?.result.deletionDate}</div>
+                                ) : ( 
+                                    <div className="flex gap-[10px] w-[150px]">
+                                        <button onClick={() => setIsModalShowing(true)} className="btn">Delete</button>
+                                        <button onClick={() => navigate(`/books/edit/${bookId}`, { state: queryBook?.result })} className="btn">Edit</button>
+                                        {
+                                            queryBook?.info.borrowDate ? (
+                                                <button onClick={() => returnBook()} className="btn">Return</button>
+                                            ) : (
+                                                <button onClick={() => setIsInputIdFormShowing((prev) => !prev)} className="btn">Lend</button>
+                                            )
+                                        }
+                                        
+                                        {
+                                            isModalShowing && (
+                                                <Modal 
+                                                    message="Are you sure to delete this book?" 
+                                                    onConfirm={() => deleteBook()} 
+                                                    onCancel={() => setIsModalShowing(false)}
+                                                />
+                                            )
+                                        }
+                                    </div>
                                 )
                             }
-
-                            {
-                                isModalShowing && (
-                                    <Modal 
-                                        message="Are you sure to delete this book?" 
-                                        onConfirm={() => deleteBook()} 
-                                        onCancel={() => setIsModalShowing(false)}
-                                    />
-                                )
-                            }
-                        </div>
+                        </>
                     )
                 }
 

@@ -1,7 +1,7 @@
 import express from "express";
 import bcrypt from "bcrypt";
 
-import { conn, authMiddleware, getUser, UserSession } from "../../functions.js";
+import { conn, authMiddleware, getUserByEmail, UserSession } from "../../functions.js";
 import memberRouter from "./member.js";
 
 const userRouter = express.Router();
@@ -33,10 +33,10 @@ userRouter.post('/signup', async (req, res) => {
             conn.unprepare(sql);
         }
     } catch (err) {
-        return res.status(403).json({ msg: 'The user already exists!' });
+        return res.status(403).send('The ID or email already exists!');
     }
     
-    res.json({ msg: 'Successfully registred!' });
+    res.send('Successfully registred!');
 });
 
 userRouter.post('/login', async (req, res) => {
@@ -48,7 +48,7 @@ userRouter.post('/login', async (req, res) => {
 
     const { emailOrID, password } = req.body;
 
-    const result = await getUser(emailOrID, password);
+    const result = await getUserByEmail(emailOrID);
     
     if (result.length) {
         const { id, firstName, lastName, password: hash_db } = result[0];
@@ -82,7 +82,7 @@ userRouter.delete('/logout', authMiddleware, async (req, res) => {
 
         res.clearCookie('connect.sid');
          
-        res.json({ msg: 'Successfully logged out!' });
+        res.send('Successfully logged out!');
     });   
 });
 

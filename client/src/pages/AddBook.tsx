@@ -4,6 +4,7 @@ import { useState } from "react";
 import BookForm from "../components/BookForm";
 import NavBar from "../components/NavBar";
 import { fetcher } from "../functions";
+import useLocalStorage from "../components/useLocalStorage";
 
 const initialValues: Book = {
     title: '', 
@@ -23,10 +24,16 @@ export default function AddBook() {
     const navigate = useNavigate();
     
     const queryClient = useQueryClient();
+
+    const { userData: { id }} = useLocalStorage();
     
     const { mutate } = useMutation({
         mutationFn: async (payload: Book) => {            
-            const res = await fetcher.post(`http://localhost:8080/books`, { ...payload });
+            const res = await fetcher.post(`http://localhost:8080/books`, { ...payload }, {
+                params: {
+                    librarianId: id
+                }
+            });
 
             return res;
         },

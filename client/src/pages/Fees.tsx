@@ -22,19 +22,19 @@ export default function Fees() {
     const { data, isLoading, error, isFetching } = useQuery({
         queryKey: ['fees', memberId],
         queryFn: async () => {
-            const { data } = await fetcher.get(`http://localhost:8080/users/fees`, {
+            const { data } = await fetcher.get(`http://localhost:8080/members/fees`, {
                 params: {
                     id: memberId
                 }
             });
             
-            return data as { result: { id: string, year: number, amount: number }[], price: number };
+            return data as { total: { id: string, year: number, amount: number }[], price: number };
         }
     });
 
     const { mutate: postAmount } = useMutation({
         mutationFn: async () => {
-            return await fetcher.post(`http://localhost:8080/users/fees`, { ...payload }, {
+            return await fetcher.post(`http://localhost:8080/members/fees`, { ...payload }, {
                 params: {
                     id: memberId
                 }
@@ -91,7 +91,7 @@ export default function Fees() {
                     </thead>
                     <tbody>
                         {
-                            data?.result.map(fees => {
+                            data?.total.map(fees => {
                                 return (
                                     <tr key={fees.id}>
                                         <td className="mr-5 ">{fees.year}</td>
