@@ -1,6 +1,6 @@
 import { FormEvent, useEffect, useState } from "react";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
-import { Navigate, useNavigate, useParams } from "react-router-dom";
+import { Link, Navigate, useNavigate, useParams } from "react-router-dom";
 import { AxiosError } from "axios";
 import useLocalStorage from "../components/useLocalStorage";
 import Modal from "../components/Modal";
@@ -234,6 +234,8 @@ export default function GetBook() {
                                     <div className="flex gap-[10px] w-[150px]">
                                         <button onClick={() => setIsModalShowing(true)} className="btn">Delete</button>
                                         <button onClick={() => navigate(`/books/edit/${bookId}`, { state: queryBook?.result })} className="btn">Edit</button>
+                                        <Link to={`/books/${bookId}/modifications`}>View modifications</Link>
+                                        <Link to={`/books/${bookId}/borrowings`}>View borrowings history</Link>
                                         {
                                             queryBook?.info.borrowDate ? (
                                                 <button onClick={() => returnBook()} className="btn">Return</button>

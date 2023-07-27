@@ -102,7 +102,7 @@ bookRouter.route('/suggest')
     });
 
 bookRouter.get('/modifications', async (req, res) => {
-    const { id: bookId } = req.query;
+    const { bookId } = req.query;
 
     const sql = `SELECT * FROM Modifications WHERE bookId = ? ORDER BY modificationDate`;
     const stmt = await conn.prepare(sql);
@@ -115,7 +115,7 @@ bookRouter.get('/modifications', async (req, res) => {
 bookRouter.get('/borrowings', async (req, res) => {
     const { bookId } = req.query;
 
-    const sql = `SELECT * FROM borrowings WHERE bookId = ? ORDER BY borrowDate`;
+    const sql = `SELECT * FROM Borrowings WHERE bookId = ? AND returnDate ORDER BY borrowDate`;
     const stmt = await conn.prepare(sql);
     const rows = await stmt.execute([bookId]) as any[][];
     conn.unprepare(sql);

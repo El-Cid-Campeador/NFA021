@@ -123,4 +123,52 @@ function generateFeesYears() {
     return arr;
 }
 
-export { fetcher, bookCategories, bookLanguages, generateYears, isAnyOfTheAttributesAnEmptyString, areAllAttributesEmptyStrings, isNumber, generateFeesYears };
+function displayBookProperty(key: string) {
+    let res = '';
+
+    switch (key) {
+        case 'title':
+            res = 'Title';
+            break;
+        case 'imgUrl':
+            res = 'Image URL';
+            break;
+        case 'authorName':
+            res = 'Author name';
+            break;
+        case 'category':
+            res = 'Category';
+            break;
+        case 'lang':
+            res = 'Language';
+            break;
+        case 'descr':
+            res = 'Description';
+            break;
+        case 'yearPubl':
+            res = 'Year of publication';
+            break;
+        case 'numEdition':
+            res = 'No. Edition';
+            break;
+        case 'nbrPages':
+            res = 'Number of pages';
+            break;
+        default:
+            break;
+    }
+
+    return res;
+}
+
+export { 
+    fetcher, 
+    bookCategories, 
+    bookLanguages, 
+    generateYears, 
+    isAnyOfTheAttributesAnEmptyString, 
+    areAllAttributesEmptyStrings, 
+    isNumber, 
+    generateFeesYears, 
+    displayBookProperty 
+};
