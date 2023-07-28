@@ -8,6 +8,10 @@ import "dotenv/config";
 import path from 'path';
 import router from "./routers/index.js";
 
+function checkIfEnvProduction() {
+    return !process.env.NODE_ENV || process.env.NODE_ENV === 'production';
+}
+
 const PORT = process.env.PORT || 8080;
 const app = express();
 
@@ -36,10 +40,11 @@ app.use(session({
     resave: false,
     saveUninitialized: false,
     cookie: {
-        secure: false,
+        path: '/api',
+        // secure: true,
         httpOnly: true,
         maxAge: 1000 * 60 * 60 * 24,
-        sameSite: (process.env.NODE_ENV && process.env.NODE_ENV === 'development') ? 'lax' : 'strict',
+        sameSite: checkIfEnvProduction() ? 'strict' : 'lax',
     }
 }));
 
@@ -47,12 +52,8 @@ app.use('/api', router);
 
 app.use(express.static('../client/dist'));
 
-app.get('/', (req, res) => {
+app.get('*', (req, res) => {
     res.sendFile(path.resolve('..', 'client', 'dist', 'index.html'));
-});
-
-app.all('/*', (req, res) => {
-    res.status(404).send('Page not found!');
 });
 
 app.listen(PORT, () => {

@@ -63,6 +63,10 @@ export default function SignIn() {
     }
 
     useEffect(() => {
+        setIsFirstLoad(true);
+    }, []);
+
+    useEffect(() => {
         signIn();
     }, [signIn]);
 

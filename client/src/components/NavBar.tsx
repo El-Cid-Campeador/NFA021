@@ -32,7 +32,9 @@ export default function NavBar() {
                 <Link to="/home">
                     <img src="/home.svg" alt="Home" title="Home" width={50} height={50} />
                 </Link>
-                <Link to="/search">Books Search</Link>
+                <Link to="/search">
+                    <img src="/book-search.svg" alt="Book Search" title="Book Search" width={50} height={50} />
+                </Link>
                 <Link to="/advanced_search">Advanced Books Search</Link>
                 {
                     role && (
@@ -41,7 +43,15 @@ export default function NavBar() {
                         </div>
                     )
                 }
-                <span onClick={() => setIsModalShowing(true)} className="text-white cursor-pointer ">Sign out</span>
+                <img 
+                    src="/signout.svg" 
+                    alt="Sign Out" 
+                    title="Sign Out" 
+                    width={50} 
+                    height={50} 
+                    onClick={() => setIsModalShowing(true)}
+                    className="cursor-pointer"
+                />
             </nav>
             {
                 isModalShowing && (

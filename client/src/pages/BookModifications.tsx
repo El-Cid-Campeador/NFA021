@@ -1,7 +1,6 @@
 import { useQuery } from "@tanstack/react-query";
 import { useParams } from "react-router-dom";
-import { fetcher } from "../functions";
-import BookModificationsInfo from "../components/BookModificationsInfo";
+import { displayBookProperty, fetcher } from "../functions";
 import NavBar from "../components/NavBar";
 
 export default function BookModifications() {
@@ -29,13 +28,36 @@ export default function BookModifications() {
             <ul>
                 {
                     data?.result.map(x => {
+                        let { bookId, librarianId, modificationDate, oldValues, newValues } = x;
+                        oldValues = JSON.parse(oldValues);
+                        newValues = JSON.parse(newValues);
+
                         return (
-                            <li key={`${x.bookId}-${x.librarianId}-${x.modificationDate}`} className="">
-                                 <p>Modifications by: {x.librarianId} on {x.modificationDate}</p>
-                                <BookModificationsInfo 
-                                    oldValues={JSON.parse(x.oldValues)} 
-                                    newValues={JSON.parse(x.newValues)} 
-                                />
+                            <li key={`${bookId}-${librarianId}-${modificationDate}`} className="">
+                                <p>Modifications by: {librarianId} on {modificationDate}</p>
+                                {
+                                    Object.keys(oldValues).map((key) => {
+                                    const property = key as keyof Book;
+
+                                    if (oldValues[property] !== newValues[property]) {
+                                            return (
+                                                <div key={key} >
+                                                    <strong>{displayBookProperty(key)}: </strong> 
+                                                    <div className="ml-5">
+                                                        <p className={"bg-[#da3633] mb-3 text-white rounded"}>
+                                                            <span className="ml-1 mr-3">-</span>
+                                                            {oldValues[property]}
+                                                        </p>
+                                                        <p className={"bg-[#238636] mb-3 text-white rounded"}>
+                                                            <span className="ml-1 mr-3">+</span>
+                                                            {newValues[property]}
+                                                        </p>
+                                                    </div>
+                                                </div>
+                                            )
+                                        }
+                                    })
+                                }
                             </li>
                         )
                     })

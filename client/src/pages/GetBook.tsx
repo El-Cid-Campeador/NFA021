@@ -1,10 +1,10 @@
 import { FormEvent, useEffect, useState } from "react";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
-import { Link, Navigate, useNavigate, useParams } from "react-router-dom";
+import { Navigate, useNavigate, useParams } from "react-router-dom";
 import { AxiosError } from "axios";
 import useLocalStorage from "../components/useLocalStorage";
 import Modal from "../components/Modal";
-import { fetcher } from "../functions";
+import { displayBookProperty, fetcher } from "../functions";
 import NavBar from "../components/NavBar";
 import Suggestions from "../components/Suggestions";
 
@@ -153,7 +153,6 @@ export default function GetBook() {
     
     function displayStatus() {
         if (queryBook?.info !== '') {
-            // eslint-disable-next-line no-unsafe-optional-chaining
             const { memberId, borrowDate, returnDate } = queryBook?.info;
             
             if (borrowDate && !returnDate) {
@@ -212,18 +211,24 @@ export default function GetBook() {
                 <div className="flex gap-[20px]">
                     <img src={queryBook?.result.imgUrl} alt={queryBook?.result.title} width={250} height={250} />
                     <div className="w-[1000px]">
-                        <h1>{queryBook?.result.title}</h1>
-                        <p>{queryBook?.result.descr}</p>
-                        <br />
-                        <p>{queryBook?.result.authorName}</p>
-                        <p>{queryBook?.result.category}</p>
-                        <p>{queryBook?.result.lang}</p>
-                        <p>{queryBook?.result.numEdition}</p>
-                        <p>{queryBook?.result.nbrPages}</p>
+                        {
+                            Object.keys(queryBook!.result).map(key => {
+                                const property = key as keyof Book;
+                                const bookProperty = displayBookProperty(String(property));
+
+                                if (bookProperty) {
+                                    return (
+                                        <div key={key} className="flex items-center mb-3">
+                                            <strong className="mr-2">{bookProperty}: </strong> 
+                                            <span>{queryBook!.result[property]}</span>   
+                                        </div>
+                                    );
+                                }
+                            })
+                        }
                     </div>
                 </div>
                 <p>Status: {displayStatus()}</p>
-                
                 {    
                     role && (
                         <>
@@ -232,12 +237,28 @@ export default function GetBook() {
                                     <div>Deleted by {queryBook?.result.deletedBy} on {queryBook?.result.deletionDate}</div>
                                 ) : ( 
                                     <div className="flex gap-[10px] w-[150px]">
-                                        <button onClick={() => setIsModalShowing(true)} className="btn">Delete</button>
-                                        <button onClick={() => navigate(`/books/edit/${bookId}`, { state: queryBook?.result })} className="btn">Edit</button>
-                                        <Link to={`/books/${bookId}/modifications`}>View modifications</Link>
-                                        <Link to={`/books/${bookId}/borrowings`}>View borrowings history</Link>
+                                        <img 
+                                            src="/book-edit.svg" 
+                                            alt="Edit The Book" 
+                                            title="Edit The Book" 
+                                            width={50} 
+                                            height={50} 
+                                            onClick={() => navigate(`/books/edit/${bookId}`, { state: queryBook?.result })} 
+                                            className="cursor-pointer"
+                                        />
+                                        <img 
+                                            src="/book-delete.svg" 
+                                            alt="Delete The Book" 
+                                            title="Delete The Book" 
+                                            width={50} 
+                                            height={50} 
+                                            onClick={() => setIsModalShowing(true)}
+                                            className="cursor-pointer"
+                                        />
+                                        <button onClick={() => navigate(`/books/${bookId}/modifications`)} className="btn">View modifications</button>
+                                        <button onClick={() => navigate(`/books/${bookId}/borrowings`)} className="btn">View borrowings history</button>
                                         {
-                                            queryBook?.info.borrowDate ? (
+                                            queryBook?.info.borrowDate && !queryBook?.info.returnDate ? (
                                                 <button onClick={() => returnBook()} className="btn">Return</button>
                                             ) : (
                                                 <button onClick={() => setIsInputIdFormShowing((prev) => !prev)} className="btn">Lend</button>

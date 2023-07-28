@@ -12,7 +12,7 @@ export default function Dashboard() {
                         <img src="/user-plus.svg" alt="Add New Librarian" title="Add New Librarian" width={50} height={50} />
                     </Link>
                     <Link to="/books/add" className="text-customBlue">
-                        <img src="/books-medical.svg" alt="Add New Book" title="Add New Book" width={50} height={50} />
+                        <img src="/book-add.svg" alt="Add New Book" title="Add New Book" width={50} height={50} />
                     </Link>
                 </div>
                 <SearchByText

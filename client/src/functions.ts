@@ -162,6 +162,38 @@ function displayBookProperty(key: string) {
     return res;
 }
 
+function displayMemberProperty(key: string) {
+    let res = '';
+
+    switch (key) {
+        case 'id':
+            res = 'ID';
+            break;
+        case 'firstName':
+            res = 'First name';
+            break;
+        case 'lastName':
+            res = 'Last name';
+            break;
+        case 'email':
+            res = 'Email';
+            break;
+        case 'lang':
+            res = 'Language';
+            break;
+        case 'addedBy':
+            res = 'Added by';
+            break;
+        case 'deletedBy':
+            res = 'Deleted by';
+            break;
+        default:
+            break;
+    }
+
+    return res;
+}
+
 export { 
     fetcher, 
     bookCategories, 
@@ -171,5 +203,6 @@ export {
     areAllAttributesEmptyStrings, 
     isNumber, 
     generateFeesYears, 
-    displayBookProperty 
+    displayBookProperty,
+    displayMemberProperty
 };

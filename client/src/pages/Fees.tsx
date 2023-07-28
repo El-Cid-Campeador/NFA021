@@ -81,6 +81,42 @@ export default function Fees() {
         <>
             <NavBar />
             <div className="m-[10px]">
+                <img 
+                    src="/money-receive.svg" 
+                    alt="Pay Fees" 
+                    title="Pay Fees" 
+                    width={50} 
+                    height={50} 
+                    onClick={() => setIsPayingFormShowing(prev => !prev)} 
+                    className="cursor-pointer"
+                />
+                {
+                    isPayingFormShowing && (
+                        <>
+                            <form onSubmit={(e) => handlePayment(e)} className="w-[500px] my-[10px] p-[10px] border-[1px] border-solid border-customBlue rounded-2xl">
+                                <label htmlFor="amount">Amount: </label>
+                                <input 
+                                    type="text" 
+                                    id="amount" 
+                                    maxLength={5}
+                                    required
+                                    value={payload.amount} 
+                                    onChange={(e) => setPayload({ ...payload, amount: e.target.value })} 
+                                />
+                                <select value={payload.year} onChange={(e) => setPayload({ ...payload, year: e.target.value })}>
+                                    <option value="">Year</option>
+                                    {
+                                        generateFeesYears().map(year => {
+                                            return <option value={year} key={year}>{year}</option>;
+                                        })
+                                    }
+                                </select> 
+                                <input type="submit" value="Pay" className="block btn" />
+                            </form>
+                            <p className="error-msg">{inputError}</p>
+                        </>
+                    )
+                }
                 <table>
                     <caption>- Fees -</caption>
                     <thead>
@@ -102,34 +138,6 @@ export default function Fees() {
                         }
                     </tbody>
                 </table>
-                <button onClick={() => setIsPayingFormShowing(prev => !prev)} className="btn">Pay fees</button>
-                    {
-                        isPayingFormShowing && (
-                            <>
-                                <form onSubmit={(e) => handlePayment(e)} className="w-[500px] my-[10px] p-[10px] border-[1px] border-solid border-customBlue rounded-2xl">
-                                    <label htmlFor="amount">Amount: </label>
-                                    <input 
-                                        type="text" 
-                                        id="amount" 
-                                        maxLength={5}
-                                        required
-                                        value={payload.amount} 
-                                        onChange={(e) => setPayload({ ...payload, amount: e.target.value })} 
-                                    />
-                                    <select value={payload.year} onChange={(e) => setPayload({ ...payload, year: e.target.value })}>
-                                        <option value="">Year</option>
-                                        {
-                                            generateFeesYears().map(year => {
-                                                return <option value={year} key={year}>{year}</option>;
-                                            })
-                                        }
-                                    </select> 
-                                    <input type="submit" value="Pay" className="block btn" />
-                                </form>
-                                <p className="error-msg">{inputError}</p>
-                            </>
-                        )
-                    }
             </div>
         </>
     );

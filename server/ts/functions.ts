@@ -189,4 +189,15 @@ function librarianMiddleware(req: Request, res: Response, next: NextFunction) {
     res.status(403).send('Access denied!');
 }
 
-export { UserSession, conn, getMember, getUserByEmail, getBookBorrowInfo, registerChanges, getTotalFeesByYear, formatDate, authMiddleware, librarianMiddleware };
+export { 
+    UserSession, 
+    conn, 
+    getMember, 
+    getUserByEmail, 
+    getBookBorrowInfo, 
+    registerChanges,
+    getTotalFeesByYear, 
+    formatDate, 
+    authMiddleware, 
+    librarianMiddleware 
+};

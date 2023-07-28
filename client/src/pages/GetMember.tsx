@@ -1,8 +1,8 @@
 import { useState } from "react";
-import { Link, Navigate, useNavigate, useParams } from "react-router-dom";
+import { Navigate, useNavigate, useParams } from "react-router-dom";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import Modal from "../components/Modal";
-import { fetcher } from "../functions";
+import { displayMemberProperty, fetcher } from "../functions";
 import NavBar from "../components/NavBar";
 
 export default function GetMember() {
@@ -18,6 +18,7 @@ export default function GetMember() {
         queryKey: ['members', memberId],
         queryFn: async () => {
             const { data } = await fetcher.get(`/api/members/${memberId}`);
+            
             if (data.result) {
                 return data as { result: Member };
             }
@@ -46,17 +47,42 @@ export default function GetMember() {
     return (
         <>
             <NavBar />
-            <div>
-                <p>{queryUser?.result.id}</p>
-                <p>{queryUser?.result.firstName}</p>
-                <p>{queryUser?.result.lastName}</p>
-                <p>{queryUser?.result.email}</p>
-                <p>{queryUser?.result.additionDate}</p>
-                <Link to={`/fees/${memberId}`}>
-                    <button className="btn">View {queryUser?.result.firstName} {queryUser?.result.lastName}'s fees</button>
-                </Link>
-                <button onClick={() => setIsModalShowing(true)} className="btn">Delete</button>
+            <div className="ml-[10px]">
+                {
+                    Object.keys(queryUser!.result).map(key => {
+                        const property = key as keyof Member;
+                        const memberProperty = displayMemberProperty(String(property));
 
+                        if (memberProperty && queryUser!.result[property]) {
+                            return (
+                                <div key={key} className="flex items-center mb-3">
+                                    <strong className="mr-2">{memberProperty}: </strong>
+                                    <p>{queryUser!.result[property]}</p>
+                                </div>
+                            );
+                        }
+                    })
+                }
+                <div className="flex gap-2.5">
+                    <img 
+                        src="/check-fees.svg" 
+                        alt="Check fees" 
+                        title="Check fees" 
+                        width={50} 
+                        height={50} 
+                        onClick={() => navigate(`/fees/${memberId}`)} 
+                        className="cursor-pointer"
+                    />
+                    <img 
+                        src="/user-delete.svg" 
+                        alt="Delete User" 
+                        title="Delete User" 
+                        width={50} 
+                        height={50} 
+                        onClick={() => setIsModalShowing(true)}
+                        className="cursor-pointer"
+                    />
+                </div>
                 {
                     isModalShowing && (
                         <Modal 
