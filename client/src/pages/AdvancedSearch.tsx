@@ -22,7 +22,7 @@ export default function AdvancedSearch() {
                 return { result: [] };
             }
 
-            const { data } = await fetcher.get(`http://localhost:8080/books/search`, {
+            const { data } = await fetcher.get(`/api/books/search`, {
                 params: { ...search }
             });
             

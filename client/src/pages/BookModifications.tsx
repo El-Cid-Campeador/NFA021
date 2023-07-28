@@ -10,7 +10,7 @@ export default function BookModifications() {
     const { data, isLoading, error, isFetching } = useQuery({
         queryKey: ['books', bookId],
         queryFn: async () => {
-            const { data } = await fetcher.get(`http://localhost:8080/books/modifications`, {
+            const { data } = await fetcher.get(`/api/books/modifications`, {
                 params: {
                     bookId
                 }

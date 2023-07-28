@@ -10,7 +10,7 @@ export default function Home() {
     const { data, isLoading, error, isFetching } = useQuery({
         queryKey: ['books'],
         queryFn: async () => {
-            const { data } = await fetcher.get(`http://localhost:8080/books/latest`);
+            const { data } = await fetcher.get(`/api/books/latest`);
             
             return data as { result: Book[] };
         }

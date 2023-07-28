@@ -14,7 +14,7 @@ export default function NavBar() {
         mutationFn: async () => {
             localStorage.removeItem('xUr');
             
-            return await fetcher.delete(`http://localhost:8080/logout`);
+            return await fetcher.delete(`/api/logout`);
         },
         onSuccess: () => {
             navigate('/');

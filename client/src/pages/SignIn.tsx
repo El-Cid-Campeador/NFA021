@@ -17,7 +17,7 @@ export default function SignIn() {
 
     const { mutate: signIn, isLoading } = useMutation({
         mutationFn: async () => {
-            const res = await fetcher.post(`http://localhost:8080/login`, { ...payload }); 
+            const res = await fetcher.post(`/api/login`, { ...payload }); 
             
             return res;
         },

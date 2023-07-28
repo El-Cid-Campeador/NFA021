@@ -27,7 +27,7 @@ export default function EditBook() {
     
     const { mutate } = useMutation({
         mutationFn: async (payload: Book) => {
-            const res = await fetcher.patch(`http://localhost:8080/books/${bookId}`, { ...payload }, {
+            const res = await fetcher.patch(`/api/books/${bookId}`, { ...payload }, {
                 params: {
                     librarianId: id
                 }

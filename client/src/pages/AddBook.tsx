@@ -29,7 +29,7 @@ export default function AddBook() {
     
     const { mutate } = useMutation({
         mutationFn: async (payload: Book) => {            
-            const res = await fetcher.post(`http://localhost:8080/books`, { ...payload }, {
+            const res = await fetcher.post(`/api/books`, { ...payload }, {
                 params: {
                     librarianId: id
                 }

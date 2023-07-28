@@ -22,7 +22,7 @@ export default function Fees() {
     const { data, isLoading, error, isFetching } = useQuery({
         queryKey: ['fees', memberId],
         queryFn: async () => {
-            const { data } = await fetcher.get(`http://localhost:8080/members/fees`, {
+            const { data } = await fetcher.get(`/api/members/fees`, {
                 params: {
                     id: memberId
                 }
@@ -34,7 +34,7 @@ export default function Fees() {
 
     const { mutate: postAmount } = useMutation({
         mutationFn: async () => {
-            return await fetcher.post(`http://localhost:8080/members/fees`, { ...payload }, {
+            return await fetcher.post(`/api/members/fees`, { ...payload }, {
                 params: {
                     id: memberId
                 }

@@ -20,7 +20,7 @@ export default function SignUp() {
 
     const { mutate: signUp } = useMutation({
         mutationFn: async () => {
-            return await fetcher.post(`http://localhost:8080/signup`, { ...payload });
+            return await fetcher.post(`/api/signup`, { ...payload });
         },
         onSuccess: () => {
             navigate('/signin');

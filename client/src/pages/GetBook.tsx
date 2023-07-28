@@ -30,7 +30,7 @@ export default function GetBook() {
     const { data: queryBook, isLoading, error, isFetching } = useQuery({
         queryKey: ['books', bookId],
         queryFn: async () => {
-            const { data } = await fetcher.get(`http://localhost:8080/books/${bookId}`);
+            const { data } = await fetcher.get(`/api/books/${bookId}`);
             if (data.result) {
                 return data as { result: Book, info: any | string };
             }
@@ -41,7 +41,7 @@ export default function GetBook() {
     
     const { mutate: deleteBook } = useMutation({
         mutationFn: async () => {
-            return await fetcher.delete(`http://localhost:8080/books/${bookId}`, {
+            return await fetcher.delete(`/api/books/${bookId}`, {
                 params: {
                     librarianId: id
                 }
@@ -60,7 +60,7 @@ export default function GetBook() {
     const { data: querySugg, isLoading: isLoadingSugg, error: errorSugg, isFetching: isFetchingSugg } = useQuery({
         queryKey: ['suggestions'],
         queryFn: async () => {
-            const { data } = await fetcher.get(`http://localhost:8080/books/suggest`, {
+            const { data } = await fetcher.get(`/api/books/suggest`, {
                 params: {
                     bookId
                 }
@@ -74,7 +74,7 @@ export default function GetBook() {
 
     const { mutate: addSuggestion } = useMutation({
         mutationFn: async () => {
-            return await fetcher.post(`http://localhost:8080/books/suggest`, {
+            return await fetcher.post(`/api/books/suggest`, {
                     descr: suggestion,
                     memberId: id
                 }, {
@@ -98,7 +98,7 @@ export default function GetBook() {
 
     const { mutate: lendBook } = useMutation({
         mutationFn: async () => {
-            return await fetcher.post(`http://localhost:8080/books/lend`, {
+            return await fetcher.post(`/api/books/lend`, {
                     memberId
                 }, {
                     params: {
@@ -128,7 +128,7 @@ export default function GetBook() {
 
     const { mutate: returnBook } = useMutation({
         mutationFn: async () => {
-            return await fetcher.patch(`http://localhost:8080/books/return`, {
+            return await fetcher.patch(`/api/books/return`, {
                     memberId: queryBook?.info.memberId
                 }, {
                     params: {

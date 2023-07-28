@@ -17,7 +17,7 @@ export default function GetMember() {
     const { data: queryUser, isLoading: isLoadingUser, error: errorUser, isFetching: isFetchingUser } = useQuery({
         queryKey: ['members', memberId],
         queryFn: async () => {
-            const { data } = await fetcher.get(`http://localhost:8080/members/${memberId}`);
+            const { data } = await fetcher.get(`/api/members/${memberId}`);
             if (data.result) {
                 return data as { result: Member };
             }
@@ -28,7 +28,7 @@ export default function GetMember() {
 
     const { mutate: deleteUser} = useMutation({
         mutationFn: async () => {
-            return await fetcher.delete(`http://localhost:8080/members/${memberId}`);
+            return await fetcher.delete(`/api/members/${memberId}`);
         },
         onSuccess: () => {
             queryClient.invalidateQueries({ queryKey: ['members'] });
