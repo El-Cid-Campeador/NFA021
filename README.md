@@ -6,9 +6,10 @@ This is a project for my college subject named "NFA021". It's about building a w
 
 **Prerequisites**:
 
+* Any linux distribution or MAC OS or WSL
 * NodeJS v18.16.0
 
-    Check:
+  Check:
 
 ```bash
 $ node -v
@@ -17,7 +18,7 @@ $ npm -v
 
 * MariaDB v10.5.20
 
-    Check:
+  Check:
 
 ```bash
 $ mariadb --version
@@ -25,7 +26,7 @@ $ mariadb --version
 
 * Redis
 
-    Check
+  Check
 
 ```$bash
 $ redis-cli --version
@@ -38,12 +39,7 @@ To launch the project, open a new terminal:
 ```bash
 $ npm i -g typescript
 $ git clone https://github.com/El-Cid-Campeador/NFA021
-```
-
--> For Windows users, use Powershell and replace " && " by " ; ".
-
-```bash
-$ cd server && tsc -w
+$ cd server && npm i && tsc -w
 ```
 
 Create a .env in *server* folder, and add **attentively** those lines:
@@ -62,7 +58,7 @@ $ cd server && npm run dev
 Open another new terminal, then execute:
 
 ```bash
-$ cd client && npm run dev
+$ cd client && npm i && npm run dev
 ```
 
 Open `http://localhost:5173` in your favourite browser, and enjoy!
