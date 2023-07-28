@@ -47,6 +47,8 @@ Create a .env in *server* folder, and add **attentively** those lines:
 ```.env
 DB_PASSWORD=YourMySQLPassword
 SECRET_KEY=YourSecretkey
+PORT=8080
+NODE_ENV=development
 ```
 
 Open another terminal, then run:

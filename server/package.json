@@ -5,8 +5,8 @@
   "main": "index.js",
   "type": "module",
   "scripts": {
-    "dev": "nodemon ./js/index.js",
-    "serve": "node ./js/index.js"
+    "dev": "NODE_ENV=development nodemon ./js/index.js",
+    "serve": "NODE_ENV=production node ./js/index.js"
   },
   "keywords": [],
   "author": "",
