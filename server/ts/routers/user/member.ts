@@ -11,7 +11,9 @@ memberRouter.get('/', async (req, res) => {
     const { search } = req.query;
     const payload = `%${search}%`;
 
-    const sql = `SELECT Users.* FROM Users JOIN Members ON Users.id = Members.id WHERE (Members.id LIKE ? OR firstName LIKE ? OR lastName LIKE ?)`;
+    const sql = `SELECT Members.id, firstName, lastName
+        FROM Users JOIN Members ON Users.id = Members.id WHERE (Members.id LIKE ? OR firstName LIKE ? OR lastName LIKE ?)
+    `;
     const stmt = await conn.prepare(sql);
     const rows = await stmt.execute([payload, payload, payload]) as any[][];
     conn.unprepare(sql);
@@ -32,7 +34,7 @@ memberRouter.route('/fees')
         const { memberId, librarianId } = req.query;
         const { amount, year } = req.body;
         
-        const sql = `INSERT INTO Fees (id, amount, year, memberId, librarianId) VALUES (UUID(), ?, ?, ?)`;
+        const sql = `INSERT INTO Fees (id, amount, year, memberId, librarianId) VALUES (UUID(), ?, ?, ?, ?)`;
         const stmt = await conn.prepare(sql);
         await stmt.execute([Number(amount), Number(year), memberId, librarianId]);
         conn.unprepare(sql);

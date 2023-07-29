@@ -1,6 +1,6 @@
 import { FormEvent, useEffect, useState } from "react";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
-import { Navigate, useNavigate, useParams } from "react-router-dom";
+import { Link, Navigate, useNavigate, useParams } from "react-router-dom";
 import { AxiosError } from "axios";
 import useLocalStorage from "../components/useLocalStorage";
 import Modal from "../components/Modal";
@@ -151,7 +151,7 @@ export default function GetBook() {
 
     const { userData: { role } } = useLocalStorage();
     
-    function displayStatus() {
+    function DisplayStatus() {
         if (queryBook?.info !== '') {
             const { memberId, borrowDate, returnDate } = queryBook?.info;
             
@@ -162,11 +162,15 @@ export default function GetBook() {
                     status += ` by ${memberId}`;
                 }
                 
-                return status;
+                return (
+                    <span className="text-red-600">{status}</span>
+                );
             } 
         }
         
-        return `In possession`;
+        return (
+            <span className="text-green-600 ">In possession</span>
+        );
     }
 
     function handleAddSuggestion() {
@@ -216,7 +220,7 @@ export default function GetBook() {
                                 const property = key as keyof Book;
                                 const bookProperty = displayBookProperty(String(property));
 
-                                if (bookProperty) {
+                                if (bookProperty && key !== 'imgUrl') {
                                     return (
                                         <div key={key} className="flex items-center mb-3">
                                             <strong className="mr-2">{bookProperty}: </strong> 
@@ -228,7 +232,7 @@ export default function GetBook() {
                         }
                     </div>
                 </div>
-                <p>Status: {displayStatus()}</p>
+                <p className="my-[25px]"><strong>Status</strong>: <DisplayStatus /></p>
                 {    
                     role && (
                         <>
@@ -236,7 +240,7 @@ export default function GetBook() {
                                 queryBook?.result.deletedBy ? (
                                     <div>Deleted by {queryBook?.result.deletedBy} on {queryBook?.result.deletionDate}</div>
                                 ) : ( 
-                                    <div className="flex gap-[10px] w-[150px]">
+                                    <div className="flex items-center gap-[10px] w-[300px]">
                                         <img 
                                             src="/book-edit.svg" 
                                             alt="Edit The Book" 
@@ -255,8 +259,8 @@ export default function GetBook() {
                                             onClick={() => setIsModalShowing(true)}
                                             className="cursor-pointer"
                                         />
-                                        <button onClick={() => navigate(`/books/${bookId}/modifications`)} className="btn">View modifications</button>
-                                        <button onClick={() => navigate(`/books/${bookId}/borrowings`)} className="btn">View borrowings history</button>
+                                        <Link to={`/books/${bookId}/modifications`}>View modifications</Link>
+                                        <Link to={`/books/${bookId}/borrowings`}>View borrowings history</Link>
                                         {
                                             queryBook?.info.borrowDate && !queryBook?.info.returnDate ? (
                                                 <button onClick={() => returnBook()} className="btn">Return</button>

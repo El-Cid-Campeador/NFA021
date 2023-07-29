@@ -26,7 +26,7 @@ export default function AdvancedSearch() {
                 params: { ...search }
             });
             
-            return data as { result: Book[] };
+            return data as { result: { id: string, title: string, imgUrl: string }[] };
         }
 	});
 

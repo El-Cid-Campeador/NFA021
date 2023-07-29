@@ -1,7 +1,7 @@
 import { Link } from "react-router-dom";
 
 type Props = {
-    result: Book[]
+    result: { id: string, title: string, imgUrl: string }[]
 }
 
 export default function Books({ result }: Props) {
@@ -11,7 +11,7 @@ export default function Books({ result }: Props) {
                 result.map(book => {
                     return (
                         <li key={book.id} className="flex flex-col justify-center w-[200px]">
-                            <Link to={`/books/${book.id}`} >
+                            <Link to={`/books/${book.id}`} className="text-black">
                                 <img src={book.imgUrl} alt="The image could not be loaded" />
                                 <h1 className="text-sm">{book.title}</h1>
                             </Link>

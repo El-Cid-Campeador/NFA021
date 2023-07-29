@@ -17,7 +17,7 @@ export default function BookBorrowings() {
 
             console.log(data);
 
-            return data as { result: any[] };
+            return data as { result: { memberId: string, borrowDate: string, lenderId: string, returnDate: string, receiverId: string }[] };
         }
     });
 
@@ -41,7 +41,7 @@ export default function BookBorrowings() {
                     {
                         data?.result.map(x => {
                             return (
-                                <tr key={`${x.memberId}-${x.bookId}-${x.borrowDate}`}>
+                                <tr key={`${x.memberId}-${bookId}-${x.borrowDate}`}>
                                     <td>{x.memberId}</td>
                                     <td className="mr-5 ">{x.borrowDate}</td>
                                     <td>{x.lenderId}</td>

@@ -12,7 +12,7 @@ export default function Home() {
         queryFn: async () => {
             const { data } = await fetcher.get(`/api/books/latest`);
             
-            return data as { result: Book[] };
+            return data as { result: { id: string, title: string, imgUrl: string }[] };
         }
     });
     

@@ -10,16 +10,21 @@
     --custom-blue: #007bff;
 }
 
-label + * {
+label+* {
     margin-left: 10px;
     margin-bottom: 10px;
 }
 
-input[type="text"], input[type="tel"], input[type="password"], input[type="email"], input[type="number"], select  {
+input[type="text"],
+input[type="tel"],
+input[type="password"],
+input[type="email"],
+input[type="number"],
+select {
     padding: 7px;
     outline: none;
     border-radius: 10px;
-    box-shadow: 0 2px 5px 1px rgba(64,60,67,.16);
+    box-shadow: 0 2px 5px 1px rgba(64, 60, 67, .16);
 }
 
 select {
@@ -54,11 +59,15 @@ li {
     border-radius: 10px;
 }
 
+a {
+    color: var(--custom-blue);
+}
+
 textarea {
     padding: 7px;
     outline: 1px solid black;
     border-radius: 7px;
-    box-shadow: 0 2px 5px 1px rgba(64,60,67,.16);
+    box-shadow: 0 2px 5px 1px rgba(64, 60, 67, .16);
     resize: none;
 }
 
@@ -75,4 +84,27 @@ textarea {
 
 .error-msg {
     color: crimson;
+}
+
+table {
+    width: 100%;
+    background-color: #FFFFFF;
+    border-collapse: collapse;
+    border-width: 2px;
+    border-color: #7ea8f8;
+    border-style: solid;
+    color: #212529;
+    margin-bottom: 1rem;
+}
+  
+table td, table th {
+    border-width: 2px;
+    border-color: #7ea8f8;
+    border-style: solid;
+    padding: 5px;
+    text-align: center;
+}
+  
+table thead {
+    background-color: #7ea8f8;
 }

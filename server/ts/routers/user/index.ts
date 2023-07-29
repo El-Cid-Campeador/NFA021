@@ -1,7 +1,7 @@
 import express from "express";
 import bcrypt from "bcrypt";
 
-import { conn, authMiddleware, getUserByEmail, UserSession } from "../../functions.js";
+import { conn, authMiddleware, getUserByEmailOrID, UserSession } from "../../functions.js";
 import memberRouter from "./member.js";
 
 const userRouter = express.Router();
@@ -48,7 +48,7 @@ userRouter.post('/login', async (req, res) => {
 
     const { emailOrID, password } = req.body;
 
-    const result = await getUserByEmail(emailOrID);
+    const result = await getUserByEmailOrID(emailOrID);
     
     if (result.length) {
         const { id, firstName, lastName, password: hash_db } = result[0];

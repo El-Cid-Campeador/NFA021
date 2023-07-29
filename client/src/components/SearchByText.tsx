@@ -12,10 +12,16 @@ type Props = {
 }
 
 function RenderResultByQueryType(queryKey: string, data: never[]) {
+    let payload;
+
     switch (queryKey) {
         case "books":
-            return <Books result={data} />
+            payload = data as { id: string, title: string, imgUrl: string }[];
+
+            return <Books result={payload} />
         case "members":
+            payload = data as { id: string, firstName: string, lastName: string }[];
+            
             return <Members result={data} />
         default:
             return <></>
@@ -37,6 +43,7 @@ export default function SearchByText({ queryKey, route, placeholder }: Props) {
                 params: { search: payload }
             });
 
+          
             return data as { result: never[] };
         }
 	});

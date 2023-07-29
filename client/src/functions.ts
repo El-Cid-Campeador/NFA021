@@ -181,8 +181,8 @@ function displayMemberProperty(key: string) {
         case 'lang':
             res = 'Language';
             break;
-        case 'addedBy':
-            res = 'Added by';
+        case 'additionDate':
+            res = 'Addition date';
             break;
         case 'deletedBy':
             res = 'Deleted by';

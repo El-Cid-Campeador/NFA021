@@ -26,7 +26,7 @@ export default function EditBook() {
     const { userData: { id } } = useLocalStorage();
     
     const { mutate } = useMutation({
-        mutationFn: async (payload: Book) => {
+        mutationFn: async (payload: BookDataInput) => {
             const res = await fetcher.patch(`/api/books/${bookId}`, { ...payload }, {
                 params: {
                     librarianId: id

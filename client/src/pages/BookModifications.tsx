@@ -3,6 +3,13 @@ import { useParams } from "react-router-dom";
 import { displayBookProperty, fetcher } from "../functions";
 import NavBar from "../components/NavBar";
 
+type BookInfo = {
+    librarianId: string, 
+    modificationDate: string, 
+    oldValues: string, 
+    newValues: string 
+}
+
 export default function BookModifications() {
     const { bookId } = useParams();
     
@@ -15,7 +22,7 @@ export default function BookModifications() {
                 }
             });
 
-            return data as { result: any[] };
+            return data as { result: BookInfo[] };
         }
     });
 
@@ -28,29 +35,29 @@ export default function BookModifications() {
             <ul>
                 {
                     data?.result.map(x => {
-                        let { bookId, librarianId, modificationDate, oldValues, newValues } = x;
-                        oldValues = JSON.parse(oldValues);
-                        newValues = JSON.parse(newValues);
+                        const { librarianId, modificationDate, oldValues, newValues } = x;
+                        const previous = JSON.parse(oldValues);
+                        const next = JSON.parse(newValues);
 
                         return (
                             <li key={`${bookId}-${librarianId}-${modificationDate}`} className="">
                                 <p>Modifications by: {librarianId} on {modificationDate}</p>
                                 {
-                                    Object.keys(oldValues).map((key) => {
-                                    const property = key as keyof Book;
+                                    Object.keys(previous).map((key) => {
+                                    const property = key as keyof BookInfo;
 
-                                    if (oldValues[property] !== newValues[property]) {
+                                    if (previous[property] !== next[property]) {
                                             return (
                                                 <div key={key} >
                                                     <strong>{displayBookProperty(key)}: </strong> 
                                                     <div className="ml-5">
                                                         <p className={"bg-[#da3633] mb-3 text-white rounded"}>
                                                             <span className="ml-1 mr-3">-</span>
-                                                            {oldValues[property]}
+                                                            {previous[property]}
                                                         </p>
                                                         <p className={"bg-[#238636] mb-3 text-white rounded"}>
                                                             <span className="ml-1 mr-3">+</span>
-                                                            {newValues[property]}
+                                                            {next[property]}
                                                         </p>
                                                     </div>
                                                 </div>

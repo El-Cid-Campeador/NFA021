@@ -4,7 +4,7 @@ import { conn, authMiddleware, librarianMiddleware, getMember, UserSession, regi
 const bookRouter = express.Router();
 
 bookRouter.get('/latest', authMiddleware, async (req, res) => {
-    const rows = await conn.query(`SELECT * FROM Books WHERE deletedBy IS NULL ORDER BY yearPubl DESC, additionDate DESC LIMIT 3`) as any[][];  
+    const rows = await conn.query(`SELECT id, title, imgUrl FROM Books WHERE deletedBy IS NULL ORDER BY yearPubl DESC, additionDate DESC LIMIT 3`) as any[][];  
 
     res.json({ result: rows[0] });
 });
@@ -16,7 +16,7 @@ bookRouter.route('/')
 
         const sessionUser = req.session as UserSession;
 
-        let sql = `SELECT * FROM Books WHERE deletedBy IS NULL AND (title LIKE ? OR authorName LIKE ?)`;
+        let sql = `SELECT id, title FROM Books WHERE deletedBy IS NULL AND (title LIKE ? OR authorName LIKE ?)`;
 
         if (sessionUser.user?.role) {
             sql = `SELECT * FROM Books WHERE title LIKE ? OR authorName LIKE ?`;
@@ -45,10 +45,10 @@ bookRouter.get('/search', authMiddleware, async (req, res) => {
 
     const sessionUser = req.session as UserSession;
 
-    let sql = `SELECT * FROM Books WHERE deletedBy IS NULL`;
+    let sql = `SELECT id, title, imgUrl FROM Books WHERE 1 = 1`;
 
-    if (sessionUser.user?.role) {
-        sql = `SELECT * FROM Books WHERE 1 = 1`;
+    if (!sessionUser.user?.role) {
+        sql += ` AND deletedBy IS NULL`;
     }
 
     const params  = [];
@@ -79,7 +79,7 @@ bookRouter.route('/suggest')
     .get(authMiddleware, async (req, res) => {
         const { bookId } = req.query;
     
-        const sql = `SELECT Suggestions.*, firstName, lastName 
+        const sql = `SELECT Suggestions.id, descr, Suggestions.additionDate, firstName, lastName 
             FROM Suggestions INNER JOIN Users ON Suggestions.memberId = Users.id INNER JOIN Members ON Users.id = Members.id
             WHERE Members.deletedBy IS NULL AND bookId = ?
         `;
@@ -104,7 +104,9 @@ bookRouter.route('/suggest')
 bookRouter.get('/modifications', async (req, res) => {
     const { bookId } = req.query;
 
-    const sql = `SELECT * FROM Modifications WHERE bookId = ? ORDER BY modificationDate`;
+    const sql = `SELECT librarianId, modificationDate, oldValues, newValues 
+        FROM Modifications WHERE bookId = ? ORDER BY modificationDate
+    `;
     const stmt = await conn.prepare(sql);
     const rows = await stmt.execute([bookId]) as any[][];
     conn.unprepare(sql);
@@ -115,7 +117,9 @@ bookRouter.get('/modifications', async (req, res) => {
 bookRouter.get('/borrowings', async (req, res) => {
     const { bookId } = req.query;
 
-    const sql = `SELECT * FROM Borrowings WHERE bookId = ? AND returnDate ORDER BY borrowDate`;
+    const sql = `SELECT memberId, borrowDate, lenderId, returnDate, receiverId 
+        FROM Borrowings WHERE bookId = ? AND returnDate ORDER BY borrowDate
+    `;
     const stmt = await conn.prepare(sql);
     const rows = await stmt.execute([bookId]) as any[][];
     conn.unprepare(sql);
@@ -157,10 +161,12 @@ bookRouter.route('/:id')
 
         const sessionUser = req.session as UserSession;
 
-        let sql = `SELECT * FROM Books WHERE deletedBy IS NULL AND id = ?`;
+        let sql = `SELECT title, imgUrl, authorName, category, lang, descr, yearPubl, numEdition, nbrPages, addedBy, additionDate, deletedBy, deletionDate 
+            FROM Books WHERE id = ?
+        `;
 
         if (sessionUser.user?.role) {
-            sql = `SELECT * FROM Books WHERE id = ?`;
+            sql += ` AND deletedBy IS NULL`;
         }
 
         const stmt = await conn.prepare(sql);

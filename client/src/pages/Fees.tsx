@@ -3,6 +3,7 @@ import NavBar from "../components/NavBar";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { fetcher, generateFeesYears } from "../functions";
 import { FormEvent, useEffect, useState } from "react";
+import useLocalStorage from "../components/useLocalStorage";
 
 export default function Fees() {
     const { memberId } = useParams();
@@ -24,7 +25,7 @@ export default function Fees() {
         queryFn: async () => {
             const { data } = await fetcher.get(`/api/members/fees`, {
                 params: {
-                    id: memberId
+                    memberId
                 }
             });
             
@@ -32,11 +33,14 @@ export default function Fees() {
         }
     });
 
+    const { userData: { id } } = useLocalStorage();
+
     const { mutate: postAmount } = useMutation({
         mutationFn: async () => {
             return await fetcher.post(`/api/members/fees`, { ...payload }, {
                 params: {
-                    id: memberId
+                    memberId,
+                    librarianId: id
                 }
             });
         },

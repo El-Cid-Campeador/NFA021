@@ -35,11 +35,11 @@ export default function NavBar() {
                 <Link to="/search">
                     <img src="/book-search.svg" alt="Book Search" title="Book Search" width={50} height={50} />
                 </Link>
-                <Link to="/advanced_search">Advanced Books Search</Link>
+                <Link to="/advanced_search" className="text-white">Advanced Books Search</Link>
                 {
                     role && (
                         <div>
-                            <Link to="/dashboard">Dashboard</Link>
+                            <Link to="/dashboard" className="text-white">Dashboard</Link>
                         </div>
                     )
                 }

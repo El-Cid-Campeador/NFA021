@@ -6,7 +6,7 @@ import NavBar from "../components/NavBar";
 import { fetcher } from "../functions";
 import useLocalStorage from "../components/useLocalStorage";
 
-const initialValues: Book = {
+const initialValues: BookDataInput = {
     title: '', 
     imgUrl: '', 
     authorName: '', 
@@ -28,7 +28,7 @@ export default function AddBook() {
     const { userData: { id }} = useLocalStorage();
     
     const { mutate } = useMutation({
-        mutationFn: async (payload: Book) => {            
+        mutationFn: async (payload: BookDataInput) => {            
             const res = await fetcher.post(`/api/books`, { ...payload }, {
                 params: {
                     librarianId: id

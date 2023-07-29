@@ -10,11 +10,12 @@ type Member = {
     firstName: string, 
     lastName: string,
     email: string,
-    additionDate: string
+    additionDate: string, 
+    deletionDate?: string, 
+    deletedBy?: string 
 }
 
 type Book = {
-    id?: string, 
     title: string, 
     imgUrl: string, 
     authorName: string, 
@@ -24,10 +25,22 @@ type Book = {
     yearPubl: number, 
     numEdition: number,
     nbrPages: number,
-    addedBy?: string,
-    additionDate?: string,
+    addedBy: string,
+    additionDate: string,
     deletedBy?: string,
     deletionDate?: string
+}
+
+type BookDataInput = {
+    title: string, 
+    imgUrl: string, 
+    authorName: string, 
+    category: string,
+    lang: string,
+    descr: string,  
+    yearPubl: number, 
+    numEdition: number,
+    nbrPages: number
 }
 
 type Suggestion = {

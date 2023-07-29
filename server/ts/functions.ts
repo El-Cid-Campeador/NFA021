@@ -117,7 +117,9 @@ async function connectDB() {
 }
 
 async function getMember(memberId: string) {
-    const sql = `SELECT Users.*, Members.deletedBy FROM Users JOIN Members ON Users.id = Members.id WHERE Members.id = ?`;
+    const sql = `SELECT Members.id, firstName, lastName, email, additionDate, deletionDate, deletedBy 
+        FROM Users JOIN Members ON Users.id = Members.id WHERE Members.id = ?
+    `;
     const stmt = await conn.prepare(sql);
     const rows = await stmt.execute([memberId]) as any[][];
     conn.unprepare(sql);
@@ -125,8 +127,10 @@ async function getMember(memberId: string) {
     return rows[0];
 }
 
-async function getUserByEmail(emailOrID: string) {
-    const sql = `SELECT * FROM Users WHERE (email = ? OR id = ?) AND deletionDate = '0000-00-00 00:00:00'`;
+async function getUserByEmailOrID(emailOrID: string) {
+    const sql = `SELECT id, firstName, lastName, password 
+        FROM Users WHERE (email = ? OR id = ?) AND deletionDate = '0000-00-00 00:00:00'
+    `;
     
     const stmt = await conn.prepare(sql);
     const rows = await stmt.execute([emailOrID, emailOrID]) as any[][];
@@ -136,7 +140,9 @@ async function getUserByEmail(emailOrID: string) {
 }
 
 async function getBookBorrowInfo(bookId: string) {
-    const sql = `SELECT * FROM Borrowings WHERE bookId = ? ORDER BY borrowDate LIMIT 1`;
+    const sql = `SELECT memberId, borrowDate, lenderId, returnDate, receiverId 
+        FROM Borrowings WHERE bookId = ? ORDER BY borrowDate LIMIT 1
+    `;
     const stmt = await conn.prepare(sql);
     const rows = await stmt.execute([bookId]) as any[][];
     conn.unprepare(sql);
@@ -145,7 +151,9 @@ async function getBookBorrowInfo(bookId: string) {
 }
 
 async function registerChanges(bookId: string, librarianId: string, newValues: any) {
-    let sql = `SELECT title, imgUrl, authorName, category, lang, descr, yearPubl, numEdition, nbrPages FROM Books WHERE id = ?`;
+    let sql = `SELECT title, imgUrl, authorName, category, lang, descr, yearPubl, numEdition, nbrPages 
+        FROM Books WHERE id = ?
+    `;
     let stmt = await conn.prepare(sql);
     const rows = await stmt.execute([bookId]) as any[][];
     conn.unprepare(sql);
@@ -193,7 +201,7 @@ export {
     UserSession, 
     conn, 
     getMember, 
-    getUserByEmail, 
+    getUserByEmailOrID, 
     getBookBorrowInfo, 
     registerChanges,
     getTotalFeesByYear, 
