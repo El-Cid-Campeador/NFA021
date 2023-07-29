@@ -4,7 +4,7 @@ import { Link, Navigate, useNavigate, useParams } from "react-router-dom";
 import { AxiosError } from "axios";
 import useLocalStorage from "../components/useLocalStorage";
 import Modal from "../components/Modal";
-import { displayBookProperty, fetcher } from "../functions";
+import { displayBookProperty, fetcher, formatDate, formatProperty } from "../functions";
 import Suggestions from "../components/Suggestions";
 import Container from "../components/Container";
 
@@ -155,7 +155,7 @@ export default function GetBook() {
             const { memberId, borrowDate, returnDate } = queryBook?.info;
             
             if (borrowDate && !returnDate) {
-                let status = `Borrowed on ${borrowDate}`;
+                let status = `Borrowed on ${formatDate(borrowDate)}`;
 
                 if (role) {
                     status += ` by ${memberId}`;
@@ -220,14 +220,14 @@ export default function GetBook() {
                     <div className="w-[1000px]">
                         {
                             Object.keys(queryBook!.result).map(key => {
-                                const property = key as keyof Book;
-                                const bookProperty = displayBookProperty(String(property));
+                                const originalProperty = key as keyof Book;
+                                const displayedProperty = displayBookProperty(String(originalProperty));
 
-                                if (bookProperty && queryBook!.result[property] && key !== 'imgUrl') {
+                                if (displayedProperty && queryBook!.result[originalProperty] && key !== 'imgUrl') {
                                     return (
                                         <div key={key} className="flex items-center mb-3">
-                                            <strong className="mr-2">{bookProperty}: </strong> 
-                                            <span>{queryBook!.result[property]}</span>   
+                                            <strong className="mr-2">{displayedProperty}: </strong> 
+                                            <span>{formatProperty(queryBook!.result, displayedProperty, originalProperty)}</span>   
                                         </div>
                                     );
                                 }

@@ -49,13 +49,16 @@ export default function AddBook() {
 
     return (
         <Container content={
-            <BookForm 
-                initialValues={initialValues}
-                onSubmit={mutate}
-                onCancel={() => navigate('/dashboard')}
-                error={error}
-                setError={setError}
-            />
+            <div className="wrapper">
+                <BookForm 
+                    initialValues={initialValues}
+                    onSubmit={mutate}
+                    onCancel={() => navigate('/dashboard')}
+                    error={error}
+                    setError={setError}
+                />
+            </div>
         } />
+        
     );
 }

@@ -101,94 +101,96 @@ export default function AddLibrarian() {
 
     return (
         <Container content={
-            <div className="w-[500px] h-auto my-[10px] mx-auto p-[10px] border-[1px] border-solid border-customBlue rounded-2xl">
-                <form onSubmit={(e) => handlesubmit(e)}>
-                    <div>
-                        <label htmlFor="id">ID: </label>
-                        <input 
-                            type="tel" 
-                            id="id" 
-                            pattern="\d*"
-                            minLength={12}
-                            maxLength={12}
-                            required 
-                            value={payload.id} 
-                            onChange={(e) => setPayload({ ...payload, id: e.target.value })} 
-                        />
-                    </div>
-                    <div>
-                        <label htmlFor="firstName">First name: </label>
-                        <input 
-                            type="text" 
-                            id="firstName" 
-                            maxLength={50}
-                            required 
-                            value={payload.firstName} 
-                            onChange={(e) => setPayload({ ...payload, firstName: e.target.value })} 
-                        />
-                    </div>
-                    <div>
-                        <label htmlFor="lastName">Last name: </label>
-                        <input 
-                            type="text" 
-                            id="lastName" 
-                            maxLength={50}
-                            required 
-                            value={payload.lastName} 
-                            onChange={(e) => setPayload({ ...payload, lastName: e.target.value })} 
-                        />
-                    </div>
-                    <div>
-                        <label htmlFor="email">Email: </label>
-                        <input 
-                            type="email" 
-                            id="email" 
-                            maxLength={50}
-                            required 
-                            value={payload.email} 
-                            onChange={(e) => setPayload({ ...payload, email: e.target.value })} 
-                        />
-                    </div>
-                    <div className="flex items-center">
-                        <label htmlFor="password">New password: </label>
-                        <input 
-                            type={showPassword ? 'text' : 'password'} 
-                            id="password" 
-                            required 
-                            value={payload.password} 
-                            onChange={(e) => setPayload({ ...payload, password: e.target.value })} 
-                        />
-                        <div onClick={() => setShowPassword(prev => !prev)} className="ml-[10px] cursor-pointer">
-                            {
-                                showPassword ? (
-                                    <img src="/eye-slash.svg" alt="Hide password" width={20} height={20} />
-                                ) : (
-                                    <img src="/eye.svg" alt="Show password" width={20} height={20} />
-                                )
-                            }
+            <div className="wrapper">
+                <div className="w-[500px] h-auto my-[10px] mx-auto p-[10px] border-[1px] border-solid border-customBlue rounded-2xl">
+                    <form onSubmit={(e) => handlesubmit(e)}>
+                        <div>
+                            <label htmlFor="id">ID: </label>
+                            <input 
+                                type="tel" 
+                                id="id" 
+                                pattern="\d*"
+                                minLength={12}
+                                maxLength={12}
+                                required 
+                                value={payload.id} 
+                                onChange={(e) => setPayload({ ...payload, id: e.target.value })} 
+                            />
                         </div>
-                    </div>
-                    <button type="submit">
-                        <img 
-                            src="/user-check.svg" 
-                            alt="Add The Librarian" 
-                            title="Add The Librarian" 
-                            width={50} 
-                            height={50} 
-                            className="cursor-pointer"
-                        />
-                    </button>
-                </form>
-                <p className="error-msg">{inputError}</p>
-                {
-                    isModalShowing ? (
-                        <Modal 
-                            message={`Are you sure to add ${payload.firstName} ${payload.lastName} as a librarian?`} 
-                            onConfirm={() => addNewLibrarian()} 
-                            onCancel={() => setIsModalShowing(false)} 
-                        />
-                    ) : <></>
-                }  
+                        <div>
+                            <label htmlFor="firstName">First name: </label>
+                            <input 
+                                type="text" 
+                                id="firstName" 
+                                maxLength={50}
+                                required 
+                                value={payload.firstName} 
+                                onChange={(e) => setPayload({ ...payload, firstName: e.target.value })} 
+                            />
+                        </div>
+                        <div>
+                            <label htmlFor="lastName">Last name: </label>
+                            <input 
+                                type="text" 
+                                id="lastName" 
+                                maxLength={50}
+                                required 
+                                value={payload.lastName} 
+                                onChange={(e) => setPayload({ ...payload, lastName: e.target.value })} 
+                            />
+                        </div>
+                        <div>
+                            <label htmlFor="email">Email: </label>
+                            <input 
+                                type="email" 
+                                id="email" 
+                                maxLength={50}
+                                required 
+                                value={payload.email} 
+                                onChange={(e) => setPayload({ ...payload, email: e.target.value })} 
+                            />
+                        </div>
+                        <div className="flex items-center">
+                            <label htmlFor="password">New password: </label>
+                            <input 
+                                type={showPassword ? 'text' : 'password'} 
+                                id="password" 
+                                required 
+                                value={payload.password} 
+                                onChange={(e) => setPayload({ ...payload, password: e.target.value })} 
+                            />
+                            <div onClick={() => setShowPassword(prev => !prev)} className="ml-[10px] cursor-pointer">
+                                {
+                                    showPassword ? (
+                                        <img src="/eye-slash.svg" alt="Hide password" width={20} height={20} />
+                                    ) : (
+                                        <img src="/eye.svg" alt="Show password" width={20} height={20} />
+                                    )
+                                }
+                            </div>
+                        </div>
+                        <button type="submit">
+                            <img 
+                                src="/user-check.svg" 
+                                alt="Add The Librarian" 
+                                title="Add The Librarian" 
+                                width={50} 
+                                height={50} 
+                                className="cursor-pointer"
+                            />
+                        </button>
+                    </form>
+                    <p className="error-msg">{inputError}</p>
+                    {
+                        isModalShowing ? (
+                            <Modal 
+                                message={`Are you sure to add ${payload.firstName} ${payload.lastName} as a librarian?`} 
+                                onConfirm={() => addNewLibrarian()} 
+                                onCancel={() => setIsModalShowing(false)} 
+                            />
+                        ) : <></>
+                    }  
+                </div>
             </div>
         } />      
     );

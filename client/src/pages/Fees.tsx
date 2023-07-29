@@ -83,7 +83,7 @@ export default function Fees() {
 
     return (
        <Container content={
-            <div className="mx-[10px]">
+            <div className="wrapper mx-[10px]">
                 <img 
                     src="/money-receive.svg" 
                     alt="Pay Fees" 

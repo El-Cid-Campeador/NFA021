@@ -1,6 +1,6 @@
 import { useQuery } from "@tanstack/react-query";
 import { useParams } from "react-router-dom";
-import { fetcher } from "../functions";
+import { fetcher, formatDate } from "../functions";
 import Container from "../components/Container";
 
 export default function BookBorrowings() {
@@ -24,7 +24,7 @@ export default function BookBorrowings() {
 
     return (
         <Container content={
-            <div className="ml-[10px]">
+            <div className="wrapper ml-[10px]">
                 {
                     data?.result.length ? (
                         <table>
@@ -43,9 +43,9 @@ export default function BookBorrowings() {
                                         return (
                                             <tr key={`${x.memberId}-${bookId}-${x.borrowDate}`}>
                                                 <td>{x.memberId}</td>
-                                                <td className="mr-5 ">{x.borrowDate}</td>
+                                                <td className="mr-5 ">{formatDate(x.borrowDate)}</td>
                                                 <td>{x.lenderId}</td>
-                                                <td>{x.returnDate}</td>
+                                                <td>{formatDate(x.returnDate)}</td>
                                                 <td>{x.receiverId}</td>
                                             </tr>
                                         )

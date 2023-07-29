@@ -27,7 +27,7 @@ export default function Home() {
 
     return (
         <Container content={
-            <div className="m-[10px] pb-[55px] wrapper">
+            <div className="wrapper ml-[10px]">
                 <h1>Welcome {firstName} {lastName}!</h1>
                 <h2 className="font-extrabold ">The 3 latest books: </h2>
                 <Books result={data!.result} />

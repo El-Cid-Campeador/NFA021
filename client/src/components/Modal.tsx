@@ -1,3 +1,5 @@
+import { useEffect } from "react";
+
 type Props = {
     message: string,
     onConfirm: () => void,
@@ -5,9 +7,19 @@ type Props = {
 }
 
 export default function Modal({ message, onConfirm, onCancel }: Props) {
+    useEffect(() => {
+        document.querySelector('body')!.classList.add('show-modal');
+        document.querySelector('html')!.classList.add('show-modal');
+
+        return (() => {
+            document.querySelector('body')!.classList.remove('show-modal');
+            document.querySelector('html')!.classList.remove('show-modal');
+        });
+    }, []);
+
     return (
         <div 
-            className="absolute top-0 right-0 bottom-0 left-0 flex justify-center items-center bg-[#000000cb] z-[9000]" 
+            className="absolute w-[100vw] h-[100vh] top-0 right-0 bottom-0 left-0 flex justify-center items-center bg-[#000000cb] z-[9000]" 
             onClick={() => onCancel()}
         >
             <div 

@@ -1,4 +1,4 @@
-* { 
+*, *:before, *:after { 
     margin: 0;
     padding: 0;
     box-sizing: border-box;
@@ -6,8 +6,16 @@
     font-size: 14px;
 }
 
+html, body {
+    overflow-x: hidden;
+}
+
 :root {
     --custom-blue: #007bff;
+}
+
+.show-modal {
+    overflow-y: hidden;
 }
 
 .wrapper { 

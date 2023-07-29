@@ -1,6 +1,6 @@
 import { useQuery } from "@tanstack/react-query";
 import { Navigate, useParams } from "react-router-dom";
-import { fetcher } from "../functions";
+import { fetcher, formatDate } from "../functions";
 import Container from "../components/Container";
 
 export default function FeesDetails() {
@@ -45,7 +45,7 @@ export default function FeesDetails() {
                                                 <td className="mr-5 ">{fees.year}</td>
                                                 <td>{fees.amount}</td>
                                                 <td>{fees.librarianId}</td>
-                                                <td>{fees.paymentDate}</td>
+                                                <td>{formatDate(fees.paymentDate)}</td>
                                             </tr>
                                         );
                                     })

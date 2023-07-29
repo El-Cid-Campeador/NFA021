@@ -2,7 +2,7 @@ import { useState } from "react";
 import { Navigate, useNavigate, useParams } from "react-router-dom";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import Modal from "../components/Modal";
-import { displayMemberProperty, fetcher } from "../functions";
+import { displayMemberProperty, fetcher, formatProperty } from "../functions";
 import Container from "../components/Container";
 
 export default function GetMember() {
@@ -46,17 +46,17 @@ export default function GetMember() {
     
     return (
         <Container content={
-            <div className="ml-[10px]">
+            <div className="wrapper ml-[10px]">
                 {
                     Object.keys(queryMember!.result).map(key => {
-                        const property = key as keyof Member;
-                        const memberProperty = displayMemberProperty(String(property));
+                        const originalProperty = key as keyof Member;
+                        const displayedProperty = displayMemberProperty(String(originalProperty));
 
-                        if (memberProperty && queryMember!.result[property]) {
+                        if (displayedProperty && queryMember!.result[originalProperty]) {
                             return (
                                 <div key={key} className="flex items-center mb-3">
-                                    <strong className="mr-2">{memberProperty}: </strong>
-                                    <p>{queryMember!.result[property]}</p>
+                                    <strong className="mr-2">{displayedProperty}: </strong>
+                                    <p>{formatProperty(queryMember!.result, displayedProperty, originalProperty)}</p>
                                 </div>
                             );
                         }

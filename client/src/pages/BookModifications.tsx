@@ -1,6 +1,6 @@
 import { useQuery } from "@tanstack/react-query";
 import { useParams } from "react-router-dom";
-import { displayBookProperty, fetcher } from "../functions";
+import { displayBookProperty, fetcher, formatDate } from "../functions";
 import Container from "../components/Container";
 
 type BookInfo = {
@@ -31,7 +31,7 @@ export default function BookModifications() {
 
     return (
         <Container content={
-            <div className="ml-[10px]">
+            <div className="wrapper ml-[10px]">
                 {
                     data?.result.length ? (
                         <ul>
@@ -43,7 +43,7 @@ export default function BookModifications() {
             
                                     return (
                                         <li key={`${bookId}-${librarianId}-${modificationDate}`} className="">
-                                            <p>Modifications by: {librarianId} on {modificationDate}</p>
+                                            <p>Modifications by: {librarianId} on {formatDate(modificationDate)}</p>
                                             {
                                                 Object.keys(previous).map((key) => {
                                                 const property = key as keyof BookInfo;

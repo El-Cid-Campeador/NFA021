@@ -34,7 +34,7 @@ export default function AdvancedSearch() {
 
     return (
        <Container content={
-            <>
+            <div className="wrapper">
                 <div className="w-[310px] sm:w-[510px] h-auto sm:max-h-[200px] mt-[100px] sm:mt-[10px] mx-auto p-[10px] border-[1px] border-solid border-customBlue rounded-2xl">
                     <div className="flex flex-col sm:flex-row flex-wrap gap-[10px]">
                         <SearchByParameter fieldName="Category" listOptions={bookCategories} value={category} onChange={setCategory} />
@@ -52,7 +52,7 @@ export default function AdvancedSearch() {
                         ) : <h1 className="text-center mt-[10px]">No results found!</h1>
                     )
                 }
-            </>
+            </div>
        } />
     );
 }

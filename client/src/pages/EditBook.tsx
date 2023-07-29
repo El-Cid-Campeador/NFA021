@@ -47,13 +47,15 @@ export default function EditBook() {
 
     return (
         <Container content={
-            <BookForm 
-                initialValues={initialValues}
-                onSubmit={mutate}
-                onCancel={() => navigate(`/books/${bookId}`)}
-                error={error}
-                setError={setError}
-            />
+            <div className="wrapper">
+                <BookForm 
+                    initialValues={initialValues}
+                    onSubmit={mutate}
+                    onCancel={() => navigate(`/books/${bookId}`)}
+                    error={error}
+                    setError={setError}
+                />
+            </div>
         } />
     );
 }

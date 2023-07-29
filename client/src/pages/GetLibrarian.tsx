@@ -2,7 +2,7 @@ import { useState } from "react";
 import { Navigate, useNavigate, useParams } from "react-router-dom";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import Modal from "../components/Modal";
-import { displayLibrarianProperty, fetcher } from "../functions";
+import { displayLibrarianProperty, fetcher, formatProperty } from "../functions";
 import Container from "../components/Container";
 
 export default function GetLibrarian() {
@@ -46,17 +46,17 @@ export default function GetLibrarian() {
     
     return (
         <Container content={
-            <div className="ml-[10px]">
+            <div className="wrapper ml-[10px]">
                 {
                     Object.keys(queryLibrarian!.result).map(key => {
-                        const property = key as keyof Librarian;
-                        const memberProperty = displayLibrarianProperty(String(property));
+                        const originalProperty = key as keyof Librarian;
+                        const displayedProperty = displayLibrarianProperty(String(originalProperty));
 
-                        if (memberProperty && queryLibrarian!.result[property]) {
+                        if (displayedProperty && queryLibrarian!.result[originalProperty]) {
                             return (
                                 <div key={key} className="flex items-center mb-3">
-                                    <strong className="mr-2">{memberProperty}: </strong>
-                                    <p>{queryLibrarian!.result[property]}</p>
+                                    <strong className="mr-2">{displayedProperty}: </strong>
+                                    <p>{formatProperty(queryLibrarian!.result, displayedProperty, originalProperty)}</p>
                                 </div>
                             );
                         }

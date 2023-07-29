@@ -239,6 +239,14 @@ function formatDate(date: string) {
     return new Date(date).toISOString().slice(0, 19).replace('T', ' ');
 }
 
+function formatProperty(obj: any, displayedProperty: string, originalProperty: string) {
+    if (displayedProperty.includes('date')) {
+        return formatDate(obj[originalProperty]);
+    }
+
+    return obj[originalProperty];
+}
+
 export { 
     fetcher, 
     bookCategories, 
@@ -251,5 +259,6 @@ export {
     displayBookProperty,
     displayMemberProperty,
     displayLibrarianProperty,
+    formatProperty,
     formatDate
 };

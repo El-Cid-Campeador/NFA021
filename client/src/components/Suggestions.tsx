@@ -1,3 +1,5 @@
+import { formatDate } from "../functions";
+
 type Props = {
     list: Suggestion[]
 }
@@ -14,7 +16,7 @@ export default function Suggestions({ list }: Props) {
                     return (
                         <li key={sugg.id}>
                             <p>{sugg.firstName} {sugg.lastName}</p>
-                            <p>{sugg.additionDate}</p>
+                            <p>{formatDate(sugg.additionDate)}</p>
                             <p>{sugg.descr}</p>
                         </li>
                     );

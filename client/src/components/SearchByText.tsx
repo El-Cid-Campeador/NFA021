@@ -51,7 +51,7 @@ export default function SearchByText({ queryKey, route, placeholder }: Props) {
     if (error) return <Navigate to="/signin" />;
     
     return (
-        <div className="wrapper">
+        <>
             <div className=" w-[308px] sm:w-[500px] h-[50px] mt-[6.25rem] sm:mt-[10px] mx-auto p-[10px] pb-[55px] border-[1px] border-solid border-customBlue rounded-2xl">
                 <input 
                     type="text" 
@@ -67,6 +67,6 @@ export default function SearchByText({ queryKey, route, placeholder }: Props) {
                     RenderResultByQueryType(queryKey, data!.result)
                 )
             }
-        </div>
+        </>
     );
 }

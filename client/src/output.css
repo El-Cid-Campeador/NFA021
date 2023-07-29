@@ -526,6 +526,10 @@ video {
   position: absolute;
 }
 
+.sticky {
+  position: sticky;
+}
+
 .bottom-0 {
   bottom: 0px;
 }
@@ -540,6 +544,10 @@ video {
 
 .top-0 {
   top: 0px;
+}
+
+.top-\[100vh\] {
+  top: 100vh;
 }
 
 .z-\[1000\] {
@@ -689,6 +697,10 @@ video {
   height: auto;
 }
 
+.h-\[100vh\] {
+  height: 100vh;
+}
+
 .w-\[1000px\] {
   width: 1000px;
 }
@@ -727,6 +739,10 @@ video {
 
 .w-auto {
   width: auto;
+}
+
+.w-\[100vw\] {
+  width: 100vw;
 }
 
 .flex-1 {
@@ -775,6 +791,14 @@ video {
 
 .gap-\[20px\] {
   gap: 20px;
+}
+
+.overflow-hidden {
+  overflow: hidden;
+}
+
+.overflow-y-hidden {
+  overflow-y: hidden;
 }
 
 .rounded {
