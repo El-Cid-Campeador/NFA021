@@ -155,6 +155,15 @@ function displayBookProperty(key: string) {
         case 'nbrPages':
             res = 'Number of pages';
             break;
+        case 'additionDate':
+            res = 'Addition date';
+            break;
+        case 'deletionDate':
+            res = 'Addition date';
+            break;
+        case 'deletedBy':
+            res = 'Deleted by';
+            break;
         default:
             break;
     }
@@ -194,6 +203,42 @@ function displayMemberProperty(key: string) {
     return res;
 }
 
+function displayLibrarianProperty(key: string) {
+    let res = '';
+
+    switch (key) {
+        case 'id':
+            res = 'ID';
+            break;
+        case 'firstName':
+            res = 'First name';
+            break;
+        case 'lastName':
+            res = 'Last name';
+            break;
+        case 'email':
+            res = 'Email';
+            break;
+        case 'lang':
+            res = 'Language';
+            break;
+        case 'additionDate':
+            res = 'Addition date';
+            break;
+        case 'addedBy':
+            res = 'Added by';
+            break;
+        default:
+            break;
+    }
+
+    return res;
+}
+
+function formatDate(date: string) {
+    return new Date(date).toISOString().slice(0, 19).replace('T', ' ');
+}
+
 export { 
     fetcher, 
     bookCategories, 
@@ -204,5 +249,7 @@ export {
     isNumber, 
     generateFeesYears, 
     displayBookProperty,
-    displayMemberProperty
+    displayMemberProperty,
+    displayLibrarianProperty,
+    formatDate
 };

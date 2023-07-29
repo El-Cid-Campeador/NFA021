@@ -1,8 +1,8 @@
 import express from "express";
 import bcrypt from "bcrypt";
-
 import { conn, authMiddleware, getUserByEmailOrID, UserSession } from "../../functions.js";
 import memberRouter from "./member.js";
+import librarianRouter from "./librarian.js";
 
 const userRouter = express.Router();
 
@@ -21,7 +21,7 @@ userRouter.post('/signup', async (req, res) => {
         await stmt.execute([id, firstName, lastName, email, hash]);
         conn.unprepare(sql);
     
-        if (sessionUser && librarianId) {
+        if (sessionUser && sessionUser.user?.role && librarianId) {
             sql = `INSERT INTO Librarians (id, addedBy) VALUES (?, ?)`;
             stmt = await conn.prepare(sql);
             await stmt.execute([id, librarianId]);
@@ -86,6 +86,7 @@ userRouter.delete('/logout', authMiddleware, async (req, res) => {
     });   
 });
 
-userRouter.use('/members', memberRouter)
+userRouter.use('/members', memberRouter);
+userRouter.use('/librarians', librarianRouter);
 
 export default userRouter;

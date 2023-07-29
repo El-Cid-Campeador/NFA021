@@ -3,8 +3,8 @@ import { useLocation, useNavigate, useParams } from "react-router-dom";
 import { useMemo, useState } from "react";
 import BookForm from "../components/BookForm";
 import { fetcher } from "../functions";
-import NavBar from "../components/NavBar";
 import useLocalStorage from "../components/useLocalStorage";
+import Container from "../components/Container";
 
 export default function EditBook() {
     const { bookId } = useParams();
@@ -46,8 +46,7 @@ export default function EditBook() {
     });
 
     return (
-        <>
-            <NavBar />
+        <Container content={
             <BookForm 
                 initialValues={initialValues}
                 onSubmit={mutate}
@@ -55,6 +54,6 @@ export default function EditBook() {
                 error={error}
                 setError={setError}
             />
-        </>
+        } />
     );
 }

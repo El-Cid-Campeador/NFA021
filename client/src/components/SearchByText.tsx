@@ -42,20 +42,20 @@ export default function SearchByText({ queryKey, route, placeholder }: Props) {
             const { data } = await fetcher.get(`http://localhost:8080/api${route}`, {
                 params: { search: payload }
             });
-
           
             return data as { result: never[] };
+          
         }
 	});
 
     if (error) return <Navigate to="/signin" />;
     
     return (
-        <>
-            <div className="w-[500px] max-h-[200px] y-[10px] mx-auto p-[10px] border-[1px]  border-solid border-customBlue rounded-2xl">
+        <div className="wrapper">
+            <div className=" w-[308px] sm:w-[500px] h-[50px] mt-[6.25rem] sm:mt-[10px] mx-auto p-[10px] pb-[55px] border-[1px] border-solid border-customBlue rounded-2xl">
                 <input 
                     type="text" 
-                    className="w-[450px]"
+                    className="w-[288px] sm:w-[480px]"
                     placeholder={placeholder} 
                     maxLength={100}
                     value={search} 
@@ -67,6 +67,6 @@ export default function SearchByText({ queryKey, route, placeholder }: Props) {
                     RenderResultByQueryType(queryKey, data!.result)
                 )
             }
-        </>
+        </div>
     );
 }

@@ -77,7 +77,7 @@ export default function SignIn() {
     if (isLoading) return <h1>Waiting for server...</h1>;
 
     return (
-        <div className="w-[500px] h-[95vh] my-[10px] mx-auto p-[10px] border-[1px]  border-solid border-customBlue rounded-2xl">
+        <div className="w-[310px] sm:w-[500px] h-auto sm:h-[95vh] mt-[6.25rem] sm:mt-[10px] mx-auto p-[10px] border-[1px] border-solid border-customBlue rounded-2xl">
             <form onSubmit={(e) => handlesubmit(e)}>
                 <div>
                         <label htmlFor="emailOrID">Email or ID: </label>
@@ -90,7 +90,7 @@ export default function SignIn() {
                             onChange={(e) => setPayload({ ...payload, emailOrID: e.target.value })} 
                         />
                     </div>
-                    <div className="flex items-center">
+                    <div className="flex flex-wrap items-center">
                         <label htmlFor="password">Password: </label>
                         <input 
                             type={showPassword ? 'text' : 'password'} 

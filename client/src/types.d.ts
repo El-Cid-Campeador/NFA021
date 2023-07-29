@@ -15,6 +15,16 @@ type Member = {
     deletedBy?: string 
 }
 
+type Librarian = {
+    id: string,
+    firstName: string, 
+    lastName: string,
+    email: string,
+    additionDate: string, 
+    addedBy: string 
+    deletionDate?: string, 
+}
+
 type Book = {
     title: string, 
     imgUrl: string, 
@@ -41,6 +51,14 @@ type BookDataInput = {
     yearPubl: number, 
     numEdition: number,
     nbrPages: number
+}
+
+type Fees = {
+    id: string,
+    amount: number,
+    year: number,
+    librarianId: string,
+    paymentDate: string
 }
 
 type Suggestion = {

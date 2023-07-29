@@ -45,7 +45,7 @@ memberRouter.route('/fees')
 memberRouter.get('/fees_details', async (req, res) => {
     const { memberId } = req.query;
 
-    const sql = `SELECT * FROM Fees WHERE memberId = ? ORDER BY paymentDate`;
+    const sql = `SELECT id, amount, year, librarianId, paymentDate FROM Fees WHERE memberId = ? ORDER BY paymentDate`;
     const stmt = await conn.prepare(sql);
     const rows = await stmt.execute([memberId]) as any[][];
     conn.unprepare(sql);

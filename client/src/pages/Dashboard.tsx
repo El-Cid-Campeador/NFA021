@@ -1,26 +1,54 @@
-import { Link } from "react-router-dom";
+import { useState } from "react";
+import { useNavigate } from "react-router-dom";
 import SearchByText from "../components/SearchByText";
-import NavBar from "../components/NavBar";
+import Librarians from "../components/Librarians";
+import useLocalStorage from "../components/useLocalStorage";
+import Container from "../components/Container";
 
 export default function Dashboard() {
+    const [showLibrarians, setShowLibrarians] = useState(false);
+
+    const navigate = useNavigate();
+
+    const { userData: { id } } = useLocalStorage(); 
+
     return (
-        <>
-            <NavBar />
-            <div className="m-[10px]">
+        <Container content={
+            <div className="wrapper m-[10px]">
                 <div className="flex gap-[20px]">
-                    <Link to="/" className="text-customBlue">
-                        <img src="/user-plus.svg" alt="Add New Librarian" title="Add New Librarian" width={50} height={50} />
-                    </Link>
-                    <Link to="/books/add" className="text-customBlue">
-                        <img src="/book-add.svg" alt="Add New Book" title="Add New Book" width={50} height={50} />
-                    </Link>
+                    <img 
+                        src="/user-plus.svg" 
+                        alt="Add New Librarian" 
+                        title="Add New Librarian" 
+                        width={50} height={50}
+                        onClick={() => navigate("/new_librarian")}
+                        className="cursor-pointer"
+                    />
+                    <img 
+                        src="/book-add.svg" 
+                        alt="Add New Book" 
+                        title="Add New Book" 
+                        width={50} 
+                        height={50} 
+                        onClick={() => navigate("/books/add")}
+                        className="cursor-pointer"
+                    />
+                    <button className="btn" onClick={() => setShowLibrarians(prev => !prev)}>
+                        {showLibrarians ? 'Hide' : 'Show'} all added librarians
+                    </button>
                 </div>
-                <SearchByText
-                    queryKey="members"
-                    route="/members"
-                    placeholder="Member first name or last name or ID"
-                />
+                {
+                    showLibrarians ? (
+                        <Librarians id={id} />
+                    ) : (
+                        <SearchByText
+                            queryKey="members"
+                            route="/members"
+                            placeholder="Member first name or last name or ID"
+                        />
+                    )
+                }
             </div>
-        </>
+        } />
     );
 }

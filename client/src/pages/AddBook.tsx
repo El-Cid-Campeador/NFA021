@@ -2,9 +2,9 @@ import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { useNavigate } from "react-router-dom";
 import { useState } from "react";
 import BookForm from "../components/BookForm";
-import NavBar from "../components/NavBar";
 import { fetcher } from "../functions";
 import useLocalStorage from "../components/useLocalStorage";
+import Container from "../components/Container";
 
 const initialValues: BookDataInput = {
     title: '', 
@@ -48,8 +48,7 @@ export default function AddBook() {
     });
 
     return (
-        <>
-            <NavBar />
+        <Container content={
             <BookForm 
                 initialValues={initialValues}
                 onSubmit={mutate}
@@ -57,6 +56,6 @@ export default function AddBook() {
                 error={error}
                 setError={setError}
             />
-        </>
+        } />
     );
 }

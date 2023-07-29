@@ -4,7 +4,7 @@ import useLocalStorage from "../components/useLocalStorage";
 import Books from "../components/Books";
 import { fetcher } from "../functions";
 import { useEffect } from "react";
-import NavBar from "../components/NavBar";
+import Container from "../components/Container";
 
 export default function Home() {
     const { data, isLoading, error, isFetching } = useQuery({
@@ -26,13 +26,12 @@ export default function Home() {
     if (error) return <Navigate to="/signin" />;
 
     return (
-        <>
-            <NavBar />
-            <div className="m-[10px]">
+        <Container content={
+            <div className="m-[10px] pb-[55px] wrapper">
                 <h1>Welcome {firstName} {lastName}!</h1>
                 <h2 className="font-extrabold ">The 3 latest books: </h2>
                 <Books result={data!.result} />
             </div>
-        </>
+        } />
     );
 }

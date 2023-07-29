@@ -1,9 +1,9 @@
-import { Navigate, useNavigate, useParams } from "react-router-dom";
-import NavBar from "../components/NavBar";
+import { Link, Navigate, useNavigate, useParams } from "react-router-dom";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { fetcher, generateFeesYears } from "../functions";
 import { FormEvent, useEffect, useState } from "react";
 import useLocalStorage from "../components/useLocalStorage";
+import Container from "../components/Container";
 
 export default function Fees() {
     const { memberId } = useParams();
@@ -82,9 +82,8 @@ export default function Fees() {
     if (error) return <Navigate to="/signin" />;
 
     return (
-        <>
-            <NavBar />
-            <div className="m-[10px]">
+       <Container content={
+            <div className="mx-[10px]">
                 <img 
                     src="/money-receive.svg" 
                     alt="Pay Fees" 
@@ -97,7 +96,10 @@ export default function Fees() {
                 {
                     isPayingFormShowing && (
                         <>
-                            <form onSubmit={(e) => handlePayment(e)} className="w-[500px] my-[10px] p-[10px] border-[1px] border-solid border-customBlue rounded-2xl">
+                            <form 
+                                onSubmit={(e) => handlePayment(e)} 
+                                className="w-[306px] sm:w-[500px] h-auto sm:h-[130px] mt-[6.25rem] sm:mt-[10px] mx-auto p-[10px] pb-[55px] border-[1px] border-solid border-customBlue rounded-2xl"
+                            >
                                 <label htmlFor="amount">Amount: </label>
                                 <input 
                                     type="text" 
@@ -115,34 +117,42 @@ export default function Fees() {
                                         })
                                     }
                                 </select> 
-                                <input type="submit" value="Pay" className="block btn" />
+                                <input type="submit" value="Pay" className="ml-[20px] btn" />
                             </form>
                             <p className="error-msg">{inputError}</p>
                         </>
                     )
                 }
-                <table>
-                    <caption>- Fees -</caption>
-                    <thead>
-                        <tr>
-                            <th>Year</th>
-                            <th>Amount</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        {
-                            data?.total.map(fees => {
-                                return (
-                                    <tr key={fees.id}>
-                                        <td className="mr-5 ">{fees.year}</td>
-                                        <td>{fees.amount}</td>
+
+                {
+                    data?.total.length ? (
+                        <div>
+                            <Link to={`/fees/${memberId}/details`}>View Fees Details</Link>
+                            <table className="max-[640px]:mt-[100px]">
+                                <caption>- <u>Fees</u> -</caption>
+                                <thead>
+                                    <tr>
+                                        <th>Year</th>
+                                        <th>Amount</th>
                                     </tr>
-                                );
-                            })
-                        }
-                    </tbody>
-                </table>
+                                </thead>
+                                <tbody>
+                                    {
+                                        data?.total.map(fees => {
+                                            return (
+                                                <tr key={fees.id}>
+                                                    <td className="mr-5 ">{fees.year}</td>
+                                                    <td>{fees.amount}</td>
+                                                </tr>
+                                            );
+                                        })
+                                    }
+                                </tbody>
+                            </table>
+                        </div>
+                    ) : <></>
+                }
             </div>
-        </>
+       } />
     );
 }

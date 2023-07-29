@@ -5,8 +5,8 @@ import { AxiosError } from "axios";
 import useLocalStorage from "../components/useLocalStorage";
 import Modal from "../components/Modal";
 import { displayBookProperty, fetcher } from "../functions";
-import NavBar from "../components/NavBar";
 import Suggestions from "../components/Suggestions";
+import Container from "../components/Container";
 
 export default function GetBook() {
     const [isModalShowing, setIsModalShowing] = useState(false);
@@ -31,6 +31,7 @@ export default function GetBook() {
         queryKey: ['books', bookId],
         queryFn: async () => {
             const { data } = await fetcher.get(`/api/books/${bookId}`);
+            
             if (data.result) {
                 return data as { result: Book, info: any | string };
             }
@@ -69,8 +70,6 @@ export default function GetBook() {
             return data as { result: Suggestion[] };
         }
     });
-
-    const { userData: { id }} = useLocalStorage();
 
     const { mutate: addSuggestion } = useMutation({
         mutationFn: async () => {
@@ -149,7 +148,7 @@ export default function GetBook() {
         }
     });
 
-    const { userData: { role } } = useLocalStorage();
+    const { userData: { id, role } } = useLocalStorage();
     
     function DisplayStatus() {
         if (queryBook?.info !== '') {
@@ -209,18 +208,22 @@ export default function GetBook() {
     if (error || errorSugg) return <Navigate to="/signin" />;
 
     return (
-        <>
-            <NavBar />
-            <div className="m-[10px]">
-                <div className="flex gap-[20px]">
-                    <img src={queryBook?.result.imgUrl} alt={queryBook?.result.title} width={250} height={250} />
+        <Container content={
+            <div className="wrapper m-[10px]">
+                <div className="flex gap-[20px] flex-wrap">
+                    <img 
+                        src={queryBook?.result.imgUrl} 
+                        alt={queryBook?.result.title} 
+                        width={250}
+                        height={250}
+                    />
                     <div className="w-[1000px]">
                         {
                             Object.keys(queryBook!.result).map(key => {
                                 const property = key as keyof Book;
                                 const bookProperty = displayBookProperty(String(property));
 
-                                if (bookProperty && key !== 'imgUrl') {
+                                if (bookProperty && queryBook!.result[property] && key !== 'imgUrl') {
                                     return (
                                         <div key={key} className="flex items-center mb-3">
                                             <strong className="mr-2">{bookProperty}: </strong> 
@@ -232,7 +235,12 @@ export default function GetBook() {
                         }
                     </div>
                 </div>
-                <p className="my-[25px]"><strong>Status</strong>: <DisplayStatus /></p>
+
+                <br />
+                <hr />
+                <br />
+                
+                <p className="s:my-[25px]"><strong>Status</strong>: <DisplayStatus /></p>
                 {    
                     role && (
                         <>
@@ -240,7 +248,7 @@ export default function GetBook() {
                                 queryBook?.result.deletedBy ? (
                                     <div>Deleted by {queryBook?.result.deletedBy} on {queryBook?.result.deletionDate}</div>
                                 ) : ( 
-                                    <div className="flex items-center gap-[10px] w-[300px]">
+                                    <div className="flex flex-wrap items-center gap-[10px] w-[300px]">
                                         <img 
                                             src="/book-edit.svg" 
                                             alt="Edit The Book" 
@@ -329,7 +337,7 @@ export default function GetBook() {
                     !role && (
                         <>
                             <button onClick={() => setIsSuggestionFormShowing(prev => !prev)} className="btn">Add suggestion</button>
-                          
+                        
                             { 
                                 isSuggestionFormShowing && (
                                     <div className="mt-[20px]">
@@ -346,6 +354,6 @@ export default function GetBook() {
                     )
                 }
             </div>
-        </>
+        } />
     );
 }

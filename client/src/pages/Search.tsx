@@ -1,15 +1,14 @@
 import SearchByText from "../components/SearchByText";
-import NavBar from "../components/NavBar";
+import Container from "../components/Container";
 
 export default function Search() {
     return (
-        <>
-            <NavBar />
+        <Container content={
             <SearchByText
                 queryKey="books"
                 route="/books"
                 placeholder="Title or author name"
             />
-        </>
+        } />
     );
 }

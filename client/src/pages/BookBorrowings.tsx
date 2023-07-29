@@ -1,7 +1,7 @@
 import { useQuery } from "@tanstack/react-query";
 import { useParams } from "react-router-dom";
 import { fetcher } from "../functions";
-import NavBar from "../components/NavBar";
+import Container from "../components/Container";
 
 export default function BookBorrowings() {
     const { bookId } = useParams();
@@ -15,8 +15,6 @@ export default function BookBorrowings() {
                 }
             });
 
-            console.log(data);
-
             return data as { result: { memberId: string, borrowDate: string, lenderId: string, returnDate: string, receiverId: string }[] };
         }
     });
@@ -25,34 +23,39 @@ export default function BookBorrowings() {
     if (error) return <h1>{(error as Error).message}</h1>;
 
     return (
-        <div>
-            <NavBar />
-            <table>
-                <thead>
-                    <tr>
-                        <th>Member ID</th>
-                        <th>Borrowing date</th>
-                        <th>Lender ID</th>
-                        <th>Return date</th>
-                        <th>Receiver ID</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    {
-                        data?.result.map(x => {
-                            return (
-                                <tr key={`${x.memberId}-${bookId}-${x.borrowDate}`}>
-                                    <td>{x.memberId}</td>
-                                    <td className="mr-5 ">{x.borrowDate}</td>
-                                    <td>{x.lenderId}</td>
-                                    <td>{x.returnDate}</td>
-                                    <td>{x.receiverId}</td>
+        <Container content={
+            <div className="ml-[10px]">
+                {
+                    data?.result.length ? (
+                        <table>
+                            <thead>
+                                <tr>
+                                    <th>Member ID</th>
+                                    <th>Borrowing date</th>
+                                    <th>Lender ID</th>
+                                    <th>Return date</th>
+                                    <th>Receiver ID</th>
                                 </tr>
-                            )
-                        })
-                    }
-                </tbody>
-            </table>
-        </div>
+                            </thead>
+                            <tbody>
+                                {
+                                    data?.result.map(x => {
+                                        return (
+                                            <tr key={`${x.memberId}-${bookId}-${x.borrowDate}`}>
+                                                <td>{x.memberId}</td>
+                                                <td className="mr-5 ">{x.borrowDate}</td>
+                                                <td>{x.lenderId}</td>
+                                                <td>{x.returnDate}</td>
+                                                <td>{x.receiverId}</td>
+                                            </tr>
+                                        )
+                                    })
+                                }
+                            </tbody>
+                        </table>
+                    ) : <h1>No borrowings found!</h1>
+                }
+            </div>
+        } />
     )
 }

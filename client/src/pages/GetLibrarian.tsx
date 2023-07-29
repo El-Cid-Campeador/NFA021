@@ -2,37 +2,37 @@ import { useState } from "react";
 import { Navigate, useNavigate, useParams } from "react-router-dom";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import Modal from "../components/Modal";
-import { displayMemberProperty, fetcher } from "../functions";
+import { displayLibrarianProperty, fetcher } from "../functions";
 import Container from "../components/Container";
 
-export default function GetMember() {
+export default function GetLibrarian() {
     const [isModalShowing, setIsModalShowing] = useState(false);
     
-    const { memberId } = useParams();
+    const { addedlibrarianId } = useParams();
 
     const navigate = useNavigate();
 
     const queryClient = useQueryClient();
 
-    const { data: queryMember, isLoading: isLoadingMember, error: errorMember, isFetching: isFetchingMember } = useQuery({
-        queryKey: ['members', memberId],
+    const { data: queryLibrarian, isLoading: isLoadingLibrarian, error: errorLibrarian, isFetching: isFetchingLibrarian } = useQuery({
+        queryKey: ['librarians', addedlibrarianId],
         queryFn: async () => {
-            const { data } = await fetcher.get(`/api/members/${memberId}`);
+            const { data } = await fetcher.get(`/api/librarians/${addedlibrarianId}`);
             
             if (data.result) {
-                return data as { result: Member };
+                return data as { result: Librarian };
             }
 
             throw new Error();
         }
     });
 
-    const { mutate: deleteMember} = useMutation({
+    const { mutate: deleteLibrarian} = useMutation({
         mutationFn: async () => {
-            return await fetcher.delete(`/api/members/${memberId}`);
+            return await fetcher.delete(`/api/librarians/${addedlibrarianId}`);
         },
         onSuccess: () => {
-            queryClient.invalidateQueries({ queryKey: ['members'] });
+            queryClient.invalidateQueries({ queryKey: ['librarians'] });
 
             navigate('/dashboard');
         },
@@ -41,22 +41,22 @@ export default function GetMember() {
         }
     });
     
-    if (isLoadingMember || isFetchingMember) return <h1>Loading...</h1>;
-    if (errorMember) return <Navigate to="/signin" />;
+    if (isLoadingLibrarian || isFetchingLibrarian) return <h1>Loading...</h1>;
+    if (errorLibrarian) return <Navigate to="/signin" />;
     
     return (
         <Container content={
             <div className="ml-[10px]">
                 {
-                    Object.keys(queryMember!.result).map(key => {
-                        const property = key as keyof Member;
-                        const memberProperty = displayMemberProperty(String(property));
+                    Object.keys(queryLibrarian!.result).map(key => {
+                        const property = key as keyof Librarian;
+                        const memberProperty = displayLibrarianProperty(String(property));
 
-                        if (memberProperty && queryMember!.result[property]) {
+                        if (memberProperty && queryLibrarian!.result[property]) {
                             return (
                                 <div key={key} className="flex items-center mb-3">
                                     <strong className="mr-2">{memberProperty}: </strong>
-                                    <p>{queryMember!.result[property]}</p>
+                                    <p>{queryLibrarian!.result[property]}</p>
                                 </div>
                             );
                         }
@@ -69,13 +69,13 @@ export default function GetMember() {
                         title="Check fees" 
                         width={50} 
                         height={50} 
-                        onClick={() => navigate(`/fees/${memberId}`)} 
+                        onClick={() => navigate(`/fees/${addedlibrarianId}`)} 
                         className="cursor-pointer"
                     />
                     <img 
                         src="/user-delete.svg" 
-                        alt="Delete Member" 
-                        title="Delete Member" 
+                        alt="Delete Librarian" 
+                        title="Delete Librarian" 
                         width={50} 
                         height={50} 
                         onClick={() => setIsModalShowing(true)}
@@ -86,7 +86,7 @@ export default function GetMember() {
                     isModalShowing && (
                         <Modal 
                             message="Are you sure to delete this member?" 
-                            onConfirm={() => deleteMember()} 
+                            onConfirm={() => deleteLibrarian()} 
                             onCancel={() => setIsModalShowing(false)}
                         />
                     )

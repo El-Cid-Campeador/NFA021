@@ -73,7 +73,7 @@ export default function BookForm({ initialValues, onSubmit, onCancel, error, set
     }, [formData, setError]);
 
     return (
-        <div className="w-[500px] h-[95vh] my-[10px] mx-auto p-[10px] border-[1px]  border-solid border-customBlue rounded-2xl">
+        <div className="w-[310px] sm:w-[500px] h-auto sm:h-[95vh] mt-[20px] sm:mt-[10px] mx-auto p-[10px] border-[1px] border-solid border-customBlue rounded-2xl">
             <>
                 <div>
                     <label htmlFor="title">Title: </label>

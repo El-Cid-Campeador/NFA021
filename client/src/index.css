@@ -1,4 +1,4 @@
-* {
+* { 
     margin: 0;
     padding: 0;
     box-sizing: border-box;
@@ -10,7 +10,13 @@
     --custom-blue: #007bff;
 }
 
-label+* {
+.wrapper { 
+    min-height: calc(var(--vh, 1vh) * 100);
+    display: flex; 
+    flex-direction: column; 
+}
+
+label + * {
     margin-left: 10px;
     margin-bottom: 10px;
 }
@@ -30,20 +36,6 @@ select {
 select {
     border-radius: 4px;
     height: 40px;
-}
-
-nav {
-    position: absolute;
-    top: 0;
-    left: 0;
-    right: 0;
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    height: 55px;
-    background-color: black;
-    color: white;
-    z-index: 9999;
 }
 
 h1 {

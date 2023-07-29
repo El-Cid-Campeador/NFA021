@@ -161,12 +161,14 @@ bookRouter.route('/:id')
 
         const sessionUser = req.session as UserSession;
 
-        let sql = `SELECT title, imgUrl, authorName, category, lang, descr, yearPubl, numEdition, nbrPages, addedBy, additionDate, deletedBy, deletionDate 
+        let sql = `SELECT title, imgUrl, authorName, category, lang, descr, yearPubl, numEdition, nbrPages, addedBy, additionDate 
             FROM Books WHERE id = ?
         `;
 
         if (sessionUser.user?.role) {
-            sql += ` AND deletedBy IS NULL`;
+            sql = `SELECT title, imgUrl, authorName, category, lang, descr, yearPubl, numEdition, nbrPages, addedBy, additionDate, deletedBy, deletionDate 
+                FROM Books WHERE id = ? AND deletedBy IS NULL
+            `;
         }
 
         const stmt = await conn.prepare(sql);

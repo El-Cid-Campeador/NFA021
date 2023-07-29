@@ -27,20 +27,18 @@ export default function NavBar() {
     const { userData: { role } } = useLocalStorage();
 
     return (
-        <div className="mb-[70px]">
-            <nav className="px-[10px]">
-                <Link to="/home">
+        <div className="mb-[30px] w-auto">
+            <nav className="w-auto h-auto sm:h-[60px] px-[10px] flex flex-wrap flex-col sm:flex-row justify-between items-center bg-black text-white z-[1000]">
+                <Link to="/home" className="mt-4 mb-4 sm:mt-0 sm:mb-0">
                     <img src="/home.svg" alt="Home" title="Home" width={50} height={50} />
                 </Link>
-                <Link to="/search">
+                <Link to="/search" className="mb-4 sm:mb-0">
                     <img src="/book-search.svg" alt="Book Search" title="Book Search" width={50} height={50} />
                 </Link>
-                <Link to="/advanced_search" className="text-white">Advanced Books Search</Link>
+                <Link to="/advanced_search" className="mb-4 text-white sm:mb-0">Advanced Books Search</Link>
                 {
                     role && (
-                        <div>
-                            <Link to="/dashboard" className="text-white">Dashboard</Link>
-                        </div>
+                        <Link to="/dashboard" className="mb-4 text-white sm:mb-0">Dashboard</Link>
                     )
                 }
                 <img 
@@ -50,18 +48,18 @@ export default function NavBar() {
                     width={50} 
                     height={50} 
                     onClick={() => setIsModalShowing(true)}
-                    className="cursor-pointer"
+                    className="mb-4 cursor-pointer sm:mb-0"
                 />
+                {
+                    isModalShowing && (
+                        <Modal 
+                            message="Are you sure to log out?" 
+                            onConfirm={() => signOut()} 
+                            onCancel={() => setIsModalShowing(false)}
+                        />
+                    )
+                }
             </nav>
-            {
-                isModalShowing && (
-                    <Modal 
-                        message="Are you sure to log out?" 
-                        onConfirm={() => signOut()} 
-                        onCancel={() => setIsModalShowing(false)}
-                    />
-                )
-            }
         </div>
     );
 }
