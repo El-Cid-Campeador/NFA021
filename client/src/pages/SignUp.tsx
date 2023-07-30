@@ -89,7 +89,7 @@ export default function SignUp() {
     }, [payload]);
 
     return (
-        <div className="w-[310px] sm:w-[500px] h-auto sm:h-[95vh] mt-[6.25rem] sm:mt-[10px] mx-auto p-[10px] border-[1px] border-solid border-customBlue rounded-2xl">
+        <div className="w-[310px] sm:w-[500px] h-auto sm:h-[95vh] mt-[100px] sm:mt-[10px] mx-auto p-[10px] border-[1px] border-solid border-customBlue rounded-2xl">
             <form onSubmit={(e) => handlesubmit(e)}>
                 <div>
                     <label htmlFor="id">ID: </label>

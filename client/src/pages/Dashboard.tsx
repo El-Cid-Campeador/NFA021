@@ -14,7 +14,7 @@ export default function Dashboard() {
 
     return (
         <Container content={
-            <div className="wrapper m-[10px]">
+            <>
                 <div className="flex gap-[20px]">
                     <img 
                         src="/user-plus.svg" 
@@ -48,7 +48,7 @@ export default function Dashboard() {
                         />
                     )
                 }
-            </div>
+            </>
         } />
     );
 }

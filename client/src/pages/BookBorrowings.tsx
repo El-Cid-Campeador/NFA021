@@ -24,7 +24,7 @@ export default function BookBorrowings() {
 
     return (
         <Container content={
-            <div className="wrapper ml-[10px]">
+            <>
                 {
                     data?.result.length ? (
                         <table>
@@ -55,7 +55,7 @@ export default function BookBorrowings() {
                         </table>
                     ) : <h1>No borrowings found!</h1>
                 }
-            </div>
+            </>
         } />
     )
 }

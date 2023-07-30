@@ -83,7 +83,7 @@ export default function Fees() {
 
     return (
        <Container content={
-            <div className="wrapper mx-[10px]">
+            <>
                 <img 
                     src="/money-receive.svg" 
                     alt="Pay Fees" 
@@ -98,7 +98,7 @@ export default function Fees() {
                         <>
                             <form 
                                 onSubmit={(e) => handlePayment(e)} 
-                                className="w-[306px] sm:w-[500px] h-auto sm:h-[130px] mt-[6.25rem] sm:mt-[10px] mx-auto p-[10px] pb-[55px] border-[1px] border-solid border-customBlue rounded-2xl"
+                                className="w-[306px] sm:w-[500px] h-auto sm:h-[130px] mt-[20px] sm:mt-[10px] mx-auto p-[10px] pb-[55px] border-[1px] border-solid border-customBlue rounded-2xl"
                             >
                                 <label htmlFor="amount">Amount: </label>
                                 <input 
@@ -152,7 +152,7 @@ export default function Fees() {
                         </div>
                     ) : <></>
                 }
-            </div>
+            </>
        } />
     );
 }

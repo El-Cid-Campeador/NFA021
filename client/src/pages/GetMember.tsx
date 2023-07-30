@@ -70,41 +70,41 @@ export default function GetMember() {
                     })
                 }
                 
-                {
-                    !queryMember!.result.deletedBy && (
-                        <div className="flex gap-2.5">
-                            <img 
-                                src="/check-fees.svg" 
-                                alt="Check fees" 
-                                title="Check fees" 
-                                width={50} 
-                                height={50} 
-                                onClick={() => navigate(`/fees/${memberId}`)} 
-                                className="cursor-pointer"
-                            />
-                            <img 
-                                src="/user-delete.svg" 
-                                alt="Delete Member" 
-                                title="Delete Member" 
-                                width={50} 
-                                height={50} 
-                                onClick={() => setIsModalShowing(true)}
-                                className="cursor-pointer"
-                            />
-                            
-                            {
-                                isModalShowing && (
-                                    <Modal 
-                                        message="Are you sure to delete this member?" 
-                                        onConfirm={() => deleteMember()} 
-                                        onCancel={() => setIsModalShowing(false)}
-                                    />
-                                )
-                            }
-                        </div>
-                    )
-                }
                
+                    <div className="flex gap-2.5">
+                        <img 
+                            src="/check-fees.svg" 
+                            alt="Check fees" 
+                            title="Check fees" 
+                            width={50} 
+                            height={50} 
+                            onClick={() => navigate(`/fees/${memberId}`)} 
+                            className="cursor-pointer"
+                        />
+                        {
+                            !queryMember!.result.deletedBy && (
+                                <img 
+                                    src="/user-delete.svg" 
+                                    alt="Delete Member" 
+                                    title="Delete Member" 
+                                    width={50} 
+                                    height={50} 
+                                    onClick={() => setIsModalShowing(true)}
+                                    className="cursor-pointer"
+                                />
+                            )
+                        }
+                        
+                        {
+                            isModalShowing && (
+                                <Modal 
+                                    message="Are you sure to delete this member?" 
+                                    onConfirm={() => deleteMember()} 
+                                    onCancel={() => setIsModalShowing(false)}
+                                />
+                            )
+                        }
+                    </div>
             </div>
         } />
     );

@@ -52,7 +52,7 @@ export default function SearchByText({ queryKey, route, placeholder }: Props) {
     
     return (
         <>
-            <div className=" w-[308px] sm:w-[500px] h-[50px] mt-[6.25rem] sm:mt-[10px] mx-auto p-[10px] pb-[55px] border-[1px] border-solid border-customBlue rounded-2xl">
+            <div className=" w-[308px] sm:w-[500px] h-[50px] mt-[20px] sm:mt-[10px] mx-auto p-[10px] pb-[55px] border-[1px] border-solid border-customBlue rounded-2xl">
                 <input 
                     type="text" 
                     className="w-[288px] sm:w-[480px]"

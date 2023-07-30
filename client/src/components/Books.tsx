@@ -13,7 +13,7 @@ export default function Books({ result }: Props) {
                         <li key={book.id} className="flex flex-col justify-center w-[200px]">
                             <Link to={`/books/${book.id}`} className="text-black">
                                 <img src={book.imgUrl} alt="The image could not be loaded" />
-                                <h1 className="text-sm">{book.title}</h1>
+                                <h1 className="mt-4 text-sm">{book.title}</h1>
                             </Link>
                         </li>
                     );

@@ -31,7 +31,7 @@ export default function BookModifications() {
 
     return (
         <Container content={
-            <div className="wrapper ml-[10px]">
+            <>
                 {
                     data?.result.length ? (
                         <ul>
@@ -76,7 +76,7 @@ export default function BookModifications() {
                         <h1>No modifications found!</h1>
                     )
                 }
-            </div>
+            </>
         } />
     )
 }

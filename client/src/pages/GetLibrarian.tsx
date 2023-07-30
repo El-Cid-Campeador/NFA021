@@ -51,7 +51,7 @@ export default function GetLibrarian() {
     
     return (
         <Container content={
-            <div className="wrapper ml-[10px]">
+            <>
                 {
                     Object.keys(queryLibrarian!.result).map(key => {
                         const originalProperty = key as keyof Librarian;
@@ -92,7 +92,7 @@ export default function GetLibrarian() {
                         </div>
                     )
                 }
-            </div>
+            </>
         } />
     );
 }

@@ -205,7 +205,7 @@ export default function GetBook() {
 
     return (
         <Container content={
-            <div className="wrapper m-[10px]">
+            <>
                 <div className="flex gap-[20px] flex-wrap">
                     <img 
                         src={queryBook?.result.imgUrl} 
@@ -349,7 +349,7 @@ export default function GetBook() {
                         </>
                     )
                 }
-            </div>
+            </>
         } />
     );
 }

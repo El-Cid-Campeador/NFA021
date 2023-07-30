@@ -24,7 +24,7 @@ export default function FeesDetails() {
     
     return (
         <Container content={
-            <div className="wrapper mx-[10px]">
+            <>
                 {
                     data?.result.length ? (
                         <table className="mt-[100px]">
@@ -54,7 +54,7 @@ export default function FeesDetails() {
                         </table>
                     ) : <></>
                 }
-            </div>
+            </>
         } />
     );
 }

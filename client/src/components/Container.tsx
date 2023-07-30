@@ -7,10 +7,12 @@ type Props = {
 
 export default function Container({ content }: Props) {
     return (
-        <div className="wrapper">
+        <>
             <NavBar />
-                {content}
+                <div className="wrapper">
+                    {content}
+                </div>
             <Footer />
-        </div>
+        </>
     );
 }
