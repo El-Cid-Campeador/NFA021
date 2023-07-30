@@ -6,7 +6,7 @@ This is a project for my college subject named "NFA021". It's about building a w
 
 **Prerequisites**:
 
-* Any linux distribution or MAC OS or WSL
+* Any Linux distribution or MAC OS or WSL
 * NodeJS v18.16.0
 
   Check:
@@ -24,9 +24,9 @@ $ npm -v
 $ mariadb --version
 ```
 
-* Redis
+* Redis v7.0.12
 
-  Check
+  Check:
 
 ```$bash
 $ redis-cli --version
@@ -39,7 +39,8 @@ To launch the project, open a new terminal:
 ```bash
 $ npm i -g typescript
 $ git clone https://github.com/El-Cid-Campeador/NFA021
-$ cd server && npm i && tsc -w
+$ cd NFA021/server && mysql -u root -p nfa021 < ./script.sql
+$ npm i && tsc -w
 ```
 
 Create a .env in *server* folder, and add **attentively** those lines:
@@ -49,19 +50,18 @@ DB_PASSWORD=YourMySQLPassword
 SECRET_KEY=YourSecretkey
 PORT=8080
 NODE_ENV=development
-DOMAIN_NAME=YourDomainNameWebsiteForDeployment
 ```
 
 Open another terminal, then run:
 
 ```bash
-$ cd server && npm run dev
+$ cd NFA021/server && npm run dev
 ```
 
 Open another new terminal, then execute:
 
 ```bash
-$ cd client && npm i && npm run dev
+$ cd NFA021/client && npm i && npm run dev
 ```
 
 Open `http://localhost:5173` in your favourite browser, and enjoy!

@@ -1,19 +1,10 @@
-import { Request, Response, NextFunction } from "express";
 import mysql from "mysql2/promise";
-import { SessionData } from "express-session";
-import "dotenv/config";
-
-interface UserSession extends SessionData {
-    user?: User
-}
-
-const conn = await connectDB();
 
 async function connectDB() {
     const conn = await mysql.createConnection({
         host: 'localhost',
         user: 'root',
-        password: process.env.DB_PASSWORD!,
+        password: 'root',
         database: 'nfa021'
     });
 
@@ -116,88 +107,40 @@ async function connectDB() {
     return conn;
 }
 
-async function getUserByEmailOrID(emailOrID: string) {
-    const sql = `SELECT id, firstName, lastName, password 
-        FROM Users WHERE (email = ? OR id = ?) AND (deletionDate = '0000-00-00 00:00:00' OR deletionDate IS NOT NULL)
-    `;
-    
-    try {
+const conn = await connectDB();
+
+async function array() {
+    const rows = await conn.query(`SELECT * FROM Books`);
+    return rows[0];
+}
+
+async function generate() {
+    const arr = await array();
+
+    for (let i = 0; i < 14; i += 1) {
+        const index = Math.floor(Math.random() * arr.length);
+        const sql = `INSERT INTO Books (id, title, imgUrl, authorName, category, lang, descr, yearPubl, numEdition, nbrPages, addedBy) VALUES (
+            UUID(), ?, ?, ?, ?, ?, ?, ?, ?, ?, '111101246123'
+        )`;
+
         const stmt = await conn.prepare(sql);
-        const rows = await stmt.execute([emailOrID, emailOrID]) as any[][];
-        conn.unprepare(sql);
-    
-        return rows[0];
-    } catch (error) {
-        conn.unprepare(sql);
-    }
-}
-
-async function getBookBorrowInfo(bookId: string) {
-    const sql = `SELECT memberId, borrowDate, lenderId, returnDate, receiverId 
-        FROM Borrowings WHERE bookId = ? ORDER BY borrowDate LIMIT 1
-    `;
-
-    try {
-        const stmt = await conn.prepare(sql);
-        const rows = await stmt.execute([bookId]) as any[][];
-        conn.unprepare(sql);
-    
-        return rows[0][0];
-    } catch (error) {
+        await stmt.execute([
+            arr[index].title, 
+            arr[index].imgUrl, 
+            arr[index].authorName, 
+            arr[index].category, 
+            arr[index].lang, 
+            arr[index].descr, 
+            arr[index].yearPubl, 
+            arr[index].numEdition, 
+            arr[index].nbrPages
+        ]);
         conn.unprepare(sql);
     }
+
+    await conn.end();
 }
 
-async function registerChanges(bookId: string, librarianId: string, newValues: any) {
-    let sql = `SELECT title, imgUrl, authorName, category, lang, descr, yearPubl, numEdition, nbrPages 
-        FROM Books WHERE id = ?
-    `;
-    
-    try {
-        let stmt = await conn.prepare(sql);
-        const rows = await stmt.execute([bookId]) as any[][];
-        conn.unprepare(sql);
-    
-        sql = `INSERT INTO Modifications (librarianId, bookId, oldValues, newValues) VALUES (?, ?, ?, ?)`;
-        stmt = await conn.prepare(sql);
-        await stmt.execute([librarianId, bookId, JSON.stringify(rows[0][0]), JSON.stringify(newValues)]);
-        conn.unprepare(sql);
-    } catch (error) {
-        conn.unprepare(sql);
-    }
-}
+await generate();
 
-function formatDate(date: string) {
-    return new Date(date).toISOString().slice(0, 19).replace('T', ' ');
-}
-
-function authMiddleware(req: Request, res: Response, next: NextFunction) {
-    const sessionUser = req.session as UserSession;
-    
-    if (sessionUser.user) {
-        return next();
-    } 
-    
-    res.status(401).send('Unauthorized!');
-}
-
-function librarianMiddleware(req: Request, res: Response, next: NextFunction) {
-    const sessionUser = req.session as UserSession;
-
-    if (sessionUser.user && sessionUser.user.role) {
-        return next();
-    }
-
-    res.status(403).send('Access denied!');
-}
-
-export { 
-    UserSession, 
-    conn, 
-    getUserByEmailOrID, 
-    getBookBorrowInfo, 
-    registerChanges, 
-    formatDate, 
-    authMiddleware, 
-    librarianMiddleware 
-};
+// cd server && node ./script.js

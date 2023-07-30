@@ -42,11 +42,11 @@ userRouter.post('/signup', async (req, res) => {
 userRouter.post('/login', async (req, res) => {
     const sessionUser = req.session as UserSession;
 
+    if (sessionUser.user) {
+        return res.json({ msg: sessionUser.user });
+    }
+
     try {
-        if (sessionUser.user) {
-            return res.json({ msg: sessionUser.user });
-        }
-    
         const { emailOrID, password } = req.body;
     
         const result = await getUserByEmailOrID(emailOrID);

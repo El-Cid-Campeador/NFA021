@@ -29,9 +29,6 @@ export default function SignIn() {
             if (payload.emailOrID !== '') {
                 setInputError('Invalid credentials!');
             }
-        },
-        onSettled: () => {
-
         }
     });
 
@@ -75,32 +72,32 @@ export default function SignIn() {
         <div className="w-[310px] sm:w-[500px] h-auto sm:h-[95vh] mt-[20px] sm:mt-[10px] mx-auto p-[10px] border-[1px] border-solid border-customBlue rounded-2xl">
             <form onSubmit={(e) => handlesubmit(e)}>
                 <div>
-                        <label htmlFor="emailOrID">Email or ID: </label>
-                        <input 
-                            type="text" 
-                            id="emailOrID"
-                            maxLength={50} 
-                            required 
-                            value={payload.emailOrID} 
-                            onChange={(e) => setPayload({ ...payload, emailOrID: e.target.value })} 
-                        />
-                    </div>
-                    <div className="flex flex-wrap items-center">
-                        <label htmlFor="password">Password: </label>
-                        <input 
-                            type={showPassword ? 'text' : 'password'} 
-                            id="password" 
-                            maxLength={64}
-                            required 
-                            value={payload.password} 
-                            onChange={(e) => setPayload({ ...payload, password: e.target.value })} 
-                        />
-                        <div onClick={() => setShowPassword(prev => !prev)} className="ml-[10px] cursor-pointer">
+                    <label htmlFor="emailOrID">Email or ID: </label>
+                    <input 
+                        type="text" 
+                        id="emailOrID"
+                        maxLength={50} 
+                        required 
+                        value={payload.emailOrID} 
+                        onChange={(e) => setPayload({ ...payload, emailOrID: e.target.value })} 
+                    />
+                </div>
+                <div className="flex flex-wrap items-center">
+                    <label htmlFor="password">Password: </label>
+                    <input 
+                        type={showPassword ? 'text' : 'password'} 
+                        id="password" 
+                        maxLength={64}
+                        required 
+                        value={payload.password} 
+                        onChange={(e) => setPayload({ ...payload, password: e.target.value })} 
+                    />
+                    <div onClick={() => setShowPassword(prev => !prev)} className="ml-[10px] cursor-pointer">
                         {
                             showPassword ? <img src="/eye-slash.svg" alt="Hide password" width={20} height={20} /> : <img src="/eye.svg" alt="Show password" width={20} height={20} />
                         }
                     </div>
-                    </div>
+                </div>
                 
                 <input 
                     type="submit" 

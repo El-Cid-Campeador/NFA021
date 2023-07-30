@@ -149,6 +149,8 @@ bookRouter.get('/modifications', async (req, res) => {
         const stmt = await conn.prepare(sql);
         const rows = await stmt.execute([bookId]) as any[][];
         conn.unprepare(sql);
+
+        console.log(rows[0]);
     
         res.json({ result: rows[0] });
     } catch (error) {
