@@ -47,7 +47,7 @@ librarianRouter.route('/:id')
         }
     })
     .delete(async (req, res) => {
-        const sql = `UPDATE Librarians SET deletionDate = NOW() WHERE id = ?`;
+        const sql = `UPDATE Users SET deletionDate = NOW() WHERE id = ?`;
 
         try {
             const { id: memberId } = req.params;

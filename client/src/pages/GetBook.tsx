@@ -152,21 +152,17 @@ export default function GetBook() {
         if (queryBook?.info !== '') {
             const { memberId, borrowDate, returnDate } = queryBook?.info;
             
-            if (borrowDate && !returnDate) {
-                let status = `Borrowed on ${formatDate(borrowDate)}`;
-
-                if (role) {
-                    status += ` by ${memberId}`;
-                }
-                
+            if (borrowDate && !returnDate) { 
                 return (
-                    <span className="text-red-600">{status}</span>
+                    <span className="ml-2 text-red-600">
+                        Borrowed on <strong>{formatDate(borrowDate)}</strong> { role && <span>by <strong>{memberId}</strong></span>}
+                    </span>
                 );
             } 
         }
         
         return (
-            <span className="text-green-600 ">In possession</span>
+            <p className="ml-2 text-green-600">In possession</p>
         );
     }
 
@@ -240,13 +236,13 @@ export default function GetBook() {
                 <hr />
                 <br />
                 
-                <p className="my-[10px] s:my-[25px]"><strong>Status</strong>: <DisplayStatus /></p>
+                <h1 className="my-[10px] s:my-[25px] flex items-center">Status: <DisplayStatus /></h1>
                 {    
                     role && (
                         <>
                             {
                                 queryBook?.result.deletedBy ? (
-                                    <div>Deleted by {queryBook?.result.deletedBy} on {queryBook?.result.deletionDate}</div>
+                                    <div className="error-msg">Deleted by <strong>{queryBook?.result.deletedBy}</strong> on <strong>{formatDate(queryBook?.result.deletionDate!)}</strong></div>
                                 ) : ( 
                                     <div className="flex flex-wrap items-center gap-[10px] w-[300px]">
                                         <img 

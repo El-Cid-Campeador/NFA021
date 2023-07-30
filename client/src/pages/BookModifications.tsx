@@ -53,11 +53,11 @@ export default function BookModifications() {
                                                             <div key={key} >
                                                                 <strong>{displayBookProperty(key)}: </strong> 
                                                                 <div className="ml-5">
-                                                                    <p className={"bg-[#da3633] mb-3 text-white rounded"}>
+                                                                    <p className={"bg-[#da3633] mb-3 text-white rounded p-2"}>
                                                                         <span className="ml-1 mr-3">-</span>
                                                                         {previous[property]}
                                                                     </p>
-                                                                    <p className={"bg-[#238636] mb-3 text-white rounded"}>
+                                                                    <p className={"bg-[#238636] mb-3 text-white rounded p-2"}>
                                                                         <span className="ml-1 mr-3">+</span>
                                                                         {next[property]}
                                                                     </p>

@@ -14,7 +14,7 @@ bookRouter.get('/latest', authMiddleware, async (req, res) => {
 });
 
 bookRouter.route('/')
-.get(authMiddleware, async (req, res) => {
+    .get(authMiddleware, async (req, res) => {
         let sql = `SELECT id, title FROM Books WHERE deletedBy IS NULL AND (title LIKE ? OR authorName LIKE ?)`;
 
         try {
@@ -218,8 +218,8 @@ bookRouter.patch('/return', librarianMiddleware, async (req, res) => {
 
 bookRouter.route('/:id')
     .get(authMiddleware, async (req, res) => {
-        let sql = `SELECT title, imgUrl, authorName, category, lang, descr, yearPubl, numEdition, nbrPages, addedBy, additionDate 
-            FROM Books WHERE id = ?
+        let sql = `SELECT title, imgUrl, authorName, category, lang, descr, yearPubl, numEdition, nbrPages, additionDate 
+            FROM Books WHERE id = ? AND deletedBy IS NULL
         `;
 
         try {
@@ -229,7 +229,7 @@ bookRouter.route('/:id')
     
             if (sessionUser.user?.role) {
                 sql = `SELECT title, imgUrl, authorName, category, lang, descr, yearPubl, numEdition, nbrPages, addedBy, additionDate, deletedBy, deletionDate 
-                    FROM Books WHERE id = ? AND deletedBy IS NULL
+                    FROM Books WHERE id = ? 
                 `;
             }
     

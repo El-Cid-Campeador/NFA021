@@ -4,8 +4,11 @@ import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import Modal from "../components/Modal";
 import { displayMemberProperty, fetcher, formatProperty } from "../functions";
 import Container from "../components/Container";
+import useLocalStorage from "../components/useLocalStorage";
 
 export default function GetMember() {
+    const { userData: { id } } = useLocalStorage();
+
     const [isModalShowing, setIsModalShowing] = useState(false);
     
     const { memberId } = useParams();
@@ -27,9 +30,13 @@ export default function GetMember() {
         }
     });
 
-    const { mutate: deleteMember} = useMutation({
+    const { mutate: deleteMember } = useMutation({
         mutationFn: async () => {
-            return await fetcher.delete(`/api/members/${memberId}`);
+            return await fetcher.delete(`/api/members/${memberId}`, {
+                params: {
+                    librarianId: id
+                }
+            });
         },
         onSuccess: () => {
             queryClient.invalidateQueries({ queryKey: ['members'] });
@@ -62,35 +69,42 @@ export default function GetMember() {
                         }
                     })
                 }
-                <div className="flex gap-2.5">
-                    <img 
-                        src="/check-fees.svg" 
-                        alt="Check fees" 
-                        title="Check fees" 
-                        width={50} 
-                        height={50} 
-                        onClick={() => navigate(`/fees/${memberId}`)} 
-                        className="cursor-pointer"
-                    />
-                    <img 
-                        src="/user-delete.svg" 
-                        alt="Delete Member" 
-                        title="Delete Member" 
-                        width={50} 
-                        height={50} 
-                        onClick={() => setIsModalShowing(true)}
-                        className="cursor-pointer"
-                    />
-                </div>
+                
                 {
-                    isModalShowing && (
-                        <Modal 
-                            message="Are you sure to delete this member?" 
-                            onConfirm={() => deleteMember()} 
-                            onCancel={() => setIsModalShowing(false)}
-                        />
+                    !queryMember!.result.deletedBy && (
+                        <div className="flex gap-2.5">
+                            <img 
+                                src="/check-fees.svg" 
+                                alt="Check fees" 
+                                title="Check fees" 
+                                width={50} 
+                                height={50} 
+                                onClick={() => navigate(`/fees/${memberId}`)} 
+                                className="cursor-pointer"
+                            />
+                            <img 
+                                src="/user-delete.svg" 
+                                alt="Delete Member" 
+                                title="Delete Member" 
+                                width={50} 
+                                height={50} 
+                                onClick={() => setIsModalShowing(true)}
+                                className="cursor-pointer"
+                            />
+                            
+                            {
+                                isModalShowing && (
+                                    <Modal 
+                                        message="Are you sure to delete this member?" 
+                                        onConfirm={() => deleteMember()} 
+                                        onCancel={() => setIsModalShowing(false)}
+                                    />
+                                )
+                            }
+                        </div>
                     )
                 }
+               
             </div>
         } />
     );

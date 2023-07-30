@@ -155,14 +155,11 @@ function displayBookProperty(key: string) {
         case 'nbrPages':
             res = 'Number of pages';
             break;
+        case 'addedBy':
+            res = 'Added by';
+            break;
         case 'additionDate':
             res = 'Addition date';
-            break;
-        case 'deletionDate':
-            res = 'Addition date';
-            break;
-        case 'deletedBy':
-            res = 'Deleted by';
             break;
         default:
             break;
@@ -192,6 +189,9 @@ function displayMemberProperty(key: string) {
             break;
         case 'additionDate':
             res = 'Addition date';
+            break;
+        case 'deletionDate':
+            res = 'Deletion date';
             break;
         case 'deletedBy':
             res = 'Deleted by';
@@ -227,6 +227,12 @@ function displayLibrarianProperty(key: string) {
             break;
         case 'addedBy':
             res = 'Added by';
+            break;
+        case 'deletionDate':
+            res = 'Deletion date';
+            break;
+        case 'deletedBy':
+            res = 'Deleted by';
             break;
         default:
             break;

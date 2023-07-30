@@ -1,15 +1,15 @@
 import { useState } from "react";
-import { Navigate, useNavigate, useParams } from "react-router-dom";
+import { Navigate, useNavigate, useParams, useSearchParams } from "react-router-dom";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import Modal from "../components/Modal";
 import { displayLibrarianProperty, fetcher, formatProperty } from "../functions";
 import Container from "../components/Container";
-import useLocalStorage from "../components/useLocalStorage";
 
 export default function GetLibrarian() { 
     const [isModalShowing, setIsModalShowing] = useState(false);
     
     const { addedlibrarianId } = useParams();
+    const [searchParams] = useSearchParams();
 
     const navigate = useNavigate();
 
@@ -20,11 +20,9 @@ export default function GetLibrarian() {
         queryFn: async () => {
             const { data } = await fetcher.get(`/api/librarians/${addedlibrarianId}`, {
                 params: {
-                    librarianId: id
+                    librarianId: searchParams.get('id')
                 }
             });
-            
-            console.log(id);
             
             if (data.result) {
                 return data as { result: Librarian };
@@ -34,7 +32,7 @@ export default function GetLibrarian() {
         }
     });
 
-    const { mutate: deleteLibrarian} = useMutation({
+    const { mutate: deleteLibrarian } = useMutation({
         mutationFn: async () => {
             return await fetcher.delete(`/api/librarians/${addedlibrarianId}`);
         },
@@ -47,8 +45,6 @@ export default function GetLibrarian() {
            navigate('/signin');
         }
     });
-
-    const { userData: { id } } = useLocalStorage();
     
     if (isLoadingLibrarian || isFetchingLibrarian) return <h1>Loading...</h1>;
     if (errorLibrarian) return <Navigate to="/signin" />;
@@ -71,24 +67,29 @@ export default function GetLibrarian() {
                         }
                     })
                 }
-                <div className="flex gap-2.5">
-                    <img 
-                        src="/user-delete.svg" 
-                        alt="Delete Librarian" 
-                        title="Delete Librarian" 
-                        width={50} 
-                        height={50} 
-                        onClick={() => setIsModalShowing(true)}
-                        className="cursor-pointer"
-                    />
-                </div>
+
                 {
-                    isModalShowing && (
-                        <Modal 
-                            message="Are you sure to delete this member?" 
-                            onConfirm={() => deleteLibrarian()} 
-                            onCancel={() => setIsModalShowing(false)}
-                        />
+                    !queryLibrarian!.result.deletionDate && (
+                        <div className="flex gap-2.5">
+                            <img 
+                                src="/user-delete.svg" 
+                                alt="Delete Librarian" 
+                                title="Delete Librarian" 
+                                width={50} 
+                                height={50} 
+                                onClick={() => setIsModalShowing(true)}
+                                className="cursor-pointer"
+                            />
+                            {
+                                isModalShowing && (
+                                    <Modal 
+                                        message="Are you sure to delete this librarian?" 
+                                        onConfirm={() => deleteLibrarian()} 
+                                        onCancel={() => setIsModalShowing(false)}
+                                    />
+                                )
+                            }
+                        </div>
                     )
                 }
             </div>

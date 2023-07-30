@@ -5,7 +5,6 @@ import { isAnyOfTheAttributesAnEmptyString, fetcher } from "../functions";
 
 export default function SignIn() {
     const [showPassword, setShowPassword] = useState(false);
-    const [isFirstLoad, setIsFirstLoad] = useState(true);
     const [payload, setPayload] = useState({
         emailOrID: '',
         password: ''
@@ -23,16 +22,16 @@ export default function SignIn() {
         },
         onSuccess: (res) => {
             localStorage.setItem('xUr', JSON.stringify(res.data.msg));
-
+    
             navigate('/home');
         },
         onError: () => {
-            if (isFirstLoad) {
-                setInputError('');
-                setIsFirstLoad(false);
-            } else {
+            if (payload.emailOrID !== '') {
                 setInputError('Invalid credentials!');
             }
+        },
+        onSettled: () => {
+
         }
     });
 
@@ -63,13 +62,9 @@ export default function SignIn() {
     }
 
     useEffect(() => {
-        setIsFirstLoad(true);
-    }, []);
-
-    useEffect(() => {
         signIn();
     }, []);
-
+    
     useEffect(() => {
         setInputError('');
     }, [payload]);

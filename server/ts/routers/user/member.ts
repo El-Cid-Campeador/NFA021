@@ -105,14 +105,22 @@ memberRouter.route('/:id')
         }
     })
     .delete(async (req, res) => {
-        const sql = `UPDATE Members SET deletedBy = ?, deletionDate = NOW() WHERE id = ?`;
+        let sql = `UPDATE Members SET deletedBy = ? WHERE id = ?`;
 
         try {
             const { librarianId } = req.query;
             const { id: memberId } = req.params;
-    
-            const stmt = await conn.prepare(sql);
+
+            console.log(librarianId, memberId);
+            
+            let stmt = await conn.prepare(sql);
             await stmt.execute([librarianId, memberId]);
+            conn.unprepare(sql);
+
+            sql = `UPDATE Users SET deletionDate = NOW() WHERE id = ?`;
+
+            stmt = await conn.prepare(sql);
+            await stmt.execute([memberId]);
             conn.unprepare(sql);
         
             res.send('Successfully deleted!');   

@@ -29,7 +29,7 @@ export default function Librarians({ id }: Props) {
                 data?.result.map(librarian => {
                     return (
                         <li key={librarian.id} className="flex flex-col justify-center w-[120px]">
-                            <Link to={`/librarians/${librarian.id}`} className="text-black">
+                            <Link to={`/librarians/${librarian.id}?id=${id}`} className="text-black">
                                 <img src="/user.svg" alt="The image could not be loaded" width={70} height={70} />
                                 <h1 className="text-sm mt-[10px]">{librarian.firstName} {librarian.lastName}</h1>
                             </Link>
