@@ -210,7 +210,7 @@ export default function GetBook() {
                 <div className="flex gap-[20px] flex-wrap">
                     <img 
                         src={queryBook?.result.imgUrl} 
-                        alt={queryBook?.result.title} 
+                        alt="The image could not be loaded"
                         width={250}
                         height={250}
                     />
@@ -236,8 +236,9 @@ export default function GetBook() {
                 <br />
                 <hr />
                 <br />
+
+                {!queryBook?.result.deletedBy && <h1 className="my-[10px] s:my-[25px] flex items-center">Status: <DisplayStatus /></h1>}
                 
-                <h1 className="my-[10px] s:my-[25px] flex items-center">Status: <DisplayStatus /></h1>
                 {    
                     role && (
                         <>

@@ -110,8 +110,6 @@ memberRouter.route('/:id')
         try {
             const { librarianId } = req.query;
             const { id: memberId } = req.params;
-
-            console.log(librarianId, memberId);
             
             let stmt = await conn.prepare(sql);
             await stmt.execute([librarianId, memberId]);
