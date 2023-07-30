@@ -147,8 +147,6 @@ export default function GetBook() {
             navigate('/signin');
         }
     });
-
-    const { userData: { id, role } } = useLocalStorage();
     
     function DisplayStatus() {
         if (queryBook?.info !== '') {
@@ -203,6 +201,8 @@ export default function GetBook() {
     useEffect(() => {
         setInputIdError('');
     }, [memberId]);
+
+    const { userData: { id, role } } = useLocalStorage();
     
     if (isLoading || isFetching) return <h1>Loading...</h1>;
     if (error || errorSugg) return <Navigate to="/signin" />;
@@ -240,7 +240,7 @@ export default function GetBook() {
                 <hr />
                 <br />
                 
-                <p className="s:my-[25px]"><strong>Status</strong>: <DisplayStatus /></p>
+                <p className="my-[10px] s:my-[25px]"><strong>Status</strong>: <DisplayStatus /></p>
                 {    
                     role && (
                         <>
@@ -314,7 +314,7 @@ export default function GetBook() {
                                     ) : <></>
                                 }
                             </form>
-                            <p className="error-msg">{inputIdError}</p>
+                            <p className="error-msg my-[20px]">{inputIdError}</p>
                         </div>
                     )
                 }

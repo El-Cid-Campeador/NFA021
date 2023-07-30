@@ -43,7 +43,7 @@ export default function BookModifications() {
             
                                     return (
                                         <li key={`${bookId}-${librarianId}-${modificationDate}`} className="">
-                                            <p>Modifications by: {librarianId} on {formatDate(modificationDate)}</p>
+                                            <p className="mb-[10px]">By <strong>{librarianId}</strong> on <strong>{formatDate(modificationDate)}</strong></p>
                                             {
                                                 Object.keys(previous).map((key) => {
                                                 const property = key as keyof BookInfo;

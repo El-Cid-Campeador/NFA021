@@ -1,26 +1,26 @@
 import { Navigate } from "react-router-dom";
 import { useQuery } from "@tanstack/react-query";
-import useLocalStorage from "../components/useLocalStorage";
 import Books from "../components/Books";
 import { fetcher } from "../functions";
 import { useEffect } from "react";
 import Container from "../components/Container";
+import useLocalStorage from "../components/useLocalStorage";
 
 export default function Home() {
     const { data, isLoading, error, isFetching } = useQuery({
-        queryKey: ['books'],
+        queryKey: ['books', 'latest'],
         queryFn: async () => {
             const { data } = await fetcher.get(`/api/books/latest`);
             
             return data as { result: { id: string, title: string, imgUrl: string }[] };
         }
     });
-    
-    const { userData: { firstName, lastName } } = useLocalStorage();
 
     useEffect(() => {
         console.clear();
     }, []);
+
+    const { userData: { firstName, lastName } } = useLocalStorage();
 
     if (isLoading || isFetching) return <h1>Loading...</h1>;
     if (error) return <Navigate to="/signin" />;

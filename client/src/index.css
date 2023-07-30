@@ -6,10 +6,6 @@
     font-size: 14px;
 }
 
-html, body {
-    overflow-x: hidden;
-}
-
 :root {
     --custom-blue: #007bff;
 }

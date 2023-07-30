@@ -4,8 +4,9 @@ import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import Modal from "../components/Modal";
 import { displayLibrarianProperty, fetcher, formatProperty } from "../functions";
 import Container from "../components/Container";
+import useLocalStorage from "../components/useLocalStorage";
 
-export default function GetLibrarian() {
+export default function GetLibrarian() { 
     const [isModalShowing, setIsModalShowing] = useState(false);
     
     const { addedlibrarianId } = useParams();
@@ -17,7 +18,13 @@ export default function GetLibrarian() {
     const { data: queryLibrarian, isLoading: isLoadingLibrarian, error: errorLibrarian, isFetching: isFetchingLibrarian } = useQuery({
         queryKey: ['librarians', addedlibrarianId],
         queryFn: async () => {
-            const { data } = await fetcher.get(`/api/librarians/${addedlibrarianId}`);
+            const { data } = await fetcher.get(`/api/librarians/${addedlibrarianId}`, {
+                params: {
+                    librarianId: id
+                }
+            });
+            
+            console.log(id);
             
             if (data.result) {
                 return data as { result: Librarian };
@@ -40,6 +47,8 @@ export default function GetLibrarian() {
            navigate('/signin');
         }
     });
+
+    const { userData: { id } } = useLocalStorage();
     
     if (isLoadingLibrarian || isFetchingLibrarian) return <h1>Loading...</h1>;
     if (errorLibrarian) return <Navigate to="/signin" />;
@@ -63,15 +72,6 @@ export default function GetLibrarian() {
                     })
                 }
                 <div className="flex gap-2.5">
-                    <img 
-                        src="/check-fees.svg" 
-                        alt="Check fees" 
-                        title="Check fees" 
-                        width={50} 
-                        height={50} 
-                        onClick={() => navigate(`/fees/${addedlibrarianId}`)} 
-                        className="cursor-pointer"
-                    />
                     <img 
                         src="/user-delete.svg" 
                         alt="Delete Librarian" 

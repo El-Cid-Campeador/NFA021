@@ -15,8 +15,6 @@ export default function Librarians({ id }: Props) {
                     librarianId: id
                 }
             });
-
-            console.log(data);
             
             return data as { result: { id: string, firstName: string, lastName: string }[] };
         }

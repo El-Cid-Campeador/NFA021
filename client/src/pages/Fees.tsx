@@ -33,8 +33,6 @@ export default function Fees() {
         }
     });
 
-    const { userData: { id } } = useLocalStorage();
-
     const { mutate: postAmount } = useMutation({
         mutationFn: async () => {
             return await fetcher.post(`/api/members/fees`, { ...payload }, {
@@ -50,7 +48,7 @@ export default function Fees() {
         onError: () => {
            navigate('/signin');
         }
-    });
+    });   
 
     function handlePayment(e: FormEvent) {
         e.preventDefault();
@@ -77,6 +75,8 @@ export default function Fees() {
     useEffect(() => {
         setInputError('');
     }, [payload]);
+
+    const { userData: { id } } = useLocalStorage();
     
     if (isLoading || isFetching) return <h1>Loading...</h1>;
     if (error) return <Navigate to="/signin" />;

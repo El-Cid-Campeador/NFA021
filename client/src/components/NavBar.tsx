@@ -1,8 +1,8 @@
 import { Link, useNavigate } from "react-router-dom";
 import { useMutation } from "@tanstack/react-query";
+import { useState } from "react";
 import useLocalStorage from "./useLocalStorage";
 import { fetcher } from "../functions";
-import { useState } from "react";
 import Modal from "./Modal";
 
 export default function NavBar() {

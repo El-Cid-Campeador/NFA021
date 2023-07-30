@@ -116,61 +116,55 @@ async function connectDB() {
     return conn;
 }
 
-async function getMember(memberId: string) {
-    const sql = `SELECT Members.id, firstName, lastName, email, additionDate, deletionDate, deletedBy 
-        FROM Users JOIN Members ON Users.id = Members.id WHERE Members.id = ?
-    `;
-    const stmt = await conn.prepare(sql);
-    const rows = await stmt.execute([memberId]) as any[][];
-    conn.unprepare(sql);
-
-    return rows[0];
-}
-
 async function getUserByEmailOrID(emailOrID: string) {
     const sql = `SELECT id, firstName, lastName, password 
         FROM Users WHERE (email = ? OR id = ?) AND deletionDate = '0000-00-00 00:00:00'
     `;
     
-    const stmt = await conn.prepare(sql);
-    const rows = await stmt.execute([emailOrID, emailOrID]) as any[][];
-    conn.unprepare(sql);
-
-    return rows[0];
+    try {
+        const stmt = await conn.prepare(sql);
+        const rows = await stmt.execute([emailOrID, emailOrID]) as any[][];
+        conn.unprepare(sql);
+    
+        return rows[0];
+    } catch (error) {
+        conn.unprepare(sql);
+    }
 }
 
 async function getBookBorrowInfo(bookId: string) {
     const sql = `SELECT memberId, borrowDate, lenderId, returnDate, receiverId 
         FROM Borrowings WHERE bookId = ? ORDER BY borrowDate LIMIT 1
     `;
-    const stmt = await conn.prepare(sql);
-    const rows = await stmt.execute([bookId]) as any[][];
-    conn.unprepare(sql);
 
-    return rows[0][0];
+    try {
+        const stmt = await conn.prepare(sql);
+        const rows = await stmt.execute([bookId]) as any[][];
+        conn.unprepare(sql);
+    
+        return rows[0][0];
+    } catch (error) {
+        conn.unprepare(sql);
+    }
 }
 
 async function registerChanges(bookId: string, librarianId: string, newValues: any) {
     let sql = `SELECT title, imgUrl, authorName, category, lang, descr, yearPubl, numEdition, nbrPages 
         FROM Books WHERE id = ?
     `;
-    let stmt = await conn.prepare(sql);
-    const rows = await stmt.execute([bookId]) as any[][];
-    conn.unprepare(sql);
-
-    sql = `INSERT INTO Modifications (librarianId, bookId, oldValues, newValues) VALUES (?, ?, ?, ?)`;
-    stmt = await conn.prepare(sql);
-    await stmt.execute([librarianId, bookId, JSON.stringify(rows[0][0]), JSON.stringify(newValues)]);
-    conn.unprepare(sql);
-}
-
-async function getTotalFeesByYear(memberId: string) {
-    const sql = `SELECT id, year, SUM(amount) AS amount FROM Fees WHERE memberId = ? GROUP BY year`;
-    const stmt = await conn.prepare(sql);
-    const rows = await stmt.execute([memberId]) as any[][];
-    conn.unprepare(sql);
-
-    return rows[0];
+    
+    try {
+        let stmt = await conn.prepare(sql);
+        const rows = await stmt.execute([bookId]) as any[][];
+        conn.unprepare(sql);
+    
+        sql = `INSERT INTO Modifications (librarianId, bookId, oldValues, newValues) VALUES (?, ?, ?, ?)`;
+        stmt = await conn.prepare(sql);
+        await stmt.execute([librarianId, bookId, JSON.stringify(rows[0][0]), JSON.stringify(newValues)]);
+        conn.unprepare(sql);
+    } catch (error) {
+        conn.unprepare(sql);
+    }
 }
 
 function formatDate(date: string) {
@@ -200,11 +194,9 @@ function librarianMiddleware(req: Request, res: Response, next: NextFunction) {
 export { 
     UserSession, 
     conn, 
-    getMember, 
     getUserByEmailOrID, 
     getBookBorrowInfo, 
-    registerChanges,
-    getTotalFeesByYear, 
+    registerChanges, 
     formatDate, 
     authMiddleware, 
     librarianMiddleware 

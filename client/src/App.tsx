@@ -15,6 +15,7 @@ import BookModifications from "./pages/BookModifications";
 import BookBorrowings from "./pages/BookBorrowings";
 import AddLibrarian from "./pages/AddLibrarian";
 import FeesDetails from "./pages/FeesDetails";
+import GetLibrarian from "./pages/GetLibrarian";
 
 export default function App() {	
 	return (
@@ -32,6 +33,7 @@ export default function App() {
 			<Route path="books/add" element={<AddBook />}></Route>
 			<Route path="books/edit/:bookId" element={<EditBook />}></Route>
 			<Route path="members/:memberId" element={<GetMember />}></Route>
+			<Route path="librarians/:addedlibrarianId" element={<GetLibrarian />}></Route>
 			<Route path="fees/:memberId" element={<Fees />}></Route>
 			<Route path="fees/:memberId/details" element={<FeesDetails />}></Route>
 			<Route path="*" element={<PageNotFound />}></Route>

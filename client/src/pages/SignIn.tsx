@@ -68,7 +68,7 @@ export default function SignIn() {
 
     useEffect(() => {
         signIn();
-    }, [signIn]);
+    }, []);
 
     useEffect(() => {
         setInputError('');
@@ -126,3 +126,4 @@ export default function SignIn() {
         </div>
     );
 }
+

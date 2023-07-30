@@ -15,9 +15,13 @@ export default function Suggestions({ list }: Props) {
                 list.map(sugg => {
                     return (
                         <li key={sugg.id}>
-                            <p>{sugg.firstName} {sugg.lastName}</p>
-                            <p>{formatDate(sugg.additionDate)}</p>
-                            <p>{sugg.descr}</p>
+                            <p>
+                                By
+                                <strong> {sugg.firstName} {sugg.lastName} </strong>
+                                on
+                                <strong> {formatDate(sugg.additionDate)}</strong>
+                            </p>
+                            <div className="mt-[20px]">{sugg.descr}</div>
                         </li>
                     );
                 })
