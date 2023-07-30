@@ -5,6 +5,7 @@ import { fetcher } from "../functions";
 import { useEffect } from "react";
 import Container from "../components/Container";
 import useLocalStorage from "../components/useLocalStorage";
+import Loading from "../components/Loading";
 
 export default function Home() {
     const { data, isLoading, error, isFetching } = useQuery({
@@ -22,7 +23,7 @@ export default function Home() {
 
     const { userData: { firstName, lastName } } = useLocalStorage();
 
-    if (isLoading || isFetching) return <h1>Loading...</h1>;
+    if (isLoading || isFetching) return <Loading />;
     if (error) return <Navigate to="/signin" />;
 
     return (

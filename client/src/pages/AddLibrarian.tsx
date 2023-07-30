@@ -7,6 +7,7 @@ import { AxiosError } from "axios";
 import validator from "validator";
 import Modal from "../components/Modal";
 import Container from "../components/Container";
+import Loading from "../components/Loading";
 
 export default function AddLibrarian() {
     const [showPassword, setShowPassword] = useState(false);
@@ -23,7 +24,7 @@ export default function AddLibrarian() {
 
     const navigate = useNavigate();
 
-    const { mutate: addNewLibrarian } = useMutation({
+    const { mutate: addNewLibrarian, isLoading } = useMutation({
         mutationFn: async () => {
             return await fetcher.post(`/api/signup`, { ...payload }, {
                 params: {
@@ -98,6 +99,8 @@ export default function AddLibrarian() {
     useEffect(() => {
         setInputError('');
     }, [payload]);
+
+    if (isLoading) return <Loading />;
 
     return (
         <Container content={

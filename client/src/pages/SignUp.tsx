@@ -4,6 +4,7 @@ import validator from "validator";
 import { fetcher, isAnyOfTheAttributesAnEmptyString } from "../functions";
 import { Link, useNavigate } from "react-router-dom";
 import { AxiosError } from "axios";
+import Loading from "../components/Loading";
 
 export default function SignUp() {
     const [showPassword, setShowPassword] = useState(false);
@@ -18,7 +19,7 @@ export default function SignUp() {
 
     const navigate = useNavigate();
 
-    const { mutate: signUp } = useMutation({
+    const { mutate: signUp, isLoading } = useMutation({
         mutationFn: async () => {
             return await fetcher.post(`/api/signup`, { ...payload });
         },
@@ -87,6 +88,8 @@ export default function SignUp() {
     useEffect(() => {
         setInputError('');
     }, [payload]);
+
+    if (isLoading) return <Loading />;
 
     return (
         <div className="w-[310px] sm:w-[500px] h-auto sm:h-[95vh] mt-[100px] sm:mt-[10px] mx-auto p-[10px] border-[1px] border-solid border-customBlue rounded-2xl">

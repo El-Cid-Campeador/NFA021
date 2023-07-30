@@ -7,6 +7,7 @@ import Modal from "../components/Modal";
 import { displayBookProperty, fetcher, formatDate, formatProperty } from "../functions";
 import Suggestions from "../components/Suggestions";
 import Container from "../components/Container";
+import Loading from "../components/Loading";
 
 export default function GetBook() {
     const [isModalShowing, setIsModalShowing] = useState(false);
@@ -40,7 +41,7 @@ export default function GetBook() {
         }
     });
     
-    const { mutate: deleteBook } = useMutation({
+    const { mutate: deleteBook, isLoading: isDeleteBookLoading } = useMutation({
         mutationFn: async () => {
             return await fetcher.delete(`/api/books/${bookId}`, {
                 params: {
@@ -71,7 +72,7 @@ export default function GetBook() {
         }
     });
 
-    const { mutate: addSuggestion } = useMutation({
+    const { mutate: addSuggestion, isLoading: isAddSuggestionLoading } = useMutation({
         mutationFn: async () => {
             return await fetcher.post(`/api/books/suggest`, {
                     descr: suggestion,
@@ -95,7 +96,7 @@ export default function GetBook() {
         }
     });
 
-    const { mutate: lendBook } = useMutation({
+    const { mutate: lendBook, isLoading: isLendBookLoading } = useMutation({
         mutationFn: async () => {
             return await fetcher.post(`/api/books/lend`, {
                     memberId
@@ -125,7 +126,7 @@ export default function GetBook() {
         }
     });
 
-    const { mutate: returnBook } = useMutation({
+    const { mutate: returnBook, isLoading: isReturnBookLoading } = useMutation({
         mutationFn: async () => {
             return await fetcher.patch(`/api/books/return`, {
                     memberId: queryBook?.info.memberId
@@ -200,7 +201,7 @@ export default function GetBook() {
 
     const { userData: { id, role } } = useLocalStorage();
     
-    if (isLoading || isFetching) return <h1>Loading...</h1>;
+    if (isLoading || isFetching || isDeleteBookLoading || isAddSuggestionLoading || isLendBookLoading || isReturnBookLoading) return <Loading />;
     if (error || errorSugg) return <Navigate to="/signin" />;
 
     return (
@@ -322,7 +323,7 @@ export default function GetBook() {
                 {
                     areSuggestionsShowing && (
                         isLoadingSugg || isFetchingSugg ? (
-                            <h1>Loading...</h1>
+                            <Loading />
                         ) : (
                             <Suggestions list={querySugg!.result} />
                         )

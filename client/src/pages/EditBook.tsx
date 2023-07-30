@@ -5,6 +5,7 @@ import BookForm from "../components/BookForm";
 import { fetcher } from "../functions";
 import useLocalStorage from "../components/useLocalStorage";
 import Container from "../components/Container";
+import Loading from "../components/Loading";
 
 export default function EditBook() {
     const { bookId } = useParams();
@@ -25,7 +26,7 @@ export default function EditBook() {
 
     const { userData: { id } } = useLocalStorage();
     
-    const { mutate } = useMutation({
+    const { mutate, isLoading } = useMutation({
         mutationFn: async (payload: BookDataInput) => {
             const res = await fetcher.patch(`/api/books/${bookId}`, { ...payload }, {
                 params: {
@@ -44,6 +45,8 @@ export default function EditBook() {
             setError('Invalid credentials!');
         }
     });
+
+    if (isLoading) return <Loading />;
 
     return (
         <Container content={

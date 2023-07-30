@@ -5,6 +5,7 @@ import Modal from "../components/Modal";
 import { displayMemberProperty, fetcher, formatProperty } from "../functions";
 import Container from "../components/Container";
 import useLocalStorage from "../components/useLocalStorage";
+import Loading from "../components/Loading";
 
 export default function GetMember() {
     const { userData: { id } } = useLocalStorage();
@@ -30,7 +31,7 @@ export default function GetMember() {
         }
     });
 
-    const { mutate: deleteMember } = useMutation({
+    const { mutate: deleteMember, isLoading: isDeleteMemberLoading } = useMutation({
         mutationFn: async () => {
             return await fetcher.delete(`/api/members/${memberId}`, {
                 params: {
@@ -48,7 +49,7 @@ export default function GetMember() {
         }
     });
     
-    if (isLoadingMember || isFetchingMember) return <h1>Loading...</h1>;
+    if (isLoadingMember || isFetchingMember || isDeleteMemberLoading) return <Loading />;
     if (errorMember) return <Navigate to="/signin" />;
     
     return (

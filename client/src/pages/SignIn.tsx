@@ -2,6 +2,7 @@ import { FormEvent, useEffect, useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { useMutation } from "@tanstack/react-query";
 import { isAnyOfTheAttributesAnEmptyString, fetcher } from "../functions";
+import Loading from "../components/Loading";
 
 export default function SignIn() {
     const [showPassword, setShowPassword] = useState(false);
@@ -66,7 +67,7 @@ export default function SignIn() {
         setInputError('');
     }, [payload]);
 
-    if (isLoading) return <h1>Waiting for server...</h1>;
+    if (isLoading) return <Loading />;
 
     return (
         <div className="w-[310px] sm:w-[500px] h-auto sm:h-[95vh] mt-[20px] sm:mt-[10px] mx-auto p-[10px] border-[1px] border-solid border-customBlue rounded-2xl">

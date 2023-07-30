@@ -4,13 +4,14 @@ import { useState } from "react";
 import useLocalStorage from "./useLocalStorage";
 import { fetcher } from "../functions";
 import Modal from "./Modal";
+import Loading from "./Loading";
 
 export default function NavBar() {
     const navigate = useNavigate();
 
     const [isModalShowing, setIsModalShowing] = useState(false);
     
-    const { mutate: signOut } = useMutation({
+    const { mutate: signOut, isLoading } = useMutation({
         mutationFn: async () => {
             localStorage.removeItem('xUr');
             
@@ -25,6 +26,8 @@ export default function NavBar() {
     });
 
     const { userData: { role } } = useLocalStorage();
+
+    if (isLoading) return <Loading />;
 
     return (
         <div className="mb-[30px] w-auto">

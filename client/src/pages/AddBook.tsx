@@ -5,6 +5,7 @@ import BookForm from "../components/BookForm";
 import { fetcher } from "../functions";
 import useLocalStorage from "../components/useLocalStorage";
 import Container from "../components/Container";
+import Loading from "../components/Loading";
 
 const initialValues: BookDataInput = {
     title: '', 
@@ -18,6 +19,8 @@ const initialValues: BookDataInput = {
     nbrPages: 100
 }
 
+
+
 export default function AddBook() {
     const [error, setError] = useState('');
 
@@ -27,7 +30,7 @@ export default function AddBook() {
 
     const { userData: { id }} = useLocalStorage();
     
-    const { mutate } = useMutation({
+    const { mutate, isLoading } = useMutation({
         mutationFn: async (payload: BookDataInput) => {            
             const res = await fetcher.post(`/api/books`, { ...payload }, {
                 params: {
@@ -46,6 +49,8 @@ export default function AddBook() {
             setError('Invalid credentials!');
         }
     });
+
+    if (isLoading) return <Loading />;
 
     return (
         <Container content={

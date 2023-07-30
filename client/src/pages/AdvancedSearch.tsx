@@ -5,6 +5,7 @@ import { bookCategories, bookLanguages, generateYears, fetcher, areAllAttributes
 import Books from "../components/Books";
 import SearchByParameter from "../components/SearchByParameter";
 import Container from "../components/Container";
+import Loading from "../components/Loading";
 
 export default function AdvancedSearch() {
     const [category, setCategory] = useState('');
@@ -45,7 +46,7 @@ export default function AdvancedSearch() {
 
                 {
                     isLoading ? (
-                        <h1>Loading...</h1>
+                        <Loading />
                     ) : (
                         queryBooks!.result.length > 0 ? (
                             <Books result={queryBooks!.result} />

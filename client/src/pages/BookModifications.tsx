@@ -2,6 +2,7 @@ import { useQuery } from "@tanstack/react-query";
 import { useParams } from "react-router-dom";
 import { displayBookProperty, fetcher, formatDate } from "../functions";
 import Container from "../components/Container";
+import Loading from "../components/Loading";
 
 type BookInfo = {
     librarianId: string, 
@@ -26,7 +27,7 @@ export default function BookModifications() {
         }
     });
 
-    if (isLoading || isFetching) return <h1>Loading...</h1>;
+    if (isLoading || isFetching) return <Loading />;
     if (error) return <h1>{(error as Error).message}</h1>;
 
     return (

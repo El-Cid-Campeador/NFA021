@@ -4,6 +4,7 @@ import { Navigate } from "react-router-dom";
 import { fetcher } from "../functions";
 import Books from "./Books";
 import Members from "./Members";
+import Loading from "./Loading";
 
 type Props = {
     queryKey: string,
@@ -63,7 +64,7 @@ export default function SearchByText({ queryKey, route, placeholder }: Props) {
                 />
             </div>
             {
-                isLoading ? <h1>Loading...</h1> : (
+                isLoading ? <Loading /> : (
                     RenderResultByQueryType(queryKey, data!.result)
                 )
             }

@@ -4,6 +4,7 @@ import { fetcher, generateFeesYears } from "../functions";
 import { FormEvent, useEffect, useState } from "react";
 import useLocalStorage from "../components/useLocalStorage";
 import Container from "../components/Container";
+import Loading from "../components/Loading";
 
 export default function Fees() {
     const { memberId } = useParams();
@@ -33,7 +34,7 @@ export default function Fees() {
         }
     });
 
-    const { mutate: postAmount } = useMutation({
+    const { mutate: postAmount, isLoading: isPostAmountLoading } = useMutation({
         mutationFn: async () => {
             return await fetcher.post(`/api/members/fees`, { ...payload }, {
                 params: {
@@ -78,7 +79,7 @@ export default function Fees() {
 
     const { userData: { id } } = useLocalStorage();
     
-    if (isLoading || isFetching) return <h1>Loading...</h1>;
+    if (isLoading || isFetching || isPostAmountLoading) return <Loading />;
     if (error) return <Navigate to="/signin" />;
 
     return (

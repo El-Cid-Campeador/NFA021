@@ -2,6 +2,7 @@ import { useQuery } from "@tanstack/react-query";
 import { Navigate, useParams } from "react-router-dom";
 import { fetcher, formatDate } from "../functions";
 import Container from "../components/Container";
+import Loading from "../components/Loading";
 
 export default function FeesDetails() {
     const { memberId } = useParams();
@@ -19,7 +20,7 @@ export default function FeesDetails() {
         }
     });
 
-    if (isLoading || isFetching) return <h1>Loading...</h1>;
+    if (isLoading || isFetching) return <Loading />;
     if (error) return <Navigate to="/signin" />;
     
     return (

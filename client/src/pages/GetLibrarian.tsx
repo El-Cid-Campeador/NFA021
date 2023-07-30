@@ -4,6 +4,7 @@ import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import Modal from "../components/Modal";
 import { displayLibrarianProperty, fetcher, formatProperty } from "../functions";
 import Container from "../components/Container";
+import Loading from "../components/Loading";
 
 export default function GetLibrarian() { 
     const [isModalShowing, setIsModalShowing] = useState(false);
@@ -32,7 +33,7 @@ export default function GetLibrarian() {
         }
     });
 
-    const { mutate: deleteLibrarian } = useMutation({
+    const { mutate: deleteLibrarian, isLoading: IsDeleteLibrarianLoading } = useMutation({
         mutationFn: async () => {
             return await fetcher.delete(`/api/librarians/${addedlibrarianId}`);
         },
@@ -46,7 +47,7 @@ export default function GetLibrarian() {
         }
     });
     
-    if (isLoadingLibrarian || isFetchingLibrarian) return <h1>Loading...</h1>;
+    if (isLoadingLibrarian || isFetchingLibrarian || IsDeleteLibrarianLoading) return <Loading />;
     if (errorLibrarian) return <Navigate to="/signin" />;
     
     return (

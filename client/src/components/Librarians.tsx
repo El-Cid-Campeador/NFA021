@@ -1,6 +1,7 @@
 import { useQuery } from "@tanstack/react-query";
 import { Link, Navigate } from "react-router-dom";
 import { fetcher } from "../functions";
+import Loading from "./Loading";
 
 type Props = {
     id: string
@@ -20,7 +21,7 @@ export default function Librarians({ id }: Props) {
         }
     }); 
     
-    if (isLoading || isFetching) return <h1>Loading...</h1>;
+    if (isLoading || isFetching) return <Loading />;
     if (error) return <Navigate to="/signin" />;
 
     return (
