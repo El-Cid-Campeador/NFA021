@@ -1,11 +1,12 @@
 import express from "express";
+import compression from "compression";
 import cookieParser from "cookie-parser";
 import cors from "cors";
-import session from 'express-session';
-import RedisStore from 'connect-redis';
-import { createClient } from 'redis';
+import session from "express-session";
+import RedisStore from "connect-redis";
+import { createClient } from "redis";
 import "dotenv/config";
-import path from 'path';
+import path from "node:path";
 import router from "./routers/index.js";
 
 function checkIfEnvProduction() {
@@ -25,6 +26,8 @@ const redisStore = new RedisStore({
     client: redisClient,
     prefix: "myapp:",
 });
+
+app.use(compression());
 
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));

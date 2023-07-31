@@ -88,18 +88,12 @@ CREATE TABLE IF NOT EXISTS Suggestions (
 
 
 INSERT INTO Users (id, firstName, lastName, email, password) VALUES (
-    '111101246123', 'Super', 'Admin', 'admin@gmail.com', '$2b$10$zg7lImuzT42ogQ4nTMqU..SwIKOKwnE5oqY6sdW12RTNWuz0Q.H.a'
-),(
-    '118101256890', 'John', 'Doe', 'example@gmail.com', '$2b$10$ARWCGJl.0PQmXATy1RP3Fu9J6hl/8BjJSA5us5GWCq/A0.TC/wC/e'
+    '111101246123', 'Super', 'Admin', 'admin@gmail.com', '$2b$10$dIU3y7WwpgYEf7Z3GH4oh.vBcom9rEMyLyyOUhfMpgefNIH4/JNj2'
 );
 
 ALTER TABLE Librarians DISABLE KEYS;
 INSERT INTO Librarians (id, addedBy) VALUES ('111101246123', '111101246123');
 ALTER TABLE Librarians ENABLE KEYS;
-
-INSERT INTO Members (id) VALUES ('118101256890');
-
--- Plain passwords (for dev purpose): 12345678
 
 INSERT INTO Books (id, title, imgUrl, authorName, category, lang, descr, yearPubl, numEdition, nbrPages, addedBy) VALUES (
     UUID(),
