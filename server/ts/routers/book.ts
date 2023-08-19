@@ -5,7 +5,7 @@ const bookRouter = express.Router();
 
 bookRouter.get('/latest', authMiddleware, async (req, res) => {
     try {
-        const rows = await conn.query(`SELECT id, title, imgUrl FROM Books WHERE deletedBy IS NULL ORDER BY yearPubl DESC, additionDate DESC LIMIT 3`) as any[][];  
+        const rows = await conn.query(`SELECT id, title, imgUrl FROM Books WHERE deletedBy IS NULL ORDER BY additionDate DESC LIMIT 3`) as any[][];  
     
         res.json({ result: rows[0] });
     } catch (error) {
@@ -198,7 +198,7 @@ bookRouter.post('/lend', librarianMiddleware, async (req, res) => {
 });
 
 bookRouter.patch('/return', librarianMiddleware, async (req, res) => {
-    const sql = `UPDATE Borrowings SET returnDate = NOW(), receiverId = ? WHERE memberId = ? AND bookId = ? AND borrowDate = CONVERT_TZ(?, '+00:00', @@session.time_zone)`;
+    const sql = `UPDATE Borrowings SET returnDate = NOW(), receiverId = ? WHERE memberId = ? AND bookId = ? AND borrowDate = CONVERT_TZ(?, 'UTC', @@session.time_zone)`;
 
     try {
         const { bookId, librarianId, borrowDate } = req.query;

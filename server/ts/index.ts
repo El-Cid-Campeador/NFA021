@@ -13,10 +13,12 @@ function checkIfEnvProduction() {
     return !process.env.NODE_ENV || process.env.NODE_ENV === 'production';
 }
 
-const PORT = process.env.PORT || 8080;
+const PORT = process.env.SERVER_PORT || 8080;
 const app = express();
 
-const redisClient = createClient();
+const redisClient = createClient({
+    url: `redis://${process.env.REDIS_HOST || '127.0.0.1'}:6379`
+});
 
 redisClient.connect().catch(err => {
     console.log('Could not establish a connection with redis. ' + err);
@@ -27,19 +29,28 @@ const redisStore = new RedisStore({
     prefix: "myapp:",
 });
 
+const allowedDomains = ['http://localhost:5173'];
+
 app.use(compression());
 
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 app.use(cookieParser());
 app.use(cors({ 
-    origin: 'http://localhost:5173', 
+    origin: function (origin, callback) {
+        if (allowedDomains.includes(origin || '')) {
+            callback(null, true);
+        } else {
+            return callback(new Error('Not allowed by CORS'));
+        }
+    },
+    methods: ['GET', 'POST', 'DELETE', 'PATCH'],
     credentials: true 
 }));
 
 app.use(session({
     store: redisStore,
-    secret: process.env.SECRET_KEY!,
+    secret: process.env.SECRET_KEY || 'secret',
     resave: false,
     saveUninitialized: false,
     cookie: {
@@ -50,6 +61,14 @@ app.use(session({
     }
 }));
 
+app.use((err: Error, req: express.Request, res: express.Response, next: express.NextFunction) => {
+    if (err instanceof Error && err.message === 'Not allowed by CORS') {
+      res.status(403).json({ error: 'CORS not allowed' });
+    } else {
+      next(err);
+    }
+});
+
 app.use('/api', router);
 
 app.use(express.static('../client/dist'));
@@ -59,5 +78,5 @@ app.get('*', (req, res) => {
 });
 
 app.listen(PORT, () => {
-    console.log(`At http://localhost:${PORT}`);
+    console.log(`Server running at http://localhost:${PORT}`);
 });

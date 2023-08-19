@@ -242,7 +242,13 @@ function displayLibrarianProperty(key: string) {
 }
 
 function formatDate(date: string) {
-    return new Date(date).toISOString().slice(0, 19).replace('T', ' ');
+    const inputDate = new Date(date);
+    const utc3Offset = 3 * 60;
+    const utc3Timestamp = inputDate.getTime() + utc3Offset * 60 * 1000;
+
+    const utc3Date = new Date(utc3Timestamp);
+
+    return utc3Date.toISOString().slice(0, 19).replace('T', ' ');
 }
 
 function formatProperty(obj: any, displayedProperty: string, originalProperty: string) {

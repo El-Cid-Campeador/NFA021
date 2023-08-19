@@ -3,10 +3,10 @@ import "dotenv/config";
 
 async function connectDB() {
     const conn = await mysql.createConnection({
-        host: 'localhost',
-        user: 'root',
-        password: process.env.DB_PASSWORD,
-        database: 'nfa021'
+        host: process.env.MYSQL_HOST || 'localhost',
+        user: process.env.MYSQL_USER || 'root',
+        password: process.env.MYSQL_PASSWORD || '',
+        database: process.env.MYSQL_DATABASE || 'nfa021'
     });
 
     await conn.execute(`CREATE TABLE IF NOT EXISTS Users (
@@ -15,8 +15,8 @@ async function connectDB() {
             lastName VARCHAR(50) NOT NULL,
             email VARCHAR(50) NOT NULL UNIQUE,
             password VARCHAR(100) NOT NULL,
-            additionDate TIMESTAMP DEFAULT NOW(),
-            deletionDate TIMESTAMP
+            additionDate DATETIME DEFAULT NOW(),
+            deletionDate DATETIME
         )`
     ); 
 
@@ -48,9 +48,9 @@ async function connectDB() {
             numEdition SMALLINT UNSIGNED NOT NULL,
             nbrPages MEDIUMINT UNSIGNED NOT NULL,
             addedBy VARCHAR(12) NOT NULL,
-            additionDate TIMESTAMP DEFAULT NOW(),
-            deletedBy VARCHAR(12) ,
-            deletionDate TIMESTAMP,
+            additionDate DATETIME DEFAULT NOW(),
+            deletedBy VARCHAR(12),
+            deletionDate DATETIME,
             FOREIGN KEY (addedBy) REFERENCES Librarians(id),
             FOREIGN KEY (deletedBy) REFERENCES Librarians(id)
         )`
@@ -59,10 +59,10 @@ async function connectDB() {
     await conn.execute(`CREATE TABLE IF NOT EXISTS Borrowings (
             memberId VARCHAR(12),
             bookId VARCHAR(36),
-            borrowDate TIMESTAMP DEFAULT NOW(),
+            borrowDate DATETIME DEFAULT NOW(),
             lenderId VARCHAR(12) NOT NULL,
-            returnDate TIMESTAMP,
-            receiverId VARCHAR(12) ,
+            returnDate DATETIME,
+            receiverId VARCHAR(12),
             PRIMARY KEY (memberId, bookId, borrowDate),
             FOREIGN KEY (memberId) REFERENCES Members(id),
             FOREIGN KEY (bookId) REFERENCES Books(id),
@@ -74,7 +74,7 @@ async function connectDB() {
     await conn.execute(`CREATE TABLE IF NOT EXISTS Modifications (
             librarianId VARCHAR(12),
             bookId VARCHAR(36),
-            modificationDate TIMESTAMP DEFAULT NOW(),
+            modificationDate DATETIME DEFAULT NOW(),
             oldValues JSON NOT NULL,
             newValues JSON NOT NULL,
             PRIMARY KEY (librarianId, bookId, modificationDate),
@@ -89,7 +89,7 @@ async function connectDB() {
             year SMALLINT UNSIGNED NOT NULL,
             memberId VARCHAR(12) NOT NULL,
             librarianId VARCHAR(12) NOT NULL,
-            paymentDate TIMESTAMP DEFAULT NOW(),
+            paymentDate DATETIME DEFAULT NOW(),
             FOREIGN KEY (memberId) REFERENCES Members(id)
         )`
     );
@@ -99,7 +99,7 @@ async function connectDB() {
             descr LONGTEXT NOT NULL,
             memberId VARCHAR(12) NOT NULL,
             bookId VARCHAR(36) NOT NULL,
-            additionDate TIMESTAMP DEFAULT NOW(),
+            additionDate DATETIME DEFAULT NOW(),
             FOREIGN KEY (memberId) REFERENCES Members(id),
             FOREIGN KEY (bookId) REFERENCES Books(id)
         )`

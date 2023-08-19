@@ -2,6 +2,7 @@ import { Request, Response, NextFunction } from "express";
 import mysql from "mysql2/promise";
 import { SessionData } from "express-session";
 import "dotenv/config";
+import waitPort from "wait-port";
 
 interface UserSession extends SessionData {
     user?: User
@@ -10,11 +11,14 @@ interface UserSession extends SessionData {
 const conn = await connectDB();
 
 async function connectDB() {
+    await waitPort({ host: process.env.MYSQL_HOST || 'localhost', port: 3306 });
+    
     const conn = await mysql.createConnection({
-        host: 'localhost',
-        user: 'root',
-        password: process.env.DB_PASSWORD!,
-        database: 'nfa021'
+        host: process.env.MYSQL_HOST || 'localhost',
+        user: process.env.MYSQL_USER || 'root',
+        password: process.env.MYSQL_PASSWORD || 'root',
+        database: process.env.MYSQL_DATABASE || 'nfa021',
+        charset: 'utf8mb4'
     });
 
     await conn.execute(`CREATE TABLE IF NOT EXISTS Users (
@@ -23,8 +27,8 @@ async function connectDB() {
             lastName VARCHAR(50) NOT NULL,
             email VARCHAR(50) NOT NULL UNIQUE,
             password VARCHAR(100) NOT NULL,
-            additionDate TIMESTAMP DEFAULT NOW(),
-            deletionDate TIMESTAMP
+            additionDate DATETIME DEFAULT NOW(),
+            deletionDate DATETIME 
         )`
     ); 
 
@@ -56,9 +60,9 @@ async function connectDB() {
             numEdition SMALLINT UNSIGNED NOT NULL,
             nbrPages MEDIUMINT UNSIGNED NOT NULL,
             addedBy VARCHAR(12) NOT NULL,
-            additionDate TIMESTAMP DEFAULT NOW(),
-            deletedBy VARCHAR(12) ,
-            deletionDate TIMESTAMP,
+            additionDate DATETIME DEFAULT NOW(),
+            deletedBy VARCHAR(12),
+            deletionDate DATETIME,
             FOREIGN KEY (addedBy) REFERENCES Librarians(id),
             FOREIGN KEY (deletedBy) REFERENCES Librarians(id)
         )`
@@ -67,10 +71,10 @@ async function connectDB() {
     await conn.execute(`CREATE TABLE IF NOT EXISTS Borrowings (
             memberId VARCHAR(12),
             bookId VARCHAR(36),
-            borrowDate TIMESTAMP DEFAULT NOW(),
+            borrowDate DATETIME DEFAULT NOW(),
             lenderId VARCHAR(12) NOT NULL,
-            returnDate TIMESTAMP,
-            receiverId VARCHAR(12) ,
+            returnDate DATETIME,
+            receiverId VARCHAR(12),
             PRIMARY KEY (memberId, bookId, borrowDate),
             FOREIGN KEY (memberId) REFERENCES Members(id),
             FOREIGN KEY (bookId) REFERENCES Books(id),
@@ -82,7 +86,7 @@ async function connectDB() {
     await conn.execute(`CREATE TABLE IF NOT EXISTS Modifications (
             librarianId VARCHAR(12),
             bookId VARCHAR(36),
-            modificationDate TIMESTAMP DEFAULT NOW(),
+            modificationDate DATETIME DEFAULT NOW(),
             oldValues JSON NOT NULL,
             newValues JSON NOT NULL,
             PRIMARY KEY (librarianId, bookId, modificationDate),
@@ -97,7 +101,7 @@ async function connectDB() {
             year SMALLINT UNSIGNED NOT NULL,
             memberId VARCHAR(12) NOT NULL,
             librarianId VARCHAR(12) NOT NULL,
-            paymentDate TIMESTAMP DEFAULT NOW(),
+            paymentDate DATETIME DEFAULT NOW(),
             FOREIGN KEY (memberId) REFERENCES Members(id)
         )`
     );
@@ -107,7 +111,7 @@ async function connectDB() {
             descr LONGTEXT NOT NULL,
             memberId VARCHAR(12) NOT NULL,
             bookId VARCHAR(36) NOT NULL,
-            additionDate TIMESTAMP DEFAULT NOW(),
+            additionDate DATETIME DEFAULT NOW(),
             FOREIGN KEY (memberId) REFERENCES Members(id),
             FOREIGN KEY (bookId) REFERENCES Books(id)
         )`
@@ -118,9 +122,9 @@ async function connectDB() {
 
 async function getUserByEmailOrID(emailOrID: string) {
     const sql = `SELECT id, firstName, lastName, password 
-        FROM Users WHERE (email = ? OR id = ?) AND (deletionDate = '0000-00-00 00:00:00' OR deletionDate IS NOT NULL)
+        FROM Users WHERE (email = ? OR id = ?) AND deletionDate IS NULL
     `;
-    
+
     try {
         const stmt = await conn.prepare(sql);
         const rows = await stmt.execute([emailOrID, emailOrID]) as any[][];
@@ -168,7 +172,13 @@ async function registerChanges(bookId: string, librarianId: string, newValues: a
 }
 
 function formatDate(date: string) {
-    return new Date(date).toISOString().slice(0, 19).replace('T', ' ');
+    const inputDate = new Date(date);
+    const utc3Offset = 3 * 60;
+    const utc3Timestamp = inputDate.getTime() + utc3Offset * 60 * 1000;
+
+    const utc3Date = new Date(utc3Timestamp);
+
+    return utc3Date.toISOString().slice(0, 19).replace('T', ' ');
 }
 
 function authMiddleware(req: Request, res: Response, next: NextFunction) {

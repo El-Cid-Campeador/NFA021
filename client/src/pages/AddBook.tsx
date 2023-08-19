@@ -19,8 +19,6 @@ const initialValues: BookDataInput = {
     nbrPages: 100
 }
 
-
-
 export default function AddBook() {
     const [error, setError] = useState('');
 

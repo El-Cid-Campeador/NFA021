@@ -4,8 +4,8 @@ CREATE TABLE IF NOT EXISTS Users (
     lastName VARCHAR(50) NOT NULL,
     email VARCHAR(50) NOT NULL UNIQUE,
     password VARCHAR(100) NOT NULL,
-    additionDate TIMESTAMP DEFAULT NOW(),
-    deletionDate TIMESTAMP
+    additionDate DATETIME DEFAULT NOW(),
+    deletionDate DATETIME 
 );
 
 CREATE TABLE IF NOT EXISTS Librarians (
@@ -34,9 +34,9 @@ CREATE TABLE IF NOT EXISTS Books (
     numEdition SMALLINT UNSIGNED NOT NULL,
     nbrPages MEDIUMINT UNSIGNED NOT NULL,
     addedBy VARCHAR(12) NOT NULL,
-    additionDate TIMESTAMP DEFAULT NOW(),
-    deletedBy VARCHAR(12) ,
-    deletionDate TIMESTAMP,
+    additionDate DATETIME DEFAULT NOW(),
+    deletedBy VARCHAR(12),
+    deletionDate DATETIME,
     FOREIGN KEY (addedBy) REFERENCES Librarians(id),
     FOREIGN KEY (deletedBy) REFERENCES Librarians(id)
 );
@@ -44,10 +44,10 @@ CREATE TABLE IF NOT EXISTS Books (
 CREATE TABLE IF NOT EXISTS Borrowings (
     memberId VARCHAR(12),
     bookId VARCHAR(36),
-    borrowDate TIMESTAMP DEFAULT NOW(),
+    borrowDate DATETIME DEFAULT NOW(),
     lenderId VARCHAR(12) NOT NULL,
-    returnDate TIMESTAMP,
-    receiverId VARCHAR(12) ,
+    returnDate DATETIME,
+    receiverId VARCHAR(12),
     PRIMARY KEY (memberId, bookId, borrowDate),
     FOREIGN KEY (memberId) REFERENCES Members(id),
     FOREIGN KEY (bookId) REFERENCES Books(id),
@@ -58,7 +58,7 @@ CREATE TABLE IF NOT EXISTS Borrowings (
 CREATE TABLE IF NOT EXISTS Modifications (
     librarianId VARCHAR(12),
     bookId VARCHAR(36),
-    modificationDate TIMESTAMP DEFAULT NOW(),
+    modificationDate DATETIME DEFAULT NOW(),
     oldValues JSON NOT NULL,
     newValues JSON NOT NULL,
     PRIMARY KEY (librarianId, bookId, modificationDate),
@@ -72,7 +72,7 @@ CREATE TABLE IF NOT EXISTS Fees (
     year SMALLINT UNSIGNED NOT NULL,
     memberId VARCHAR(12) NOT NULL,
     librarianId VARCHAR(12) NOT NULL,
-    paymentDate TIMESTAMP DEFAULT NOW(),
+    paymentDate DATETIME DEFAULT NOW(),
     FOREIGN KEY (memberId) REFERENCES Members(id)
 );
 
@@ -81,7 +81,7 @@ CREATE TABLE IF NOT EXISTS Suggestions (
     descr LONGTEXT NOT NULL,
     memberId VARCHAR(12) NOT NULL,
     bookId VARCHAR(36) NOT NULL,
-    additionDate TIMESTAMP DEFAULT NOW(),
+    additionDate DATETIME DEFAULT NOW(),
     FOREIGN KEY (memberId) REFERENCES Members(id),
     FOREIGN KEY (bookId) REFERENCES Books(id)
 );
@@ -153,7 +153,7 @@ INSERT INTO Books (id, title, imgUrl, authorName, category, lang, descr, yearPub
     'Victor Hugo', 
     'Literature',
     'French', 
-    '"Quoi que fassent ceux qui règnent chez eux par la violence et hors de chez eux par la menace, quoi que fassent ceux qui se croient les maîtres des peuples et qui ne sont que les tyrans des consciences, l’homme qui lutte pour la justice et la vérité trouvera toujours le moyen d’accomplir son devoir tout entier. La toute-puissance du mal n’a jamais abouti qu’à des efforts inutiles. La pensée échappe toujours à qui tente de l’étouffer. Elle se fait insaisissable à la compression ; elle se réfugie d’une forme dans l’autre. Le flambeau rayonne ; si on l’éteint, si on l’engloutit dans les ténèbres, le flambeau devient une voix, et l’on ne fait pas la nuit sur la parole ; si l’on met un baîllon à la bouche qui parle, la parole se change en lumière, et l’on ne baîllonne pas la lumière. Rien ne dompte la conscience de l’homme, car la conscience de l’homme, c’est la pensée de Dieu."',
+    '"Quoi que fassent ceux qui règnent chez eux par la violence et hors de chez eux par la menace, quoi que fassent ceux qui se croient les maîtres des peuples et qui ne sont que les tyrans des consciences, l’homme qui lutte pour la justice et la vérité trouvera toujours le moyen d’accomplir son devoir tout entier. La toute-puissance du mal n’a jamais abouti qu’à des efforts inutiles. La pensée échappe toujours à qui tente de l’étouffer. Elle se fait insaisissable à la compression ; elle se réfugie d’une forme dans l’autre. Le flambeau rayonne ; si on l’éteint, si on l’engloutit dans les ténèbres, le flambeau devient une voix, et l’on ne fait pas la nuit sur la parole ; si l’on met un bâillon à la bouche qui parle, la parole se change en lumière, et l’on ne bâillonne pas la lumière. Rien ne dompte la conscience de l’homme, car la conscience de l’homme, c’est la pensée de Dieu."',
     1998,
     1,
     416,

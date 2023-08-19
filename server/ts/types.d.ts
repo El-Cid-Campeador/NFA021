@@ -4,4 +4,3 @@ type User = {
     lastName: string, 
     role?: string 
 }
-

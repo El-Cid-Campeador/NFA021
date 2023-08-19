@@ -1,0 +1,86 @@
+version: "3.8"
+
+services:
+    mariadb:
+        container_name: mariadb
+        image: mariadb:10.5.22
+        environment:
+            - MYSQL_ROOT_PASSWORD=root
+            - MYSQL_DATABASE=nfa021
+        volumes:
+            - mariadb_data:/var/lib/mysql
+            - ./server/script.sql:/docker-entrypoint-initdb.d/script.sql
+        ports:
+            - 3307:3306
+        networks:
+            - backend
+        restart: always
+    redis:
+        container_name: redis
+        depends_on:
+            - mariadb
+        image: redis:7.2-rc3
+        volumes: 
+            - cache:/data
+        networks:
+            - backend
+        restart: always
+    server:
+        container_name: server
+        depends_on:
+            - mariadb
+            - redis
+        build: ./server
+        volumes:
+            - ./server:/usr/src/app/server
+            - ./client/dist:/usr/src/app/client/dist
+        environment:
+            - SERVER_PORT=8080
+            - MYSQL_HOST=mariadb
+            - MYSQL_USER=root
+            - MYSQL_PASSWORD=root
+            - MYSQL_DATABASE=nfa021
+            - REDIS_HOST=redis
+            - SECRET_KEY=secret
+        ports:
+            - 8080:8080
+        networks:
+            - backend
+            - frontend
+        restart: always
+    
+    client:
+        container_name: client
+        depends_on:
+            - mariadb
+            - redis
+            - server
+        build: ./client
+        volumes:
+            - ./client:/usr/src/app/client
+        ports:
+            - 5173:5173
+        networks:
+            - frontend  
+        restart: always
+    tailwindcss:
+        container_name: tailwindcss
+        depends_on:
+            - mariadb
+            - redis
+            - server
+            - client
+        build: ./client
+        volumes:
+            - ./client/src/output.css:/usr/src/app/client/src/output.css
+        command: sh -c "npm run css"
+
+volumes:
+    mariadb_data:
+    cache:
+
+networks:
+    backend:
+        name: backend
+    frontend:
+        name: frontend
