@@ -21,6 +21,6 @@ $ docker compose up
 
 Open `http://localhost:5173` in a browser.
 
--> Admin's ID: 111101246123
--> Admin's email: admin@gmail.com
--> Admin's password: <Xu_Q|m9xR^SwCdTJP2b
+* Admin's ID: 111101246123
+* Admin's email: admin@gmail.com
+* Admin's password: <Xu_Q|m9xR^SwCdTJP2b
