@@ -8,6 +8,11 @@ import { createClient } from "redis";
 import "dotenv/config";
 import path from "node:path";
 import router from "./routers/index.js";
+import { fileURLToPath } from 'url';
+import { dirname } from 'path';
+
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = dirname(__filename);
 
 function checkIfEnvProduction() {
     return !process.env.NODE_ENV || process.env.NODE_ENV === 'production';
@@ -38,10 +43,14 @@ app.use(express.urlencoded({ extended: true }));
 app.use(cookieParser());
 app.use(cors({ 
     origin: function (origin, callback) {
-        if (allowedDomains.includes(origin || '')) {
+        if (!origin || allowedDomains.indexOf(origin) != -1) {
             callback(null, true);
+
+            return;
         } else {
-            return callback(new Error('Not allowed by CORS'));
+            callback(new Error('Not allowed by CORS'));
+
+            return;
         }
     },
     methods: ['GET', 'POST', 'DELETE', 'PATCH'],
@@ -63,18 +72,18 @@ app.use(session({
 
 app.use((err: Error, req: express.Request, res: express.Response, next: express.NextFunction) => {
     if (err instanceof Error && err.message === 'Not allowed by CORS') {
-      res.status(403).json({ error: 'CORS not allowed' });
+        res.status(403).json({ error: 'CORS not allowed' });
     } else {
-      next(err);
+        next(err);
     }
 });
 
 app.use('/api', router);
 
-app.use(express.static('../client/dist'));
+app.use(express.static(path.join(__dirname, '..', '..', 'client', 'dist')));
 
 app.get('*', (req, res) => {
-    res.sendFile(path.resolve('..', 'client', 'dist', 'index.html'));
+    res.sendFile(path.join(__dirname, '..', '..', 'client', 'dist', 'index.html'));
 });
 
 app.listen(PORT, () => {
