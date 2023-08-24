@@ -15,7 +15,7 @@ bookRouter.get('/latest', authMiddleware, async (req, res) => {
 
 bookRouter.route('/')
     .get(authMiddleware, async (req, res) => {
-        let sql = `SELECT id, title FROM Books WHERE deletedBy IS NULL AND (title LIKE ? OR authorName LIKE ?)`;
+        let sql = `SELECT id, title, imgUrl FROM Books WHERE deletedBy IS NULL AND (title LIKE ? OR authorName LIKE ?)`;
 
         try {
             const { search } = req.query;
