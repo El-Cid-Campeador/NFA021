@@ -8,6 +8,8 @@ This is a project for my college subject named "NFA021". It's about building a l
 
 * Docker
 
+---
+
 To launch the project, open a new terminal and run those commands:
 
 ```bash
