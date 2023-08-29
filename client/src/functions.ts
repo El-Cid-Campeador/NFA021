@@ -1,7 +1,7 @@
 import axios from "axios";
 
 const fetcher = axios.create({
-    baseURL: 'http://localhost:8080',
+    baseURL: 'http://localhost:8080', // http://192.168.1.13:8080
     withCredentials: true
 });
 
@@ -80,7 +80,7 @@ const bookLanguages = [
 function generateYears(): number[] {
     const arr = [];
     for (let year = new Date().getFullYear(); year >= 1970; year -= 1) {
-        arr.push(year);  
+        arr.push(year);
     }
 
     return arr;
@@ -259,15 +259,15 @@ function formatProperty(obj: any, displayedProperty: string, originalProperty: s
     return obj[originalProperty];
 }
 
-export { 
-    fetcher, 
-    bookCategories, 
-    bookLanguages, 
-    generateYears, 
-    isAnyOfTheAttributesAnEmptyString, 
-    areAllAttributesEmptyStrings, 
-    isNumber, 
-    generateFeesYears, 
+export {
+    fetcher,
+    bookCategories,
+    bookLanguages,
+    generateYears,
+    isAnyOfTheAttributesAnEmptyString,
+    areAllAttributesEmptyStrings,
+    isNumber,
+    generateFeesYears,
     displayBookProperty,
     displayMemberProperty,
     displayLibrarianProperty,

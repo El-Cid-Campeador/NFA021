@@ -8,7 +8,7 @@ import { createClient } from "redis";
 import "dotenv/config";
 import path from "node:path";
 import router from "./routers/index.js";
-import { fileURLToPath } from 'url';
+import { fileURLToPath } from 'node:url';
 import { dirname } from 'path';
 
 const __filename = fileURLToPath(import.meta.url);
@@ -31,17 +31,17 @@ redisClient.connect().catch(err => {
 
 const redisStore = new RedisStore({
     client: redisClient,
-    prefix: "myapp:",
+    prefix: "myapp:"
 });
 
-const allowedDomains = ['http://localhost:5173'];
+const allowedDomains = ['http://localhost:5173', 'http://192.168.1.13:8080'];
 
 app.use(compression());
 
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 app.use(cookieParser());
-app.use(cors({ 
+app.use(cors({
     origin: function (origin, callback) {
         if (!origin || allowedDomains.indexOf(origin) != -1) {
             callback(null, true);
@@ -54,7 +54,7 @@ app.use(cors({
         }
     },
     methods: ['GET', 'POST', 'DELETE', 'PATCH'],
-    credentials: true 
+    credentials: true
 }));
 
 app.use(session({
