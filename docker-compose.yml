@@ -10,10 +10,10 @@ services:
         volumes:
             - mariadb_data:/var/lib/mysql
             - ./server/script.sql:/docker-entrypoint-initdb.d/script.sql
-        ports:
-            - 3307:3306
         networks:
             - backend
+        stdin_open: true
+        tty: true
         restart: always
     redis:
         container_name: redis

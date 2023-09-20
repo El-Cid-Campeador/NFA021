@@ -1,4 +1,4 @@
-# NFA021
+###### NFA021 (React + Node.JS + MariaDB)
 
 This is a project for my college subject named "NFA021". It's about building a library website for members and librarians to manage book-related operations.
 
